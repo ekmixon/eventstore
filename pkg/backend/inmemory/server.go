@@ -83,6 +83,10 @@ type inMemoryServer struct {
 var _ protob.EventStoreServer = (*inMemoryServer)(nil)
 
 func (s *inMemoryServer) Save(_ context.Context, sr *protob.SaveRequest) (*protob.SaveResponse, error) {
+	if err := sr.Validate(); err != nil {
+		return nil, err
+	}
+
 	t := tokenizer(sr.Location)
 
 	s.store[t] = storedValue{
@@ -94,6 +98,10 @@ func (s *inMemoryServer) Save(_ context.Context, sr *protob.SaveRequest) (*proto
 }
 
 func (s *inMemoryServer) Load(_ context.Context, lr *protob.LoadRequest) (*protob.LoadResponse, error) {
+	if err := lr.Validate(); err != nil {
+		return nil, err
+	}
+
 	t := tokenizer(lr.Location)
 	v, ok := s.store[t]
 	if !ok {
@@ -108,8 +116,18 @@ func (s *inMemoryServer) Load(_ context.Context, lr *protob.LoadRequest) (*proto
 	return &protob.LoadResponse{Value: v.value}, nil
 }
 
-func (s *inMemoryServer) Delete(context.Context, *protob.DeleteRequest) (*protob.DeleteResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Delete not implemented")
+func (s *inMemoryServer) Delete(_ context.Context, dr *protob.DeleteRequest) (*protob.DeleteResponse, error) {
+	if err := dr.Validate(); err != nil {
+		return nil, err
+	}
+
+	t := tokenizer(dr.Location)
+	_, ok := s.store[t]
+	if ok {
+		delete(s.store, t)
+	}
+
+	return &protob.DeleteResponse{}, nil
 }
 
 func tokenizer(location *protob.LocationType) string {
