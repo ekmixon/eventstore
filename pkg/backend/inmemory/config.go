@@ -27,4 +27,10 @@ func EnvAccessorCtor() sharedmain.EnvConfigAccessor {
 
 type envAccessor struct {
 	sharedmain.EnvConfig
+
+	DefaultGlobalTTL   int32 `envconfig:"EVENTSTORE_DEFAULT_GLOBAL_TTL" default:"604800"`
+	DefaultBridgeTTL   int32 `envconfig:"EVENTSTORE_DEFAULT_BRIDGE_TTL" default:"604800"`
+	DefaultInstanceTTL int32 `envconfig:"EVENTSTORE_DEFAULT_INSTANCE_TTL" default:"20"`
+
+	DefaultExpiredGCPeriod int32 `envconfig:"EVENTSTORE_DEFAULT_EXPIRED_GC_PERIOD" default:"30"`
 }

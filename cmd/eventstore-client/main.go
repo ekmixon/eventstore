@@ -34,27 +34,19 @@ var (
 	instance = kingpin.Flag("instance", "Instance ID, when scope is instance.").Default("").String()
 	key      = kingpin.Flag("key", "Key for storing value.").Required().String()
 	value    = kingpin.Flag("value", "Value to be stored.").Default("").String()
-	ttl      = kingpin.Flag("ttl", "Stored value's time to live (ms).").Default("5000").Int32()
+	ttl      = kingpin.Flag("ttl", "Stored value's time to live (seconds).").Default("5").Int32()
 )
 
 func main() {
 	kingpin.Parse()
 
-	// falg validation
+	// flag validation
 
 	sc, ok := protob.ScopeChoice_value[*scope]
 	if !ok {
 		kingpin.FatalUsage("not valid scope %q", *scope)
 	}
 	scopeTypeChoice := protob.ScopeChoice(sc)
-
-	// if *scope != "global" && (bridge == nil || *bridge == "") {
-	// 	kingpin.FatalUsage("bridge and instance scope types needs to inform bridge %q")
-	// }
-
-	// if *scope == "instance" && (instance == nil || *instance == "") {
-	// 	kingpin.FatalUsage("instance scope types needs to inform instance")
-	// }
 
 	location := &protob.LocationType{
 		Scope: &protob.ScopeType{
