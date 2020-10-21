@@ -18,61 +18,104 @@ package main
 
 import (
 	"context"
-	"flag"
 	"log"
-	"time"
 
 	"google.golang.org/grpc"
+	"gopkg.in/alecthomas/kingpin.v2"
 
 	"github.com/triggermesh/eventstore/pkg/eventstore/protob"
 )
 
 var (
-	serverAddr = flag.String("server_addr", "localhost:9090", "The server address in the format of host:port")
+	server   = kingpin.Flag("server", "Event storage address.").Required().String()
+	command  = kingpin.Flag("command", "One of load, save, delete.").Required().String()
+	scope    = kingpin.Flag("scope", "One of Global, Bridge, Instance.").Required().String()
+	bridge   = kingpin.Flag("bridge", "Bridge name, when scope is bridge or instance.").String()
+	instance = kingpin.Flag("instance", "Instance ID, when scope is instance.").String()
+	key      = kingpin.Flag("key", "Key for storing value.").Required().String()
+	value    = kingpin.Flag("value", "Value to be stored.").String()
+	ttl      = kingpin.Flag("ttl", "Stored value's time to live (ms).").Int32()
 )
 
 func main() {
-	flag.Parse()
+	kingpin.Parse()
 
-	conn, err := grpc.Dial(*serverAddr, grpc.WithInsecure(), grpc.WithBlock())
-	if err != nil {
-		log.Fatalf("failed to dial %s: %v", *&serverAddr, err)
+	// validation
+
+	if *command != "load" && *command != "save" && *command != "delete" {
+		kingpin.FatalUsage("not valid command %q", *command)
 	}
+
+	sc, ok := protob.ScopeChoice_value[*scope]
+	if !ok {
+		kingpin.FatalUsage("not valid scope %q", *scope)
+	}
+	scopeTypeChoice := protob.ScopeChoice(sc)
+
+	if *scope != "global" && (bridge == nil || *bridge == "") {
+		kingpin.FatalUsage("bridge and instance scope types needs to inform bridge %q")
+	}
+
+	if *scope == "instance" && (instance == nil || *instance == "") {
+		kingpin.FatalUsage("instance scope types needs to inform instance")
+	}
+
+	location := &protob.LocationType{
+		Scope: &protob.ScopeType{
+			Type:     scopeTypeChoice,
+			Bridge:   *bridge,
+			Instance: *instance,
+		},
+	}
+
+	// connection
+
+	conn, err := grpc.Dial(*server, grpc.WithInsecure(), grpc.WithBlock())
+	if err != nil {
+		log.Fatalf("failed to dial %s: %v", *server, err)
+	}
+
 	defer conn.Close()
 	client := protob.NewEventStoreClient(conn)
+	ctx := context.Background()
 
-	log.Println("Saving value")
-	_, err = client.Save(context.Background(), &protob.SaveRequest{
-		Location: &protob.LocationType{
-			Scope: &protob.ScopeType{
-				Type:     protob.ScopeChoice_Instance,
-				Bridge:   "mybridge",
-				Instance: "01234-deadbeef",
-			},
-		},
-		Value: "saveme1",
-		Ttl:   1000,
-	})
-	if err != nil {
-		log.Fatalf("could not save: %v", err)
+	// execution
+
+	switch *command {
+	case "load":
+		lr, err := client.Load(ctx, &protob.LoadRequest{Location: location})
+		if err != nil {
+			log.Fatalf("could not load: %v", err)
+		}
+		log.Printf("Loaded value: %s", lr.GetValue())
+
+	case "save":
+		if value == nil {
+			kingpin.FatalUsage("value not informed")
+		}
+
+		if ttl == nil {
+			kingpin.FatalUsage("TTL not informed")
+		}
+
+		_, err = client.Save(ctx, &protob.SaveRequest{
+			Location: location,
+			Value:    []byte(*value),
+			Ttl:      *ttl,
+		})
+		if err != nil {
+			log.Fatalf("could not save: %v", err)
+		}
+		log.Print("Saved.")
+
+	case "delete":
+		_, err = client.Delete(ctx, &protob.DeleteRequest{Location: location})
+		if err != nil {
+			log.Fatalf("could not delete value: %v", err)
+		}
+		log.Println("Deleted.")
+
+	default:
+		kingpin.FatalUsage("not valid command %q", *command)
 	}
-
-	time.Sleep(2 * time.Second)
-
-	log.Println("Loading value")
-	lr, err := client.Load(context.Background(), &protob.LoadRequest{
-		Location: &protob.LocationType{
-			Scope: &protob.ScopeType{
-				Type:     protob.ScopeChoice_Instance,
-				Bridge:   "mybridge",
-				Instance: "01234-deadbeef",
-			},
-		},
-	})
-
-	if err != nil {
-		log.Fatalf("could not load: %v", err)
-	}
-	log.Printf("Loaded value: %s", lr.GetValue())
-
 }

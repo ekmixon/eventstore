@@ -15,10 +15,9 @@ limitations under the License.
 */
 
 syntax = "proto3";
-
 option go_package = "github.com/triggermesh/eventstore/pkg/protob";
-
 package protob;
+
 
 enum ScopeChoice {
   Instance = 0;
@@ -40,7 +39,7 @@ message LocationType {
 message SaveRequest {
   LocationType location = 1;
   int32 ttl = 2;
-  string value = 3;
+  bytes value = 3;
 }
 
 message SaveResponse {}
@@ -50,7 +49,7 @@ message LoadRequest {
 }
 
 message LoadResponse {
-  string value = 1;
+  bytes value = 1;
 }
 
 message DeleteRequest {
