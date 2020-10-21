@@ -30,21 +30,17 @@ var (
 	server   = kingpin.Flag("server", "Event storage address.").Required().String()
 	command  = kingpin.Flag("command", "One of load, save, delete.").Required().String()
 	scope    = kingpin.Flag("scope", "One of Global, Bridge, Instance.").Required().String()
-	bridge   = kingpin.Flag("bridge", "Bridge name, when scope is bridge or instance.").String()
-	instance = kingpin.Flag("instance", "Instance ID, when scope is instance.").String()
+	bridge   = kingpin.Flag("bridge", "Bridge name, when scope is bridge or instance.").Default("").String()
+	instance = kingpin.Flag("instance", "Instance ID, when scope is instance.").Default("").String()
 	key      = kingpin.Flag("key", "Key for storing value.").Required().String()
-	value    = kingpin.Flag("value", "Value to be stored.").String()
-	ttl      = kingpin.Flag("ttl", "Stored value's time to live (ms).").Int32()
+	value    = kingpin.Flag("value", "Value to be stored.").Default("").String()
+	ttl      = kingpin.Flag("ttl", "Stored value's time to live (ms).").Default("5000").Int32()
 )
 
 func main() {
 	kingpin.Parse()
 
-	// validation
-
-	if *command != "load" && *command != "save" && *command != "delete" {
-		kingpin.FatalUsage("not valid command %q", *command)
-	}
+	// falg validation
 
 	sc, ok := protob.ScopeChoice_value[*scope]
 	if !ok {
@@ -52,13 +48,13 @@ func main() {
 	}
 	scopeTypeChoice := protob.ScopeChoice(sc)
 
-	if *scope != "global" && (bridge == nil || *bridge == "") {
-		kingpin.FatalUsage("bridge and instance scope types needs to inform bridge %q")
-	}
+	// if *scope != "global" && (bridge == nil || *bridge == "") {
+	// 	kingpin.FatalUsage("bridge and instance scope types needs to inform bridge %q")
+	// }
 
-	if *scope == "instance" && (instance == nil || *instance == "") {
-		kingpin.FatalUsage("instance scope types needs to inform instance")
-	}
+	// if *scope == "instance" && (instance == nil || *instance == "") {
+	// 	kingpin.FatalUsage("instance scope types needs to inform instance")
+	// }
 
 	location := &protob.LocationType{
 		Scope: &protob.ScopeType{
@@ -83,33 +79,40 @@ func main() {
 
 	switch *command {
 	case "load":
-		lr, err := client.Load(ctx, &protob.LoadRequest{Location: location})
+		req := &protob.LoadRequest{Location: location}
+		if err := req.Validate(); err != nil {
+			log.Fatalf("Wrong request: %v", err)
+		}
+
+		lr, err := client.Load(ctx, req)
 		if err != nil {
 			log.Fatalf("could not load: %v", err)
 		}
 		log.Printf("Loaded value: %s", lr.GetValue())
 
 	case "save":
-		if value == nil {
-			kingpin.FatalUsage("value not informed")
-		}
-
-		if ttl == nil {
-			kingpin.FatalUsage("TTL not informed")
-		}
-
-		_, err = client.Save(ctx, &protob.SaveRequest{
+		req := &protob.SaveRequest{
 			Location: location,
 			Value:    []byte(*value),
 			Ttl:      *ttl,
-		})
+		}
+		if err := req.Validate(); err != nil {
+			log.Fatalf("Wrong request: %v", err)
+		}
+
+		_, err = client.Save(ctx, req)
 		if err != nil {
 			log.Fatalf("could not save: %v", err)
 		}
 		log.Print("Saved.")
 
 	case "delete":
-		_, err = client.Delete(ctx, &protob.DeleteRequest{Location: location})
+		req := &protob.DeleteRequest{Location: location}
+		if err := req.Validate(); err != nil {
+			log.Fatalf("Wrong request: %v", err)
+		}
+
+		_, err = client.Delete(ctx, req)
 		if err != nil {
 			log.Fatalf("could not delete value: %v", err)
 		}
