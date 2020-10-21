@@ -25,7 +25,9 @@ require (
 	go.opencensus.io v0.22.4
 	go.uber.org/zap v1.15.0
 	golang.org/x/crypto v0.0.0-20200323165209-0ec3e9974c59 // indirect
+	google.golang.org/grpc/cmd/protoc-gen-go-grpc v1.0.0 // indirect
 	google.golang.org/protobuf v1.23.0
+	gopkg.in/alecthomas/kingpin.v2 v2.2.6
 	gopkg.in/check.v1 v1.0.0-20200227125254-8fa46927fb4f // indirect
 	gopkg.in/yaml.v2 v2.3.0 // indirect
 	k8s.io/api v0.17.6 // indirect

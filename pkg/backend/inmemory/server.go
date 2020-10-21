@@ -24,16 +24,18 @@ import (
 	"time"
 
 	"go.uber.org/zap"
+
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
+
 	"knative.dev/pkg/logging"
 
 	"github.com/triggermesh/eventstore/pkg/eventstore/protob"
 	"github.com/triggermesh/eventstore/pkg/eventstore/sharedmain"
 )
 
-const listenPort = "9090"
+const listenPort = "8080"
 
 // ServerCtor creates an event store server
 func ServerCtor(ctx context.Context, envAcc sharedmain.EnvConfigAccessor) sharedmain.EventStoreServer {
@@ -50,7 +52,7 @@ type inMemoryEventStore struct {
 }
 
 type storedValue struct {
-	value   string
+	value   []byte
 	expires time.Time
 }
 
@@ -95,12 +97,12 @@ func (s *inMemoryServer) Load(_ context.Context, lr *protob.LoadRequest) (*proto
 	t := tokenizer(lr.Location)
 	v, ok := s.store[t]
 	if !ok {
-		return nil, fmt.Errorf("key %q not present at store", t)
+		return nil, status.Errorf(codes.InvalidArgument, "key %q not present at store", t)
 	}
 
 	if time.Now().After(v.expires) {
 		delete(s.store, t)
-		return nil, fmt.Errorf("key %q is expired", t)
+		return nil, status.Errorf(codes.InvalidArgument, "key %q is expired", t)
 	}
 
 	return &protob.LoadResponse{Value: v.value}, nil
