@@ -21,6 +21,7 @@ import (
 	"fmt"
 	"log"
 	"net"
+	"sync"
 	"time"
 
 	"go.uber.org/zap"
@@ -39,15 +40,32 @@ const listenPort = "8080"
 
 // ServerCtor creates an event store server
 func ServerCtor(ctx context.Context, envAcc sharedmain.EnvConfigAccessor) sharedmain.EventStoreServer {
-	// env := envAcc.(*envAccessor)
+	env := envAcc.(*envAccessor)
 	logger := logging.FromContext(ctx)
 
+	defaultTTL := map[protob.ScopeChoice]int32{
+		protob.ScopeChoice_Global:   env.DefaultGlobalTTL,
+		protob.ScopeChoice_Bridge:   env.DefaultBridgeTTL,
+		protob.ScopeChoice_Instance: env.DefaultInstanceTTL,
+	}
+
 	return &inMemoryEventStore{
+		store:           make(map[string]storedValue),
+		defaultTTL:      defaultTTL,
+		expiredGCPeriod: env.DefaultExpiredGCPeriod,
+
 		logger: logger,
 	}
 }
 
+// inMemoryEventStore is an implementation of EventStore based on memory ephemeral backend.
 type inMemoryEventStore struct {
+	protob.UnimplementedEventStoreServer
+	store           map[string]storedValue
+	defaultTTL      map[protob.ScopeChoice]int32
+	expiredGCPeriod int32
+
+	mutex  sync.RWMutex
 	logger *zap.SugaredLogger
 }
 
@@ -56,6 +74,7 @@ type storedValue struct {
 	expires time.Time
 }
 
+// Start event store server
 func (s *inMemoryEventStore) Start(ctx context.Context) error {
 	s.logger.Info("Starting in memory event store")
 	lis, err := net.Listen("tcp", fmt.Sprintf("0.0.0.0:%s", listenPort))
@@ -63,71 +82,120 @@ func (s *inMemoryEventStore) Start(ctx context.Context) error {
 		log.Fatal("failed to start listening: %s", err)
 	}
 
-	ims := &inMemoryServer{
-		store: make(map[string]storedValue),
-	}
-
 	srv := grpc.NewServer()
-	protob.RegisterEventStoreServer(srv, ims)
-	srv.Serve(lis)
+	protob.RegisterEventStoreServer(srv, s)
 
-	return nil
+	defer srv.GracefulStop()
+
+	errCh := make(chan error)
+	go func() {
+		if err := srv.Serve(lis); err != nil {
+			errCh <- err
+		}
+	}()
+
+	go func() {
+		ticker := time.NewTicker(time.Duration(s.expiredGCPeriod) * time.Second)
+		for {
+			select {
+			case <-ctx.Done():
+				ticker.Stop()
+				return
+			case <-ticker.C:
+				s.deleteExpired()
+			}
+		}
+	}()
+
+	select {
+	case err = <-errCh:
+		return err
+	case <-ctx.Done():
+		return nil
+	}
 }
 
-// inMemoryServer is a ephemeral storage implementation of EventStore
-type inMemoryServer struct {
-	protob.UnimplementedEventStoreServer
-	store map[string]storedValue
-}
+var _ protob.EventStoreServer = (*inMemoryEventStore)(nil)
 
-var _ protob.EventStoreServer = (*inMemoryServer)(nil)
-
-func (s *inMemoryServer) Save(_ context.Context, sr *protob.SaveRequest) (*protob.SaveResponse, error) {
+func (s *inMemoryEventStore) Save(_ context.Context, sr *protob.SaveRequest) (*protob.SaveResponse, error) {
 	if err := sr.Validate(); err != nil {
 		return nil, err
 	}
 
 	t := tokenizer(sr.Location)
 
+	ttl := sr.GetTtl()
+	if ttl == 0 {
+		ttl = s.defaultTTL[sr.Location.Scope.Type]
+	}
+
+	s.mutex.Lock()
+	defer s.mutex.Unlock()
+
 	s.store[t] = storedValue{
 		value:   sr.GetValue(),
-		expires: time.Now().Add(time.Duration(sr.GetTtl()) * time.Millisecond),
+		expires: time.Now().Add(time.Duration(ttl) * time.Second),
 	}
 
 	return &protob.SaveResponse{}, nil
 }
 
-func (s *inMemoryServer) Load(_ context.Context, lr *protob.LoadRequest) (*protob.LoadResponse, error) {
+func (s *inMemoryEventStore) Load(_ context.Context, lr *protob.LoadRequest) (*protob.LoadResponse, error) {
 	if err := lr.Validate(); err != nil {
 		return nil, err
 	}
 
 	t := tokenizer(lr.Location)
+
+	s.mutex.RLock()
+	defer s.mutex.RUnlock()
 	v, ok := s.store[t]
 	if !ok {
 		return nil, status.Errorf(codes.InvalidArgument, "key %q not present at store", t)
 	}
 
 	if time.Now().After(v.expires) {
-		delete(s.store, t)
 		return nil, status.Errorf(codes.InvalidArgument, "key %q is expired", t)
 	}
 
 	return &protob.LoadResponse{Value: v.value}, nil
 }
 
-func (s *inMemoryServer) Delete(_ context.Context, dr *protob.DeleteRequest) (*protob.DeleteResponse, error) {
+func (s *inMemoryEventStore) Delete(_ context.Context, dr *protob.DeleteRequest) (*protob.DeleteResponse, error) {
 	if err := dr.Validate(); err != nil {
 		return nil, err
 	}
 
 	t := tokenizer(dr.Location)
+
+	s.mutex.Lock()
+	defer s.mutex.Unlock()
+
 	_, ok := s.store[t]
 	if ok {
 		delete(s.store, t)
 	}
 
 	return &protob.DeleteResponse{}, nil
+}
+
+func (s *inMemoryEventStore) deleteExpired() {
+
+	// we dont mind if there are dirty reads, no need to lock
+	expired := []string{}
+	now := time.Now()
+	for k, v := range s.store {
+		if now.After(v.expires) {
+			expired = append(expired, k)
+		}
+	}
+
+	s.mutex.Lock()
+	defer s.mutex.Unlock()
+
+	for _, k := range expired {
+		delete(s.store, k)
+	}
 }
 
 func tokenizer(location *protob.LocationType) string {
