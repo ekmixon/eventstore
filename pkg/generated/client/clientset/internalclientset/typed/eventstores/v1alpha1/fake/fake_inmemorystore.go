@@ -19,6 +19,8 @@ limitations under the License.
 package fake
 
 import (
+	"context"
+
 	v1alpha1 "github.com/triggermesh/eventstore/pkg/apis/eventstores/v1alpha1"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	labels "k8s.io/apimachinery/pkg/labels"
@@ -39,7 +41,7 @@ var inmemorystoresResource = schema.GroupVersionResource{Group: "eventstores.tri
 var inmemorystoresKind = schema.GroupVersionKind{Group: "eventstores.triggermesh.io", Version: "v1alpha1", Kind: "InMemoryStore"}
 
 // Get takes name of the inMemoryStore, and returns the corresponding inMemoryStore object, and an error if there is any.
-func (c *FakeInMemoryStores) Get(name string, options v1.GetOptions) (result *v1alpha1.InMemoryStore, err error) {
+func (c *FakeInMemoryStores) Get(ctx context.Context, name string, options v1.GetOptions) (result *v1alpha1.InMemoryStore, err error) {
 	obj, err := c.Fake.
 		Invokes(testing.NewGetAction(inmemorystoresResource, c.ns, name), &v1alpha1.InMemoryStore{})
 
@@ -50,7 +52,7 @@ func (c *FakeInMemoryStores) Get(name string, options v1.GetOptions) (result *v1
 }
 
 // List takes label and field selectors, and returns the list of InMemoryStores that match those selectors.
-func (c *FakeInMemoryStores) List(opts v1.ListOptions) (result *v1alpha1.InMemoryStoreList, err error) {
+func (c *FakeInMemoryStores) List(ctx context.Context, opts v1.ListOptions) (result *v1alpha1.InMemoryStoreList, err error) {
 	obj, err := c.Fake.
 		Invokes(testing.NewListAction(inmemorystoresResource, inmemorystoresKind, c.ns, opts), &v1alpha1.InMemoryStoreList{})
 
@@ -72,14 +74,14 @@ func (c *FakeInMemoryStores) List(opts v1.ListOptions) (result *v1alpha1.InMemor
 }
 
 // Watch returns a watch.Interface that watches the requested inMemoryStores.
-func (c *FakeInMemoryStores) Watch(opts v1.ListOptions) (watch.Interface, error) {
+func (c *FakeInMemoryStores) Watch(ctx context.Context, opts v1.ListOptions) (watch.Interface, error) {
 	return c.Fake.
 		InvokesWatch(testing.NewWatchAction(inmemorystoresResource, c.ns, opts))
 
 }
 
 // Create takes the representation of a inMemoryStore and creates it.  Returns the server's representation of the inMemoryStore, and an error, if there is any.
-func (c *FakeInMemoryStores) Create(inMemoryStore *v1alpha1.InMemoryStore) (result *v1alpha1.InMemoryStore, err error) {
+func (c *FakeInMemoryStores) Create(ctx context.Context, inMemoryStore *v1alpha1.InMemoryStore, opts v1.CreateOptions) (result *v1alpha1.InMemoryStore, err error) {
 	obj, err := c.Fake.
 		Invokes(testing.NewCreateAction(inmemorystoresResource, c.ns, inMemoryStore), &v1alpha1.InMemoryStore{})
 
@@ -90,7 +92,7 @@ func (c *FakeInMemoryStores) Create(inMemoryStore *v1alpha1.InMemoryStore) (resu
 }
 
 // Update takes the representation of a inMemoryStore and updates it. Returns the server's representation of the inMemoryStore, and an error, if there is any.
-func (c *FakeInMemoryStores) Update(inMemoryStore *v1alpha1.InMemoryStore) (result *v1alpha1.InMemoryStore, err error) {
+func (c *FakeInMemoryStores) Update(ctx context.Context, inMemoryStore *v1alpha1.InMemoryStore, opts v1.UpdateOptions) (result *v1alpha1.InMemoryStore, err error) {
 	obj, err := c.Fake.
 		Invokes(testing.NewUpdateAction(inmemorystoresResource, c.ns, inMemoryStore), &v1alpha1.InMemoryStore{})
 
@@ -102,7 +104,7 @@ func (c *FakeInMemoryStores) Update(inMemoryStore *v1alpha1.InMemoryStore) (resu
 
 // UpdateStatus was generated because the type contains a Status member.
 // Add a +genclient:noStatus comment above the type to avoid generating UpdateStatus().
-func (c *FakeInMemoryStores) UpdateStatus(inMemoryStore *v1alpha1.InMemoryStore) (*v1alpha1.InMemoryStore, error) {
+func (c *FakeInMemoryStores) UpdateStatus(ctx context.Context, inMemoryStore *v1alpha1.InMemoryStore, opts v1.UpdateOptions) (*v1alpha1.InMemoryStore, error) {
 	obj, err := c.Fake.
 		Invokes(testing.NewUpdateSubresourceAction(inmemorystoresResource, "status", c.ns, inMemoryStore), &v1alpha1.InMemoryStore{})
 
@@ -113,7 +115,7 @@ func (c *FakeInMemoryStores) UpdateStatus(inMemoryStore *v1alpha1.InMemoryStore)
 }
 
 // Delete takes name of the inMemoryStore and deletes it. Returns an error if one occurs.
-func (c *FakeInMemoryStores) Delete(name string, options *v1.DeleteOptions) error {
+func (c *FakeInMemoryStores) Delete(ctx context.Context, name string, opts v1.DeleteOptions) error {
 	_, err := c.Fake.
 		Invokes(testing.NewDeleteAction(inmemorystoresResource, c.ns, name), &v1alpha1.InMemoryStore{})
 
@@ -121,15 +123,15 @@ func (c *FakeInMemoryStores) Delete(name string, options *v1.DeleteOptions) erro
 }
 
 // DeleteCollection deletes a collection of objects.
-func (c *FakeInMemoryStores) DeleteCollection(options *v1.DeleteOptions, listOptions v1.ListOptions) error {
-	action := testing.NewDeleteCollectionAction(inmemorystoresResource, c.ns, listOptions)
+func (c *FakeInMemoryStores) DeleteCollection(ctx context.Context, opts v1.DeleteOptions, listOpts v1.ListOptions) error {
+	action := testing.NewDeleteCollectionAction(inmemorystoresResource, c.ns, listOpts)
 
 	_, err := c.Fake.Invokes(action, &v1alpha1.InMemoryStoreList{})
 	return err
 }
 
 // Patch applies the patch and returns the patched inMemoryStore.
-func (c *FakeInMemoryStores) Patch(name string, pt types.PatchType, data []byte, subresources ...string) (result *v1alpha1.InMemoryStore, err error) {
+func (c *FakeInMemoryStores) Patch(ctx context.Context, name string, pt types.PatchType, data []byte, opts v1.PatchOptions, subresources ...string) (result *v1alpha1.InMemoryStore, err error) {
 	obj, err := c.Fake.
 		Invokes(testing.NewPatchSubresourceAction(inmemorystoresResource, c.ns, name, pt, data, subresources...), &v1alpha1.InMemoryStore{})
 

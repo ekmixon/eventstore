@@ -16,6 +16,12 @@ limitations under the License.
 
 package main
 
-func main() {
+import (
+	"knative.dev/pkg/injection/sharedmain"
 
+	"github.com/triggermesh/eventstore/pkg/reconciler/inmemory"
+)
+
+func main() {
+	sharedmain.Main("eventstore-controller", inmemory.NewController)
 }

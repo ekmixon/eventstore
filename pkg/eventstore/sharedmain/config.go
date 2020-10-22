@@ -61,17 +61,17 @@ type EnvConfigAccessor interface {
 
 var _ EnvConfigAccessor = (*EnvConfig)(nil)
 
-// SetComponent for target Kind
+// SetComponent for event storage Kind
 func (e *EnvConfig) SetComponent(component string) {
 	e.Component = component
 }
 
-// GetNamespace for target server
+// GetNamespace for event storage server
 func (e *EnvConfig) GetNamespace() string {
 	return e.Namespace
 }
 
-// GetName for target server
+// GetName for event storage server
 func (e *EnvConfig) GetName() string {
 	return e.Name
 }
