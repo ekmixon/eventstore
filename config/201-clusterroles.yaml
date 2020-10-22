@@ -1,0 +1,123 @@
+# Copyright (c) 2020 TriggerMesh Inc.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: eventstores-controller
+rules:
+  # Manage receive-adapters
+- apiGroups:
+  - serving.knative.dev
+  resources:
+  - services
+  verbs:
+  - get
+  - list
+  - watch
+  - create
+  - update
+  - delete
+  - patch
+
+  # Record Kubernetes events
+- apiGroups:
+  - ''
+  resources:
+  - events
+  verbs:
+  - create
+  - update
+  - patch
+
+  # Read secrets
+- apiGroups:
+  - ''
+  resources:
+  - secrets
+  verbs:
+  - get
+
+  # Read controller configurations
+- apiGroups:
+  - ''
+  resources:
+  - configmaps
+  verbs:
+  - list
+  - watch
+- apiGroups:
+  - ''
+  resources:
+  - configmaps
+  resourceNames:
+  - config-logging
+  - config-observability
+  - config-leader-election
+  verbs:
+  - get
+
+
+  # Read and manage status for target resources
+- apiGroups:
+  - eventstores.triggermesh.io
+  resources:
+  - inmemorystores
+  verbs:
+  - list
+  - watch
+  - get
+
+- apiGroups:
+  - eventstores.triggermesh.io
+  resources:
+  - inmemorystores/status
+  verbs:
+  - update
+
+# Acquire leases for leader election
+- apiGroups:
+  - coordination.k8s.io
+  resources:
+  - leases
+  verbs:
+  - create
+- apiGroups:
+  - coordination.k8s.io
+  resourceNames:
+  - eventstore-controller.github.com-triggermesh-eventstore-pkg-reconciler-inmemory.reconciler.00-of-01
+  resources:
+  - leases
+  verbs:
+  - get
+  - update
+
+
+---
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  labels:
+    duck.knative.dev/addressable: 'true'
+  name: eventstores-addressable-resolver
+rules:
+- apiGroups:
+  - eventstores.triggermesh.io
+  resources:
+  - inmemorystores
+  verbs:
+  - get
+  - list
+  - watch

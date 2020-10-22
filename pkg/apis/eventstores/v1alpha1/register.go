@@ -36,8 +36,8 @@ var (
 // addKnownTypes adds all this custom API's types to Scheme.
 func addKnownTypes(scheme *runtime.Scheme) error {
 	scheme.AddKnownTypes(SchemeGroupVersion,
-		&InMemory{},
-		&InMemoryList{},
+		&InMemoryStore{},
+		&InMemoryStoreList{},
 	)
 	metav1.AddToGroupVersion(scheme, SchemeGroupVersion)
 	return nil

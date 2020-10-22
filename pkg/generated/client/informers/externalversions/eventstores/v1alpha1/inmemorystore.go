@@ -19,6 +19,7 @@ limitations under the License.
 package v1alpha1
 
 import (
+	"context"
 	time "time"
 
 	eventstoresv1alpha1 "github.com/triggermesh/eventstore/pkg/apis/eventstores/v1alpha1"
@@ -61,13 +62,13 @@ func NewFilteredInMemoryStoreInformer(client internalclientset.Interface, namesp
 				if tweakListOptions != nil {
 					tweakListOptions(&options)
 				}
-				return client.EventstoresV1alpha1().InMemoryStores(namespace).List(options)
+				return client.EventstoresV1alpha1().InMemoryStores(namespace).List(context.TODO(), options)
 			},
 			WatchFunc: func(options v1.ListOptions) (watch.Interface, error) {
 				if tweakListOptions != nil {
 					tweakListOptions(&options)
 				}
-				return client.EventstoresV1alpha1().InMemoryStores(namespace).Watch(options)
+				return client.EventstoresV1alpha1().InMemoryStores(namespace).Watch(context.TODO(), options)
 			},
 		},
 		&eventstoresv1alpha1.InMemoryStore{},

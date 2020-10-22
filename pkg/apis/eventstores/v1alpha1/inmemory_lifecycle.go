@@ -21,6 +21,7 @@ import (
 
 	"knative.dev/pkg/apis"
 	duckv1 "knative.dev/pkg/apis/duck/v1"
+
 	servingv1 "knative.dev/serving/pkg/apis/serving/v1"
 )
 
@@ -29,20 +30,30 @@ func (s *InMemoryStore) GetGroupVersionKind() schema.GroupVersionKind {
 	return SchemeGroupVersion.WithKind("InMemoryStore")
 }
 
-var infraCondSet = apis.NewLivingConditionSet(
+var inmemoryCondSet = apis.NewLivingConditionSet(
 	ConditionDeployed,
 )
 
+// GetConditionSet implements duckv1.KRShaped.
+func (s *InMemoryStore) GetConditionSet() apis.ConditionSet {
+	return inmemoryCondSet
+}
+
+// GetStatus implements duckv1.KRShaped.
+func (s *InMemoryStore) GetStatus() *duckv1.Status {
+	return &s.Status.Status
+}
+
 // InitializeConditions sets relevant unset conditions to Unknown state.
 func (s *InMemoryStoreStatus) InitializeConditions() {
-	infraCondSet.Manage(s).InitializeConditions()
+	inmemoryCondSet.Manage(s).InitializeConditions()
 }
 
 // PropagateAvailability uses the readiness of the provided Knative Service to
 // determine whether the Deployed condition should be marked as true or false.
 func (s *InMemoryStoreStatus) PropagateAvailability(ksvc *servingv1.Service) {
 	if ksvc == nil {
-		infraCondSet.Manage(s).MarkUnknown(ConditionDeployed, ReasonUnavailable,
+		inmemoryCondSet.Manage(s).MarkUnknown(ConditionDeployed, ReasonUnavailable,
 			"The status of the adapter Service can not be determined")
 		return
 	}
@@ -52,8 +63,8 @@ func (s *InMemoryStoreStatus) PropagateAvailability(ksvc *servingv1.Service) {
 	}
 	s.Address.URL = ksvc.Status.URL
 
-	if ksvc.Status.IsReady() {
-		infraCondSet.Manage(s).MarkTrue(ConditionDeployed)
+	if ksvc.IsReady() {
+		inmemoryCondSet.Manage(s).MarkTrue(ConditionDeployed)
 		return
 	}
 
@@ -63,5 +74,5 @@ func (s *InMemoryStoreStatus) PropagateAvailability(ksvc *servingv1.Service) {
 		msg += ": " + readyCond.Message
 	}
 
-	infraCondSet.Manage(s).MarkFalse(ConditionDeployed, ReasonUnavailable, msg)
+	inmemoryCondSet.Manage(s).MarkFalse(ConditionDeployed, ReasonUnavailable, msg)
 }
