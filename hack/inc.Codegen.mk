@@ -6,9 +6,9 @@
 PKG := github.com/triggermesh/eventstore
 
 # List of API groups to generate code for
-# e.g. "targets/v1alpha1 targets/v1alpha2"
-API_GROUPS := targets/v1alpha1
-# generates e.g. "PKG/pkg/apis/targets/v1alpha1 PKG/pkg/apis/targets/v1alpha2"
+# e.g. "eventstores/v1alpha1 eventstores/v1alpha2"
+API_GROUPS := eventstores/v1alpha1
+# generates e.g. "PKG/pkg/apis/eventstores/v1alpha1 PKG/pkg/apis/eventstores/v1alpha2"
 api-import-paths := $(foreach group,$(API_GROUPS),$(PKG)/pkg/apis/$(group))
 
 generators := deepcopy client lister informer injection
@@ -31,38 +31,38 @@ deepcopy:
 
 client:
 	@echo "+ Generating clientsets for $(API_GROUPS)"
-	@rm -rf pkg/client/generated/clientset
+	@rm -rf pkg/generated/client/clientset
 	@go run k8s.io/code-generator/cmd/client-gen \
 		--go-header-file hack/boilerplate/boilerplate.go.txt \
 		--input $(subst $(space),$(comma),$(API_GROUPS)) \
 		--input-base $(PKG)/pkg/apis \
-		--output-package $(PKG)/pkg/client/generated/clientset
+		--output-package $(PKG)/pkg/generated/client/clientset
 
 lister:
 	@echo "+ Generating listers for $(API_GROUPS)"
-	@rm -rf pkg/client/generated/listers
+	@rm -rf pkg/generated/client/listers
 	@go run k8s.io/code-generator/cmd/lister-gen \
 		--go-header-file hack/boilerplate/boilerplate.go.txt \
 		--input-dirs $(subst $(space),$(comma),$(api-import-paths)) \
-		--output-package $(PKG)/pkg/client/generated/listers
+		--output-package $(PKG)/pkg/generated/client/listers
 
 informer:
 	@echo "+ Generating informers for $(API_GROUPS)"
-	@rm -rf pkg/client/generated/informers
+	@rm -rf pkg/generated/client/informers
 	@go run k8s.io/code-generator/cmd/informer-gen \
 		--go-header-file hack/boilerplate/boilerplate.go.txt \
 		--input-dirs $(subst $(space),$(comma),$(api-import-paths)) \
-		--output-package $(PKG)/pkg/client/generated/informers \
-		--versioned-clientset-package $(PKG)/pkg/client/generated/clientset/internalclientset \
-		--listers-package $(PKG)/pkg/client/generated/listers
+		--output-package $(PKG)/pkg/generated/client/informers \
+		--versioned-clientset-package $(PKG)/pkg/generated/client/clientset/internalclientset \
+		--listers-package $(PKG)/pkg/generated/client/listers
 
 injection:
 	@echo "+ Generating injection for $(API_GROUPS)"
-	@rm -rf pkg/client/generated/injection
+	@rm -rf pkg/generated/client/injection
 	@go run knative.dev/pkg/codegen/cmd/injection-gen \
 		--go-header-file hack/boilerplate/boilerplate.go.txt \
 		--input-dirs $(subst $(space),$(comma),$(api-import-paths)) \
-		--output-package $(PKG)/pkg/client/generated/injection \
-		--versioned-clientset-package $(PKG)/pkg/client/generated/clientset/internalclientset \
-		--listers-package $(PKG)/pkg/client/generated/listers \
-		--external-versions-informers-package $(PKG)/pkg/client/generated/informers/externalversions
+		--output-package $(PKG)/pkg/generated/client/injection \
+		--versioned-clientset-package $(PKG)/pkg/generated/client/clientset/internalclientset \
+		--listers-package $(PKG)/pkg/generated/client/listers \
+		--external-versions-informers-package $(PKG)/pkg/generated/client/informers/externalversions
