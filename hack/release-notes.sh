@@ -14,7 +14,7 @@ if ! git rev-list ${RELEASE} >/dev/null 2>&1; then
 	exit
 fi
 
-KTARGET="awseventbridge-event-target"
+KTARGET="eventstore"
 BASE_URL="https://github.com/triggermesh/${KTARGET}/releases/download/${RELEASE}"
 PREV_RELEASE=${PREV_RELEASE:-$(git describe --tags --abbrev=0 ${RELEASE}^ 2>/dev/null)}
 PREV_RELEASE=${PREV_RELEASE:-$(git rev-list --max-parents=0 ${RELEASE}^ 2>/dev/null)}
@@ -46,7 +46,7 @@ ${NOTABLE_CHANGES}
 
 ## Installation
 
-Download Triggermesh AWS EventBridge event target ${RELEASE}
+Download Triggermesh Event Store ${RELEASE}
 
 ${RELEASE_ASSETS_TABLE}
 
