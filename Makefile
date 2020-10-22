@@ -29,7 +29,7 @@ GOLINT            ?= golangci-lint run
 GOTOOL            ?= go tool
 GOTEST            ?= gotestsum --junitfile $(TEST_OUTPUT_DIR)/$(KREPO)-unit-tests.xml --format pkgname-and-test-fails --
 
-GOPKGS             = ./cmd/... ./pkg/apis/... ./pkg/adapter/... ./pkg/reconciler/... ./pkg/eventstore/...
+GOPKGS             = ./cmd/... ./pkg/apis/... ./pkg/backend/... ./pkg/reconciler/... ./pkg/eventstore/...
 LDFLAGS            = -extldflags=-static -w -s
 
 HAS_GOTESTSUM     := $(shell command -v gotestsum;)

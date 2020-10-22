@@ -54,6 +54,7 @@ func main() {
 			Bridge:   *bridge,
 			Instance: *instance,
 		},
+		Key: *key,
 	}
 
 	// connection
