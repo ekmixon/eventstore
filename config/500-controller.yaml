@@ -53,7 +53,7 @@ spec:
         - name: CONFIG_OBSERVABILITY_NAME
           value: config-observability
         - name: METRICS_DOMAIN
-          value: triggermesh.io/targets
+          value: triggermesh.io/eventstores
 
         # Define all supported adapters
         - name: INMEMORYSTORAGE_IMAGE

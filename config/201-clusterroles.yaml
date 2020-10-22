@@ -69,7 +69,7 @@ rules:
   - get
 
 
-  # Read and manage status for target resources
+  # Read and manage status for event store resources
 - apiGroups:
   - eventstores.triggermesh.io
   resources:
