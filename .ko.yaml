@@ -1,0 +1,2 @@
+baseImageOverrides:
+  github.com/triggermesh/eventstore/cmd/eventstore-client: docker.io/library/ubuntu

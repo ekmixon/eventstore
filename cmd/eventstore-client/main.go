@@ -35,6 +35,8 @@ var (
 	key      = kingpin.Flag("key", "Key for storing value.").Required().String()
 	value    = kingpin.Flag("value", "Value to be stored.").Default("").String()
 	ttl      = kingpin.Flag("ttl", "Stored value's time to live (seconds).").Default("5").Int32()
+
+	dialTimeout = kingpin.Flag("dial-timeout", "Timeout for connecting to the server.").Default("5s").Duration()
 )
 
 func main() {
@@ -59,7 +61,7 @@ func main() {
 
 	// connection
 
-	conn, err := grpc.Dial(*server, grpc.WithInsecure(), grpc.WithBlock())
+	conn, err := grpc.Dial(*server, grpc.WithInsecure(), grpc.WithBlock(), grpc.WithTimeout(*dialTimeout))
 	if err != nil {
 		log.Fatalf("failed to dial %s: %v", *server, err)
 	}

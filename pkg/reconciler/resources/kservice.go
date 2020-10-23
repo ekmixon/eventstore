@@ -79,6 +79,14 @@ func KsvcLabels(ls labels.Set) KsvcOpts {
 	}
 }
 
+// KsvcPodAnnotations sets annotations.
+func KsvcPodAnnotations(as map[string]string) KsvcOpts {
+	return func(ksvc *servingv1.Service) *servingv1.Service {
+		ksvc.Spec.Template.SetAnnotations(as)
+		return ksvc
+	}
+}
+
 // KsvcLabelVisibilityClusterLocal sets label to avoid exposing the service externally.
 func KsvcLabelVisibilityClusterLocal(ksvc *servingv1.Service) *servingv1.Service {
 	ksvc.Labels[networking.VisibilityLabelKey] = serving.VisibilityClusterLocal
@@ -105,6 +113,19 @@ func KsvcPodLabels(ls labels.Set) KsvcOpts {
 func KsvcPodEnvVars(env []corev1.EnvVar) KsvcOpts {
 	return func(ksvc *servingv1.Service) *servingv1.Service {
 		ksvc.Spec.Template.Spec.Containers[0].Env = env
+		return ksvc
+	}
+}
+
+// KsvcPodPort sets pod's first container port.
+func KsvcPodPort(port int32) KsvcOpts {
+	return func(ksvc *servingv1.Service) *servingv1.Service {
+		ksvc.Spec.Template.Spec.Containers[0].Ports = []corev1.ContainerPort{
+			{
+				Name:          "h2c",
+				ContainerPort: port,
+			},
+		}
 		return ksvc
 	}
 }
