@@ -19,7 +19,6 @@ package inmemory
 import (
 	"context"
 	"fmt"
-	"log"
 	"net"
 	"sync"
 	"time"
@@ -79,7 +78,7 @@ func (s *inMemoryEventStore) Start(ctx context.Context) error {
 	s.logger.Info("Starting in memory event store")
 	lis, err := net.Listen("tcp", fmt.Sprintf("0.0.0.0:%s", listenPort))
 	if err != nil {
-		log.Fatal("failed to start listening: %s", err)
+		s.logger.Fatalf("failed to start listening: %v", err)
 	}
 
 	srv := grpc.NewServer()

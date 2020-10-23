@@ -37,7 +37,14 @@ const (
 	envInMemoryDefaultBridgeTTL       = "EVENTSTORE_DEFAULT_BRIDGE_TTL"
 	envInMemoryDefaultInstanceTTL     = "EVENTSTORE_DEFAULT_INSTANCE_TTL"
 	envInMemoryDefaultExpiredGCPeriod = "EVENTSTORE_DEFAULT_EXPIRED_GC_PERIOD"
+
+	listenPort = 8080
 )
+
+var alwaysOne = map[string]string{
+	"autoscaling.knative.dev/minScale": "1",
+	"autoscaling.knative.dev/maxScale": "1",
+}
 
 // adapterConfig contains properties used to configure the eventstore's adapter.
 // Public fields are automatically populated by envconfig.
@@ -61,9 +68,11 @@ func makeAdapterKnService(o *v1alpha1.InMemoryStore, cfg *adapterConfig) *servin
 
 	return resources.MakeKService(o.Namespace, name, cfg.Image,
 		resources.KsvcLabels(ksvcLabels),
+		resources.KsvcPodAnnotations(alwaysOne),
 		resources.KsvcLabelVisibilityClusterLocal,
 		resources.KsvcPodLabels(podLabels),
 		resources.KsvcOwner(o),
+		resources.KsvcPodPort(listenPort),
 		resources.KsvcPodEnvVars(envs))
 }
 
