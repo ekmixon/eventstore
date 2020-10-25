@@ -62,7 +62,6 @@ func (r *serviceReconciler) ReconcileService(ctx context.Context, owner kmeta.Ow
 		if err != nil {
 			return nil, err
 		}
-
 		return s, nil
 	}
 
@@ -92,12 +91,12 @@ func (r *serviceReconciler) ReconcileService(ctx context.Context, owner kmeta.Ow
 		// Preserve status to avoid resetting conditions.
 		// Affects only fake Clientsets, necessary for tests.
 		expected.Status = s.Status
+		expected.Spec.ClusterIP = s.Spec.ClusterIP
 
 		s, err := r.coreClientSet.Services(expected.Namespace).Update(ctx, expected, metav1.UpdateOptions{})
 		if err != nil {
 			return nil, err
 		}
-
 		return s, nil
 	}
 
@@ -116,5 +115,6 @@ func (r *serviceReconciler) findOwned(ctx context.Context, owner kmeta.OwnerRefa
 			return s, nil
 		}
 	}
+
 	return nil, apierrors.NewNotFound(corev1.Resource("services"), "")
 }

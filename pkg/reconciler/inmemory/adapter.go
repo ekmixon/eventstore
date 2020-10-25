@@ -50,31 +50,6 @@ type adapterConfig struct {
 	Image string `default:"gcr.io/triggermesh-private/eventstore-inmemory"`
 }
 
-// makeAdapterKnService returns a Knative Service object for the store's adapter.
-func makeAdapterDeployment(o *v1alpha1.InMemoryStore, cfg *adapterConfig) *appsv1.Deployment {
-	envApp := makeCommonAppEnv(o)
-
-	deploymentLabels := pkgreconciler.MakeAdapterLabels(adapterName, o.Name)
-	podLabels := pkgreconciler.MakeAdapterLabels(adapterName, o.Name)
-	name := kmeta.ChildName(adapterName+"-", o.Name)
-	envSvc := pkgreconciler.MakeServiceEnv(o.Name, o.Namespace)
-	envObs := pkgreconciler.MakeObsEnv(cfg.configs)
-	envs := append(envSvc, append(envApp, envObs...)...)
-
-	return resources.NewDeployment(o.Namespace, name,
-		// Deployment
-		resources.Labels(deploymentLabels),
-		resources.AddDeploymentSelector(resources.AppNameLabel, adapterName),
-		resources.Controller(o),
-
-		// Pod
-		resources.Image(cfg.Image),
-		resources.Port("h2c", listenPort),
-		resources.EnvVars(envs...),
-		resources.PodLabels(podLabels),
-	)
-}
-
 func makeCommonAppEnv(o *v1alpha1.InMemoryStore) []corev1.EnvVar {
 	env := []corev1.EnvVar{}
 
@@ -135,6 +110,7 @@ func makeAdapterObjects(o *v1alpha1.InMemoryStore, cfg *adapterConfig) (*appsv1.
 	svc := resources.NewService(o.Namespace, name,
 		resources.Labels(labels),
 		resources.AddServiceSelector(resources.AppNameLabel, adapterName),
+		resources.AddServiceSelector(resources.AppInstanceLabel, name),
 		resources.ServicePort("h2c", listenPort),
 		resources.Controller(o),
 	)

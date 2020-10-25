@@ -80,7 +80,6 @@ func (r *deploymentReconciler) ReconcileDeployment(ctx context.Context, owner km
 		if err != nil {
 			return nil, err
 		}
-
 		return d, nil
 	}
 
@@ -97,7 +96,6 @@ func (r *deploymentReconciler) ReconcileDeployment(ctx context.Context, owner km
 		if err != nil {
 			return nil, err
 		}
-
 		return d, nil
 	}
 
@@ -116,5 +114,6 @@ func (r *deploymentReconciler) findOwned(ctx context.Context, owner kmeta.OwnerR
 			return d, nil
 		}
 	}
+
 	return nil, apierrors.NewNotFound(appsv1.Resource("deployments"), "")
 }
