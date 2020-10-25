@@ -31,9 +31,9 @@ type reconciler struct {
 	// adapter properties
 	adapterCfg *adapterConfig
 
-	// Knative Service reconciler
-	ksvcr libreconciler.KServiceReconciler
-	dpr   libreconciler.DeploymentReconciler
+	// reconcilers
+	dpr  libreconciler.DeploymentReconciler
+	svcr libreconciler.ServiceReconciler
 }
 
 // Check that our Reconciler implements Interface
@@ -44,12 +44,17 @@ func (r *reconciler) ReconcileKind(ctx context.Context, o *v1alpha1.InMemoryStor
 	o.Status.InitializeConditions()
 	o.Status.ObservedGeneration = o.Generation
 
-	d, event := r.dpr.ReconcileDeployment(ctx, o, makeAdapterDeployment(o, r.adapterCfg))
-	// adapter, event := r.ksvcr.ReconcileKService(ctx, o, makeAdapterKnService(o, r.adapterCfg))
+	d, svc := makeAdapterObjects(o, r.adapterCfg)
 
-	// deployment, event := r.
-
+	d, derr := r.dpr.ReconcileDeployment(ctx, o, d)
 	o.Status.PropagateDeploymentAvailability(d)
 
-	return event
+	if derr != nil {
+		return derr
+	}
+
+	svc, svcerr := r.svcr.ReconcileService(ctx, o, svc)
+	o.Status.PropagateServiceAvailability(svc)
+
+	return svcerr
 }

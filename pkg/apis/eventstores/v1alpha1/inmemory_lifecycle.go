@@ -77,7 +77,7 @@ func (s *InMemoryStoreStatus) PropagateDeploymentAvailability(d *appsv1.Deployme
 func (s *InMemoryStoreStatus) PropagateServiceAvailability(svc *corev1.Service) {
 	if svc == nil {
 		inmemoryCondSet.Manage(s).MarkUnknown(ConditionServiceReady, ReasonNotFound,
-			"The dervice can not be found")
+			"The service can not be found")
 		return
 	}
 
@@ -105,5 +105,7 @@ func serviceToAddress(svc *corev1.Service) (*apis.URL, error) {
 		return nil, errors.New("service contains more than one port")
 	}
 
-	return &apis.URL{Host: svc.Name + "." + svc.Namespace + ":" + strconv.Itoa(int(svc.Spec.Ports[0].Port))}, nil
+	return &apis.URL{
+		Scheme: "http",
+		Host:   svc.Name + "." + svc.Namespace + ":" + strconv.Itoa(int(svc.Spec.Ports[0].Port))}, nil
 }

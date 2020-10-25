@@ -17,13 +17,14 @@ limitations under the License.
 package resources
 
 import (
-	appsv1 "k8s.io/api/apps/v1"
+	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/apimachinery/pkg/util/intstr"
 )
 
-// NewDeployment creates a Deployment object.
-func NewDeployment(ns, name string, opts ...ObjectOption) *appsv1.Deployment {
-	d := &appsv1.Deployment{
+// NewService creates a Service object.
+func NewService(ns, name string, opts ...ObjectOption) *corev1.Service {
+	s := &corev1.Service{
 		ObjectMeta: metav1.ObjectMeta{
 			Namespace: ns,
 			Name:      name,
@@ -31,32 +32,34 @@ func NewDeployment(ns, name string, opts ...ObjectOption) *appsv1.Deployment {
 	}
 
 	for _, opt := range opts {
-		opt(d)
+		opt(s)
 	}
 
-	// If the Deployment was created without defining a Container
-	// explicitly, ensure its default container's name is not empty.
-	containers := d.Spec.Template.Spec.Containers
-	if len(containers) == 1 && containers[0].Name == "" {
-		containers[0].Name = defaultContainerName
-	}
-
-	return d
+	return s
 }
 
-// Selector adds a label selector to a Deployment's spec, ensuring a
-// corresponding label exists in the Pod template.
-func Selector(key, val string) ObjectOption {
+// AddServiceSelector adds a label selector to the Service spec.
+func AddServiceSelector(key, val string) ObjectOption {
 	return func(object interface{}) {
-		d := object.(*appsv1.Deployment)
+		s := object.(*corev1.Service)
 
-		selector := &d.Spec.Selector
-
+		selector := &s.Spec.Selector
 		if *selector == nil {
-			*selector = &metav1.LabelSelector{}
+			*selector = make(map[string]string, 1)
 		}
-		*selector = metav1.AddLabelToSelector(*selector, key, val)
+		(*selector)[key] = val
+	}
+}
 
-		Label(key, val)(d)
+// ServicePort adds a port to a Service.
+func ServicePort(name string, port int32) ObjectOption {
+	return func(object interface{}) {
+		s := object.(*corev1.Service)
+		s.Spec.Ports = []corev1.ServicePort{{
+			Name:       name,
+			Port:       port,
+			Protocol:   corev1.ProtocolTCP,
+			TargetPort: intstr.IntOrString{IntVal: port},
+		}}
 	}
 }

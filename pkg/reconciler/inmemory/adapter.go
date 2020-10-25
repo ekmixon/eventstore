@@ -64,7 +64,7 @@ func makeAdapterDeployment(o *v1alpha1.InMemoryStore, cfg *adapterConfig) *appsv
 	return resources.NewDeployment(o.Namespace, name,
 		// Deployment
 		resources.Labels(deploymentLabels),
-		resources.Selector(resources.AppNameLabel, adapterName),
+		resources.AddDeploymentSelector(resources.AppNameLabel, adapterName),
 		resources.Controller(o),
 
 		// Pod
@@ -107,4 +107,37 @@ func makeCommonAppEnv(o *v1alpha1.InMemoryStore) []corev1.EnvVar {
 	}
 
 	return env
+}
+
+func makeAdapterObjects(o *v1alpha1.InMemoryStore, cfg *adapterConfig) (*appsv1.Deployment, *corev1.Service) {
+	envApp := makeCommonAppEnv(o)
+
+	// deploymentLabels := pkgreconciler.MakeAdapterLabels(adapterName, o.Name)
+	labels := pkgreconciler.MakeAdapterLabels(adapterName, o.Name)
+	name := kmeta.ChildName(adapterName+"-", o.Name)
+	envSvc := pkgreconciler.MakeServiceEnv(o.Name, o.Namespace)
+	envObs := pkgreconciler.MakeObsEnv(cfg.configs)
+	envs := append(envSvc, append(envApp, envObs...)...)
+
+	d := resources.NewDeployment(o.Namespace, name,
+		// Deployment
+		resources.Labels(labels),
+		resources.AddDeploymentSelector(resources.AppNameLabel, adapterName),
+		resources.Controller(o),
+
+		// Pod
+		resources.Image(cfg.Image),
+		resources.Port("h2c", listenPort),
+		resources.EnvVars(envs...),
+		resources.PodLabels(labels),
+	)
+
+	svc := resources.NewService(o.Namespace, name,
+		resources.Labels(labels),
+		resources.AddServiceSelector(resources.AppNameLabel, adapterName),
+		resources.ServicePort("h2c", listenPort),
+		resources.Controller(o),
+	)
+
+	return d, svc
 }

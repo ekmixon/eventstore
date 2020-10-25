@@ -22,7 +22,6 @@ import (
 
 	"go.uber.org/zap"
 	appsv1 "k8s.io/api/apps/v1"
-	corev1 "k8s.io/api/core/v1"
 	apierrors "k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	appsv1client "k8s.io/client-go/kubernetes/typed/apps/v1"
@@ -49,30 +48,6 @@ func NewDeploymentReconciler(appsClientSet appsv1client.AppsV1Interface, deploym
 	}
 }
 
-// newDeploymentCreated makes a new reconciler event with event type Normal, and
-// reason DeploymentCreated.
-func newDeploymentCreated(namespace, name string) pkgreconciler.Event {
-	return pkgreconciler.NewEvent(corev1.EventTypeNormal, "DeploymentCreated", "created deployment: \"%s/%s\"", namespace, name)
-}
-
-// newDeploymentFailed makes a new reconciler event with event type Warning, and
-// reason DeploymentFailed.
-func newDeploymentFailed(namespace, name string, err error) pkgreconciler.Event {
-	return pkgreconciler.NewEvent(corev1.EventTypeWarning, "DeploymentFailed", "failed to create deployment: \"%s/%s\", %w", namespace, name, err)
-}
-
-// newDeploymentUpdated makes a new reconciler event with event type Normal, and
-// reason DeploymentUpdated.
-func newDeploymentUpdated(namespace, name string) pkgreconciler.Event {
-	return pkgreconciler.NewEvent(corev1.EventTypeNormal, "DeploymentUpdated", "updated deployment: \"%s/%s\"", namespace, name)
-}
-
-// newDeploymentDeleted makes a new reconciler event with event type Warning, and
-// reason DeploymentDeleted.
-func newDeploymentDeleted(namespace, name string) pkgreconciler.Event {
-	return pkgreconciler.NewEvent(corev1.EventTypeWarning, "DeploymentDeleted", "deleted deployment: \"%s/%s\"", namespace, name)
-}
-
 // deploymentReconciler performs default reconciliation for Deployments
 type deploymentReconciler struct {
 	appsClientSet    appsv1client.AppsV1Interface
@@ -87,7 +62,8 @@ func (r *deploymentReconciler) ReconcileDeployment(ctx context.Context, owner km
 		if err != nil {
 			return nil, err
 		}
-		return d, newDeploymentCreated(d.Namespace, d.Name)
+		//return d, newDeploymentCreated(d.Namespace, d.Name)
+		return d, nil
 	}
 
 	if err != nil {
@@ -105,20 +81,13 @@ func (r *deploymentReconciler) ReconcileDeployment(ctx context.Context, owner km
 			return nil, err
 		}
 
-		return d, newDeploymentDeleted(d.Namespace, d.Name)
+		return d, nil
 	}
 
 	if !semantic.Semantic.DeepEqual(expected, d) {
 		// resourceVersion must be returned to the API server unmodified for
 		// optimistic concurrency, as per Kubernetes API conventions
 		expected.ResourceVersion = d.ResourceVersion
-
-		// immutable Knative annotations must be preserved
-		// for _, ann := range knativeServingAnnotations {
-		// 	if val, ok := ksvc.Annotations[ann]; ok {
-		// 		metav1.SetMetaDataAnnotation(&expected.ObjectMeta, ann, val)
-		// 	}
-		// }
 
 		// Preserve status to avoid resetting conditions.
 		// Affects only fake Clientsets, necessary for tests.
@@ -129,7 +98,7 @@ func (r *deploymentReconciler) ReconcileDeployment(ctx context.Context, owner km
 			return nil, err
 		}
 
-		return d, newDeploymentUpdated(d.Namespace, d.Name)
+		return d, nil
 	}
 
 	return d, nil

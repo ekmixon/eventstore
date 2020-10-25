@@ -44,19 +44,15 @@ func NewDeployment(ns, name string, opts ...ObjectOption) *appsv1.Deployment {
 	return d
 }
 
-// Selector adds a label selector to a Deployment's spec, ensuring a
-// corresponding label exists in the Pod template.
-func Selector(key, val string) ObjectOption {
+// AddDeploymentSelector adds a label selector to a Deployment's spec.
+func AddDeploymentSelector(key, val string) ObjectOption {
 	return func(object interface{}) {
 		d := object.(*appsv1.Deployment)
 
 		selector := &d.Spec.Selector
-
 		if *selector == nil {
 			*selector = &metav1.LabelSelector{}
 		}
 		*selector = metav1.AddLabelToSelector(*selector, key, val)
-
-		Label(key, val)(d)
 	}
 }
