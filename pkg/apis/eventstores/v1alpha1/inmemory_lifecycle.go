@@ -17,12 +17,16 @@ limitations under the License.
 package v1alpha1
 
 import (
+	"errors"
+	"strconv"
+
+	appsv1 "k8s.io/api/apps/v1"
+	corev1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/runtime/schema"
 
+	"knative.dev/eventing/pkg/apis/duck"
 	"knative.dev/pkg/apis"
 	duckv1 "knative.dev/pkg/apis/duck/v1"
-
-	servingv1 "knative.dev/serving/pkg/apis/serving/v1"
 )
 
 // GetGroupVersionKind implements kmeta.OwnerRefable.
@@ -31,7 +35,8 @@ func (s *InMemoryStore) GetGroupVersionKind() schema.GroupVersionKind {
 }
 
 var inmemoryCondSet = apis.NewLivingConditionSet(
-	ConditionDeployed,
+	ConditionDeploymentReady,
+	ConditionServiceReady,
 )
 
 // GetConditionSet implements duckv1.KRShaped.
@@ -49,30 +54,56 @@ func (s *InMemoryStoreStatus) InitializeConditions() {
 	inmemoryCondSet.Manage(s).InitializeConditions()
 }
 
-// PropagateAvailability uses the readiness of the provided Knative Service to
-// determine whether the Deployed condition should be marked as true or false.
-func (s *InMemoryStoreStatus) PropagateAvailability(ksvc *servingv1.Service) {
-	if ksvc == nil {
-		inmemoryCondSet.Manage(s).MarkUnknown(ConditionDeployed, ReasonUnavailable,
-			"The status of the adapter Service can not be determined")
+// PropagateDeploymentAvailability uses the readiness of the provided deployment to
+// determine whether the Ready condition should be marked as true or false.
+func (s *InMemoryStoreStatus) PropagateDeploymentAvailability(d *appsv1.Deployment) {
+	if d == nil {
+		inmemoryCondSet.Manage(s).MarkUnknown(ConditionDeploymentReady, ReasonNotFound,
+			"The deployment can not be found")
 		return
+	}
+
+	if duck.DeploymentIsAvailable(&d.Status, false) {
+		inmemoryCondSet.Manage(s).MarkTrue(ConditionDeploymentReady)
+		return
+	}
+
+	inmemoryCondSet.Manage(s).MarkFalse(ConditionDeploymentReady, ReasonUnavailable,
+		"The deployment is not ready")
+}
+
+// PropagateServiceAvailability uses the presence of the provided service to
+// determine whether the Ready condition should be marked as true or false.
+func (s *InMemoryStoreStatus) PropagateServiceAvailability(svc *corev1.Service) {
+	if svc == nil {
+		inmemoryCondSet.Manage(s).MarkUnknown(ConditionServiceReady, ReasonNotFound,
+			"The dervice can not be found")
+		return
+	}
+
+	if svc.Spec.ClusterIP == "" {
+		inmemoryCondSet.Manage(s).MarkFalse(ConditionServiceReady, ReasonUnavailable,
+			"The service has no Cluster IP assigned")
 	}
 
 	if s.Address == nil {
 		s.Address = &duckv1.Addressable{}
 	}
-	s.Address.URL = ksvc.Status.URL
 
-	if ksvc.IsReady() {
-		inmemoryCondSet.Manage(s).MarkTrue(ConditionDeployed)
-		return
+	url, err := serviceToAddress(svc)
+	if err != nil {
+		inmemoryCondSet.Manage(s).MarkFalse(ConditionServiceReady, ReasonUnavailable,
+			err.Error())
 	}
 
-	msg := "The adapter Service is unavailable"
-	readyCond := ksvc.Status.GetCondition(servingv1.ServiceConditionReady)
-	if readyCond != nil && readyCond.Message != "" {
-		msg += ": " + readyCond.Message
+	s.Address.URL = url
+	inmemoryCondSet.Manage(s).MarkTrue(ConditionServiceReady)
+}
+
+func serviceToAddress(svc *corev1.Service) (*apis.URL, error) {
+	if len(svc.Spec.Ports) != 1 {
+		return nil, errors.New("service contains more than one port")
 	}
 
-	inmemoryCondSet.Manage(s).MarkFalse(ConditionDeployed, ReasonUnavailable, msg)
+	return &apis.URL{Host: svc.Name + "." + svc.Namespace + ":" + strconv.Itoa(int(svc.Spec.Ports[0].Port))}, nil
 }

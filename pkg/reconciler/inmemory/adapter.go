@@ -19,11 +19,11 @@ package inmemory
 import (
 	"strconv"
 
+	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
 
 	"knative.dev/eventing/pkg/reconciler/source"
 	"knative.dev/pkg/kmeta"
-	servingv1 "knative.dev/serving/pkg/apis/serving/v1"
 
 	"github.com/triggermesh/eventstore/pkg/apis/eventstores/v1alpha1"
 	pkgreconciler "github.com/triggermesh/eventstore/pkg/reconciler"
@@ -41,11 +41,6 @@ const (
 	listenPort = 8080
 )
 
-var alwaysOne = map[string]string{
-	"autoscaling.knative.dev/minScale": "1",
-	"autoscaling.knative.dev/maxScale": "1",
-}
-
 // adapterConfig contains properties used to configure the eventstore's adapter.
 // Public fields are automatically populated by envconfig.
 type adapterConfig struct {
@@ -56,24 +51,28 @@ type adapterConfig struct {
 }
 
 // makeAdapterKnService returns a Knative Service object for the store's adapter.
-func makeAdapterKnService(o *v1alpha1.InMemoryStore, cfg *adapterConfig) *servingv1.Service {
+func makeAdapterDeployment(o *v1alpha1.InMemoryStore, cfg *adapterConfig) *appsv1.Deployment {
 	envApp := makeCommonAppEnv(o)
 
-	ksvcLabels := pkgreconciler.MakeAdapterLabels(adapterName, o.Name)
+	deploymentLabels := pkgreconciler.MakeAdapterLabels(adapterName, o.Name)
 	podLabels := pkgreconciler.MakeAdapterLabels(adapterName, o.Name)
 	name := kmeta.ChildName(adapterName+"-", o.Name)
 	envSvc := pkgreconciler.MakeServiceEnv(o.Name, o.Namespace)
 	envObs := pkgreconciler.MakeObsEnv(cfg.configs)
 	envs := append(envSvc, append(envApp, envObs...)...)
 
-	return resources.MakeKService(o.Namespace, name, cfg.Image,
-		resources.KsvcLabels(ksvcLabels),
-		resources.KsvcPodAnnotations(alwaysOne),
-		resources.KsvcLabelVisibilityClusterLocal,
-		resources.KsvcPodLabels(podLabels),
-		resources.KsvcOwner(o),
-		resources.KsvcPodPort(listenPort),
-		resources.KsvcPodEnvVars(envs))
+	return resources.NewDeployment(o.Namespace, name,
+		// Deployment
+		resources.Labels(deploymentLabels),
+		resources.Selector(resources.AppNameLabel, adapterName),
+		resources.Controller(o),
+
+		// Pod
+		resources.Image(cfg.Image),
+		resources.Port("h2c", listenPort),
+		resources.EnvVars(envs...),
+		resources.PodLabels(podLabels),
+	)
 }
 
 func makeCommonAppEnv(o *v1alpha1.InMemoryStore) []corev1.EnvVar {

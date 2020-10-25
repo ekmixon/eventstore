@@ -19,10 +19,10 @@ metadata:
 rules:
   # Manage receive-adapters
 - apiGroups:
-  - serving.knative.dev
+  - apps
   resources:
-  - services
-  verbs:
+  - deployments
+  verbs: &all
   - get
   - list
   - watch
@@ -30,6 +30,12 @@ rules:
   - update
   - delete
   - patch
+
+- apiGroups:
+  - ''
+  resources:
+  - services
+  verbs: *all
 
   # Record Kubernetes events
 - apiGroups:
