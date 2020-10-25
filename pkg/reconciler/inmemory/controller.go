@@ -24,11 +24,12 @@ import (
 	"k8s.io/client-go/tools/cache"
 
 	"knative.dev/eventing/pkg/reconciler/source"
+	kubeclient "knative.dev/pkg/client/injection/kube/client"
+	deploymentinformer "knative.dev/pkg/client/injection/kube/informers/apps/v1/deployment"
+	serviceinformer "knative.dev/pkg/client/injection/kube/informers/core/v1/service"
 	"knative.dev/pkg/configmap"
 	"knative.dev/pkg/controller"
 	"knative.dev/pkg/logging"
-	servingclient "knative.dev/serving/pkg/client/injection/client"
-	serviceinformerv1 "knative.dev/serving/pkg/client/injection/informers/serving/v1/service"
 
 	"github.com/triggermesh/eventstore/pkg/apis/eventstores/v1alpha1"
 	informerv1alpha1 "github.com/triggermesh/eventstore/pkg/generated/client/injection/informers/eventstores/v1alpha1/inmemorystore"
@@ -49,10 +50,13 @@ func NewController(
 	envconfig.MustProcess(adapterName, adapterCfg)
 
 	storeInformer := informerv1alpha1.Get(ctx)
-	serviceInformer := serviceinformerv1.Get(ctx)
+	deploymentInformer := deploymentinformer.Get(ctx)
+	serviceInformer := serviceinformer.Get(ctx)
 
 	r := &reconciler{
-		ksvcr:      libreconciler.NewKServiceReconciler(servingclient.Get(ctx), serviceInformer.Lister()),
+		dpr:  libreconciler.NewDeploymentReconciler(kubeclient.Get(ctx).AppsV1(), deploymentInformer.Lister()),
+		svcr: libreconciler.NewServiceReconciler(kubeclient.Get(ctx).CoreV1(), serviceInformer.Lister()),
+
 		adapterCfg: adapterCfg,
 	}
 
@@ -60,6 +64,11 @@ func NewController(
 	logging.FromContext(ctx).Info("Setting up event handlers")
 
 	storeInformer.Informer().AddEventHandler(controller.HandleAll(impl.Enqueue))
+
+	deploymentInformer.Informer().AddEventHandler(cache.FilteringResourceEventHandler{
+		FilterFunc: controller.FilterControllerGVK((&v1alpha1.InMemoryStore{}).GetGroupVersionKind()),
+		Handler:    controller.HandleAll(impl.EnqueueControllerOf),
+	})
 
 	serviceInformer.Informer().AddEventHandler(cache.FilteringResourceEventHandler{
 		FilterFunc: controller.FilterControllerGVK((&v1alpha1.InMemoryStore{}).GetGroupVersionKind()),

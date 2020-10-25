@@ -24,12 +24,10 @@ import (
 const (
 	// ConditionReady has status True when the store is ready to receive requests.
 	ConditionReady = apis.ConditionReady
+	// ConditionDeploymentReady has status True when the store's adapter is up and running.
+	ConditionDeploymentReady apis.ConditionType = "DeploymentReady"
 	// ConditionServiceReady has status True when the store's adapter is up and running.
 	ConditionServiceReady apis.ConditionType = "ServiceReady"
-	// ConditionSecretsProvided has status True when the secrets requested has been provided
-	ConditionSecretsProvided apis.ConditionType = "SecretsProvided"
-	// ConditionDeployed has status True when the store's adapter is up and running.
-	ConditionDeployed apis.ConditionType = "Deployed"
 )
 
 // reasons for conditions

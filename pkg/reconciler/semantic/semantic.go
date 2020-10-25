@@ -18,6 +18,7 @@ package semantic
 
 import (
 	appsv1 "k8s.io/api/apps/v1"
+	corev1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/api/resource"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/conversion"
@@ -36,6 +37,7 @@ import (
 var Semantic = conversion.EqualitiesOrDie(
 	deploymentEqual,
 	knServiceEqual,
+	serviceEqual,
 )
 
 // eq is an instance of Equalities for internal deep derivative comparisons
@@ -75,6 +77,31 @@ func deploymentEqual(a, b *appsv1.Deployment) bool {
 	}
 
 	if !eq.DeepDerivative(&a.Spec, &b.Spec) {
+		return false
+	}
+
+	return true
+}
+
+// serviceEqual returns whether two Services are semantically equivalent.
+func serviceEqual(a, b *corev1.Service) bool {
+	if a == b {
+		return true
+	}
+	if a == nil || b == nil {
+		return false
+	}
+
+	if !eq.DeepDerivative(&a.ObjectMeta, &b.ObjectMeta) {
+		return false
+	}
+
+	if !eq.DeepDerivative(&a.Spec.Selector, &b.Spec.Selector) {
+		return false
+	}
+
+	// pla, plb := len(a.Spec.Ports),len(a.Spec.Ports)
+	if !eq.DeepDerivative(&a.Spec.Ports, &b.Spec.Ports) {
 		return false
 	}
 
