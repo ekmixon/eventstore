@@ -24,6 +24,7 @@ import (
 	"github.com/stretchr/testify/assert"
 
 	appsv1 "k8s.io/api/apps/v1"
+	corev1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/runtime"
 
 	servingv1 "knative.dev/serving/pkg/apis/serving/v1"
@@ -31,6 +32,7 @@ import (
 
 const (
 	fixtureDeploymentPath = "../../../test/fixtures/deployment.json"
+	fixtureServicePath    = "../../../test/fixtures/service.json"
 	fixtureKnServicePath  = "../../../test/fixtures/knService.json"
 )
 
@@ -104,6 +106,81 @@ func TestDeploymentEqual(t *testing.T) {
 				assert.True(t, deploymentEqual(desired, current))
 			case false:
 				assert.False(t, deploymentEqual(desired, current))
+			}
+		})
+	}
+}
+
+func TestServiceEqual(t *testing.T) {
+	current := &corev1.Service{}
+	loadFixture(t, fixtureServicePath, current)
+
+	assert.GreaterOrEqual(t, len(current.Labels), 2,
+		"Test suite requires a reference object with at least 2 labels to run properly")
+
+	assert.True(t, serviceEqual(nil, nil), "Two nil elements should be equal")
+
+	testCases := map[string]struct {
+		prep   func() *corev1.Service
+		expect bool
+	}{
+		"not equal when one element is nil": {
+			func() *corev1.Service {
+				return nil
+			},
+			false,
+		},
+		// counter intuitive but expected result for deep derivative comparisons
+		"equal when all desired attributes are empty": {
+			func() *corev1.Service {
+				return &corev1.Service{}
+			},
+			true,
+		},
+		"not equal when some existing attribute differs": {
+			func() *corev1.Service {
+				desired := current.DeepCopy()
+				for k := range desired.Labels {
+					desired.Labels[k] += "test"
+					break // changing one is enough
+				}
+				return desired
+			},
+			false,
+		},
+		"equal when current has more attributes than desired": {
+			func() *corev1.Service {
+				desired := current.DeepCopy()
+				for k := range desired.Labels {
+					delete(desired.Labels, k)
+					break // deleting one is enough
+				}
+				return desired
+			},
+			true,
+		},
+		"not equal when desired has more attributes than current": {
+			func() *corev1.Service {
+				desired := current.DeepCopy()
+				for k := range desired.Labels {
+					desired.Labels[k+"test"] = "test"
+					break // adding one is enough
+				}
+				return desired
+			},
+			false,
+		},
+	}
+
+	for name, tc := range testCases {
+		//nolint:scopelint
+		t.Run(name, func(t *testing.T) {
+			desired := tc.prep()
+			switch tc.expect {
+			case true:
+				assert.True(t, serviceEqual(desired, current))
+			case false:
+				assert.False(t, serviceEqual(desired, current))
 			}
 		})
 	}
