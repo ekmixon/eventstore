@@ -87,7 +87,7 @@ func (s *InMemoryStoreStatus) PropagateServiceAvailability(svc *corev1.Service) 
 	}
 
 	if s.Address == nil {
-		s.Address = &duckv1.Addressable{}
+		s.Address = &Addressable{}
 	}
 
 	url, err := serviceToAddress(svc)
@@ -96,16 +96,14 @@ func (s *InMemoryStoreStatus) PropagateServiceAvailability(svc *corev1.Service) 
 			err.Error())
 	}
 
-	s.Address.URL = url
+	s.Address.URI = &url
 	inmemoryCondSet.Manage(s).MarkTrue(ConditionServiceReady)
 }
 
-func serviceToAddress(svc *corev1.Service) (*apis.URL, error) {
+func serviceToAddress(svc *corev1.Service) (string, error) {
 	if len(svc.Spec.Ports) != 1 {
-		return nil, errors.New("service contains more than one port")
+		return "", errors.New("service contains more than one port")
 	}
 
-	return &apis.URL{
-		Scheme: "http",
-		Host:   svc.Name + "." + svc.Namespace + ":" + strconv.Itoa(int(svc.Spec.Ports[0].Port))}, nil
+	return "dns:///" + svc.Name + "." + svc.Namespace + ":" + strconv.Itoa(int(svc.Spec.Ports[0].Port)), nil
 }
