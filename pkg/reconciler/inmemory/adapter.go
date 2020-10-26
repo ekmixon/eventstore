@@ -110,7 +110,7 @@ func makeAdapterObjects(o *v1alpha1.InMemoryStore, cfg *adapterConfig) (*appsv1.
 	svc := resources.NewService(o.Namespace, name,
 		resources.Labels(labels),
 		resources.AddServiceSelector(resources.AppNameLabel, adapterName),
-		resources.AddServiceSelector(resources.AppInstanceLabel, name),
+		resources.AddServiceSelector(resources.AppInstanceLabel, o.Name),
 		resources.ServicePort("h2c", listenPort),
 		resources.Controller(o),
 	)

@@ -222,12 +222,12 @@ func (r *reconcilerImpl) Reconcile(ctx context.Context, key string) error {
 	var reconcileEvent reconciler.Event
 
 	name, do := s.reconcileMethodFor(resource)
-	// Append the event storage method to the logger.
-	logger = logger.With(zap.String("method", name))
+	// Append the target method to the logger.
+	logger = logger.With(zap.String("targetMethod", name))
 	switch name {
 	case reconciler.DoReconcileKind:
-		// Append the event storage method to the logger.
-		logger = logger.With(zap.String("method", "ReconcileKind"))
+		// Append the target method to the logger.
+		logger = logger.With(zap.String("targetMethod", "ReconcileKind"))
 
 		// Set and update the finalizer on resource if r.reconciler
 		// implements Finalizer.

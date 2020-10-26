@@ -100,7 +100,6 @@ func serviceEqual(a, b *corev1.Service) bool {
 		return false
 	}
 
-	// pla, plb := len(a.Spec.Ports),len(a.Spec.Ports)
 	if !eq.DeepDerivative(&a.Spec.Ports, &b.Spec.Ports) {
 		return false
 	}

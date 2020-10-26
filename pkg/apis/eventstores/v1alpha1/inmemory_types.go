@@ -65,8 +65,9 @@ type InMemoryStoreSpec struct {
 
 // InMemoryStoreStatus communicates the observed state of the InMemoryStore (from the controller).
 type InMemoryStoreStatus struct {
-	duckv1.Status        `json:",inline"`
-	duckv1.AddressStatus `json:",inline"`
+	duckv1.Status `json:",inline"`
+	// Address for the InMemoryStore
+	Address *Addressable `json:"address,omitempty"`
 }
 
 // +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
@@ -76,4 +77,10 @@ type InMemoryStoreList struct {
 	metav1.TypeMeta `json:",inline"`
 	metav1.ListMeta `json:"metadata"`
 	Items           []InMemoryStore `json:"items"`
+}
+
+// Addressable host an URI location indicating the destination
+// for storage requests.
+type Addressable struct {
+	URI *string `json:"url,omitempty"`
 }
