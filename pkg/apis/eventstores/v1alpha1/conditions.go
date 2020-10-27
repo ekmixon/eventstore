@@ -32,10 +32,9 @@ const (
 
 // reasons for conditions
 const (
-	// ReasonUnavailable is set on a ServiceReady condition when an adapter in unavailable.
-	ReasonUnavailable = "AdapterUnavailable"
+	// ReasonUnavailable is set on an object Ready condition when the resource in unavailable.
+	ReasonUnavailable = "ResourceUnavailable"
 
-	// ReasonNotFound is set on a SecretsProvided condition when secret
-	// credentials can't be found.
+	// ReasonNotFound is set on an object Ready condition when the resource is not found.
 	ReasonNotFound = "NotFound"
 )
