@@ -31,6 +31,7 @@ import (
 	clientgotesting "k8s.io/client-go/testing"
 
 	"knative.dev/eventing/pkg/reconciler/source"
+	knapis "knative.dev/pkg/apis"
 	fakekubeclient "knative.dev/pkg/client/injection/kube/client/fake"
 	"knative.dev/pkg/controller"
 	"knative.dev/pkg/kmeta"
@@ -52,17 +53,21 @@ const (
 	tUID  = types.UID("00000000-0000-0000-0000-000000000000")
 
 	tImg = "registry/image:tag"
+
+	deploymentNotReady = "The deployment is not ready"
+	deploymentNotFound = "The deployment can not be found"
+	serviceNotfound    = "The service can not be found"
 )
 
 var (
+	tGenName = kmeta.ChildName(adapterName+"-", tName)
+
 	tGlobalTTL       = 1000
 	tBridgeTTL       = 100
 	tInstanceTTL     = 10
 	tExpiredGCPeriod = 50
-	tURI             = "dns:///my.service"
+	tURI             = "dns:///" + tGenName + "." + tNs + ":8080"
 )
-
-var tGenName = kmeta.ChildName(adapterName+"-", tName)
 
 // Test the Reconcile method of the controller.Reconciler implemented by our controller.
 //
@@ -87,113 +92,146 @@ func TestReconcile(t *testing.T) {
 			},
 			WantStatusUpdates: []clientgotesting.UpdateActionImpl{{
 				Object: newStore(
-					withDeployment(newDeployment()),
-					withService(newService()),
+					withDeploymentStatus(corev1.ConditionFalse, v1alpha1.ReasonUnavailable, deploymentNotReady),
+					withServiceStatus(corev1.ConditionTrue, "", ""),
+					withReadyStatus(corev1.ConditionFalse, v1alpha1.ReasonUnavailable, deploymentNotReady),
+					withAddress(tURI),
 				),
 			}},
-			// WantEvents: []string{
-			// 	createAdapterEvent(),
-			// },
 		},
 
 		// Lifecycle
 
-		// {
-		// 	Name: "Adapter becomes Ready",
-		// 	Key:  tKey,
-		// 	Objects: []runtime.Object{
-		// 		newStoreNotDeployed(),
-		// 		newAdapterServiceReady(),
-		// 	},
-		// 	WantStatusUpdates: []clientgotesting.UpdateActionImpl{{
-		// 		Object: newStoreDeployed(),
-		// 	}},
-		// },
-		// {
-		// 	Name: "Adapter becomes NotReady",
-		// 	Key:  tKey,
-		// 	Objects: []runtime.Object{
-		// 		newStoreDeployed(),
-		// 		newAdapterServiceNotReady(),
-		// 	},
-		// 	WantStatusUpdates: []clientgotesting.UpdateActionImpl{{
-		// 		Object: newStoreNotDeployed(),
-		// 	}},
-		// },
-		// {
-		// 	Name: "Adapter is outdated",
-		// 	Key:  tKey,
-		// 	Objects: []runtime.Object{
-		// 		newStoreDeployed(),
-		// 		setAdapterImage(
-		// 			newAdapterServiceReady(),
-		// 			tImg+":old",
-		// 		),
-		// 	},
-		// 	WantUpdates: []clientgotesting.UpdateActionImpl{{
-		// 		Object: newAdapterServiceReady(),
-		// 	}},
-		// 	WantEvents: []string{
-		// 		updateAdapterEvent(),
-		// 	},
-		// },
+		{
+			Name: "Deployment and Service Ready",
+			Key:  tKey,
+			Objects: []runtime.Object{
+				newStore(),
+				newDeployment(withDeploymentAvailable),
+				newService(),
+			},
+			WantStatusUpdates: []clientgotesting.UpdateActionImpl{{
+				Object: newStore(
+					withDeploymentStatus(corev1.ConditionTrue, "", ""),
+					withServiceStatus(corev1.ConditionTrue, "", ""),
+					withReadyStatus(corev1.ConditionTrue, "", ""),
+					withAddress(tURI),
+				),
+			}},
+		},
+		{
+			Name: "Deployment becomes NotReady",
+			Key:  tKey,
+			Objects: []runtime.Object{
+				newStore(
+					withDeploymentStatus(corev1.ConditionTrue, "", ""),
+					withServiceStatus(corev1.ConditionTrue, "", ""),
+					withReadyStatus(corev1.ConditionTrue, "", ""),
+				),
+				newDeployment(withDeploymentUnavailable),
+				newService(),
+			},
+			WantStatusUpdates: []clientgotesting.UpdateActionImpl{{
+				Object: newStore(
+					withDeploymentStatus(corev1.ConditionFalse, v1alpha1.ReasonUnavailable, deploymentNotReady),
+					withServiceStatus(corev1.ConditionTrue, "", ""),
+					withReadyStatus(corev1.ConditionFalse, v1alpha1.ReasonUnavailable, deploymentNotReady),
+					withAddress(tURI),
+				),
+			}},
+		},
+		{
+			Name: "Deployment is outdated",
+			Key:  tKey,
+			Objects: []runtime.Object{
+				newStore(
+					withDeploymentStatus(corev1.ConditionTrue, "", ""),
+					withServiceStatus(corev1.ConditionTrue, "", ""),
+					withReadyStatus(corev1.ConditionTrue, "", ""),
+				),
+				newDeployment(withDeploymentAvailable, withDeploymentImage("old-image")),
+				newService(),
+			},
+			WantUpdates: []clientgotesting.UpdateActionImpl{{
+				Object: newDeployment(withDeploymentAvailable),
+			}},
+			WantStatusUpdates: []clientgotesting.UpdateActionImpl{{
+				Object: newStore(
+					withDeploymentStatus(corev1.ConditionTrue, "", ""),
+					withServiceStatus(corev1.ConditionTrue, "", ""),
+					withReadyStatus(corev1.ConditionTrue, "", ""),
+					withAddress(tURI),
+				),
+			}},
+		},
 
-		// // Errors
+		// Errors
 
-		// {
-		// 	Name: "Fail to create adapter service",
-		// 	Key:  tKey,
-		// 	WithReactors: []clientgotesting.ReactionFunc{
-		// 		rt.InduceFailure("create", "services"),
-		// 	},
-		// 	Objects: []runtime.Object{
-		// 		newStore(),
-		// 	},
-		// 	WantCreates: []runtime.Object{
-		// 		newAdapterService(),
-		// 	},
-		// 	WantStatusUpdates: []clientgotesting.UpdateActionImpl{{
-		// 		Object: newStoreUnknownDeployed(false),
-		// 	}},
-		// 	WantEvents: []string{
-		// 		failCreateAdapterEvent(),
-		// 	},
-		// 	WantErr: true,
-		// },
+		{
+			Name: "Fail to create service",
+			Key:  tKey,
+			WithReactors: []clientgotesting.ReactionFunc{
+				rt.InduceFailure("create", "services"),
+			},
+			Objects: []runtime.Object{
+				newStore(),
+			},
+			WantCreates: []runtime.Object{
+				newDeployment(),
+				newService(),
+			},
+			WantStatusUpdates: []clientgotesting.UpdateActionImpl{{
+				Object: newStore(
+					withDeploymentStatus(corev1.ConditionFalse, v1alpha1.ReasonUnavailable, deploymentNotReady),
+					withServiceStatus(corev1.ConditionUnknown, v1alpha1.ReasonNotFound, serviceNotfound),
+					withReadyStatus(corev1.ConditionFalse, v1alpha1.ReasonUnavailable, deploymentNotReady),
+				),
+			}},
+			WantEvents: []string{
+				failCreateServiceEvent(),
+			},
+			WantErr: true,
+		},
 
-		// {
-		// 	Name: "Fail to update adapter service",
-		// 	Key:  tKey,
-		// 	WithReactors: []clientgotesting.ReactionFunc{
-		// 		rt.InduceFailure("update", "services"),
-		// 	},
-		// 	Objects: []runtime.Object{
-		// 		newStoreDeployed(),
-		// 		setAdapterImage(
-		// 			newAdapterServiceReady(),
-		// 			tImg+":old",
-		// 		),
-		// 	},
-		// 	WantUpdates: []clientgotesting.UpdateActionImpl{{
-		// 		Object: newAdapterServiceReady(),
-		// 	}},
-		// 	WantStatusUpdates: []clientgotesting.UpdateActionImpl{{
-		// 		Object: newStoreUnknownDeployed(true),
-		// 	}},
-		// 	WantEvents: []string{
-		// 		failUpdateAdapterEvent(),
-		// 	},
-		// 	WantErr: true,
-		// },
+		{
+			Name: "Fail to update deployment",
+			Key:  tKey,
+			WithReactors: []clientgotesting.ReactionFunc{
+				rt.InduceFailure("update", "deployments"),
+			},
+			Objects: []runtime.Object{
+				newStore(
+					withDeploymentStatus(corev1.ConditionTrue, "", ""),
+					withServiceStatus(corev1.ConditionTrue, "", ""),
+					withReadyStatus(corev1.ConditionTrue, "", ""),
+				),
+				newDeployment(withDeploymentAvailable, withDeploymentImage("old-image")),
+				newService(),
+			},
+			WantUpdates: []clientgotesting.UpdateActionImpl{{
+				Object: newDeployment(withDeploymentAvailable),
+			}},
+			WantStatusUpdates: []clientgotesting.UpdateActionImpl{{
+				Object: newStore(
+					withDeploymentStatus(corev1.ConditionUnknown, v1alpha1.ReasonNotFound, deploymentNotFound),
+					withServiceStatus(corev1.ConditionTrue, "", ""),
+					withReadyStatus(corev1.ConditionUnknown, v1alpha1.ReasonNotFound, deploymentNotFound),
+				),
+			}},
+			WantEvents: []string{
+				failUpdateDeploymentEvent(),
+			},
+			WantErr: true,
+		},
 
-		// // Edge cases
+		// Edge cases
 
-		// {
-		// 	Name:    "Reconcile a non-existing object",
-		// 	Key:     tKey,
-		// 	Objects: nil,
-		// 	WantErr: false,
-		// },
+		{
+			Name:    "Reconcile a non-existing object",
+			Key:     tKey,
+			Objects: nil,
+			WantErr: false,
+		},
 	}
 
 	testCases.Test(t, MakeFactory(reconcilerCtor))
@@ -246,15 +284,44 @@ func newStore(opts ...inMemoryStoreOptions) *v1alpha1.InMemoryStore {
 	return o
 }
 
-func withDeployment(d *appsv1.Deployment) inMemoryStoreOptions {
+func withAddress(address string) inMemoryStoreOptions {
 	return func(o *v1alpha1.InMemoryStore) {
-		o.Status.PropagateDeploymentAvailability(d)
+		o.Status.Address = &v1alpha1.Addressable{URI: &address}
 	}
 }
 
-func withService(s *corev1.Service) inMemoryStoreOptions {
+func withDeploymentStatus(status corev1.ConditionStatus, reason, message string) inMemoryStoreOptions {
+	return withStatus(v1alpha1.ConditionDeploymentReady, status, reason, message)
+}
+
+func withReadyStatus(status corev1.ConditionStatus, reason, message string) inMemoryStoreOptions {
+	return withStatus(v1alpha1.ConditionReady, status, reason, message)
+}
+
+func withServiceStatus(status corev1.ConditionStatus, reason, message string) inMemoryStoreOptions {
+	return withStatus(v1alpha1.ConditionServiceReady, status, reason, message)
+}
+
+func withStatus(cType knapis.ConditionType, status corev1.ConditionStatus, reason, message string) inMemoryStoreOptions {
 	return func(o *v1alpha1.InMemoryStore) {
-		o.Status.PropagateServiceAvailability(s)
+		var c *knapis.Condition
+
+		conds := o.Status.Conditions
+		for i := range conds {
+			if conds[i].Type == cType {
+				c = &conds[i]
+				break
+			}
+		}
+
+		if c == nil {
+			c = &knapis.Condition{Type: cType}
+			o.Status.Conditions = append(conds, *c)
+		}
+
+		c.Reason = reason
+		c.Message = message
+		c.Status = status
 	}
 }
 
@@ -329,6 +396,30 @@ func newDeployment(opts ...deploymentOptions) *appsv1.Deployment {
 	return d
 }
 
+func withDeploymentAvailable(d *appsv1.Deployment) {
+	d.Status = appsv1.DeploymentStatus{
+		Conditions: []appsv1.DeploymentCondition{{
+			Type:   appsv1.DeploymentAvailable,
+			Status: "True",
+		}},
+	}
+}
+
+func withDeploymentUnavailable(d *appsv1.Deployment) {
+	d.Status = appsv1.DeploymentStatus{
+		Conditions: []appsv1.DeploymentCondition{{
+			Type:   appsv1.DeploymentAvailable,
+			Status: "False",
+		}},
+	}
+}
+
+func withDeploymentImage(image string) deploymentOptions {
+	return func(d *appsv1.Deployment) {
+		d.Spec.Template.Spec.Containers[0].Image = image
+	}
+}
+
 type serviceOptions func(*corev1.Service)
 
 func newService(opts ...serviceOptions) *corev1.Service {
@@ -371,163 +462,10 @@ func newService(opts ...serviceOptions) *corev1.Service {
 	return s
 }
 
-// Deployed: Unknown
-// func newStoreUnknownDeployed(adapterExists bool) *v1alpha1.InMemoryStore {
-// 	o := newStore()
-// 	o.Status.PropagateDeploymentAvailability(nil)
+func failUpdateDeploymentEvent() string {
+	return Eventf(corev1.EventTypeWarning, "InternalError", "inducing failure for update deployments")
+}
 
-// 	// cover the case where the URL was already set because an adapter was successfully created at an earlier time,
-// 	// but the new adapter status can't be propagated, e.g. due to an update error
-// 	if adapterExists {
-// 		o.Status.Address = &v1alpha1.Addressable{
-// 			URI: &tURI,
-// 		}
-// 	}
-
-// 	return o
-// }
-
-// // Deployed: True
-// func newStoreDeployed() *v1alpha1.InMemoryStore {
-// 	o := newStore()
-// 	o.Status.PropagateDeploymentAvailability(newAdapterServiceReady())
-// 	return o
-// }
-
-// // Deployed: False
-// func newStoreNotDeployed() *v1alpha1.InMemoryStore {
-// 	o := newStore()
-// 	o.Status.PropagateAvailability(newAdapterServiceNotReady())
-// 	return o
-// }
-
-// /* Adapter service */
-
-// // newAdapterService returns a test Service object with pre-filled attributes.
-// func newAdapterService() *servingv1.Service {
-// 	return &servingv1.Service{
-// 		ObjectMeta: metav1.ObjectMeta{
-// 			Namespace: tNs,
-// 			Name:      tGenName,
-// 			Labels: labels.Set{
-// 				resources.AppNameLabel:      adapterName,
-// 				resources.AppInstanceLabel:  tName,
-// 				resources.AppComponentLabel: resources.AdapterComponent,
-// 				resources.AppPartOfLabel:    resources.PartOf,
-// 				resources.AppManagedByLabel: resources.ManagedController,
-// 				serving.VisibilityLabelKey:  serving.VisibilityClusterLocal,
-// 			},
-// 			OwnerReferences: []metav1.OwnerReference{
-// 				*kmeta.NewControllerRef(NewOwnerRefable(
-// 					tName,
-// 					(&v1alpha1.HTTPTarget{}).GetGroupVersionKind(),
-// 					tUID,
-// 				)),
-// 			},
-// 		},
-// 		Spec: servingv1.ServiceSpec{
-// 			ConfigurationSpec: servingv1.ConfigurationSpec{
-// 				Template: servingv1.RevisionTemplateSpec{
-// 					ObjectMeta: metav1.ObjectMeta{
-// 						Labels: labels.Set{
-// 							resources.AppNameLabel:      adapterName,
-// 							resources.AppInstanceLabel:  tName,
-// 							resources.AppComponentLabel: resources.AdapterComponent,
-// 							resources.AppPartOfLabel:    resources.PartOf,
-// 							resources.AppManagedByLabel: resources.ManagedController,
-// 						},
-// 					},
-// 					Spec: servingv1.RevisionSpec{
-// 						PodSpec: corev1.PodSpec{
-// 							Containers: []corev1.Container{{
-// 								Name:  resources.AdapterComponent,
-// 								Image: tImg,
-// 								Env: []corev1.EnvVar{
-// 									{
-// 										Name:  resources.EnvNamespace,
-// 										Value: tNs,
-// 									}, {
-// 										Name:  resources.EnvName,
-// 										Value: tName,
-// 									}, {
-// 										Name:  envHTTPEventType,
-// 										Value: tResponseType,
-// 									}, {
-// 										Name:  envHTTPEventSource,
-// 										Value: tResponseSource,
-// 									}, {
-// 										Name:  envHTTPURL,
-// 										Value: tEndpointURL.String(),
-// 									}, {
-// 										Name:  envHTTPMethod,
-// 										Value: tMethod,
-// 									}, {
-// 										Name:  envHTTPSkipVerify,
-// 										Value: tSkipVerify,
-// 									}, {
-// 										Name:  envHTTPHeaders,
-// 										Value: "key1:value1,key2:value2",
-// 									}, {
-// 										Name: source.EnvLoggingCfg,
-// 									}, {
-// 										Name: source.EnvMetricsCfg,
-// 									}, {
-// 										Name: source.EnvTracingCfg,
-// 									},
-// 								},
-// 							}},
-// 						},
-// 					},
-// 				},
-// 			},
-// 		},
-// 	}
-// }
-
-// // Ready: True
-// func newAdapterServiceReady() *servingv1.Service {
-// 	svc := newAdapterService()
-// 	svc.Status.SetConditions(apis.Conditions{{
-// 		Type:   v1alpha1.ConditionReady,
-// 		Status: corev1.ConditionTrue,
-// 	}})
-// 	svc.Status.URL = &tAdapterURL
-// 	return svc
-// }
-
-// // Ready: False
-// func newAdapterServiceNotReady() *servingv1.Service {
-// 	svc := newAdapterService()
-// 	svc.Status.SetConditions(apis.Conditions{{
-// 		Type:   v1alpha1.ConditionReady,
-// 		Status: corev1.ConditionFalse,
-// 	}})
-// 	return svc
-// }
-
-// func setAdapterImage(o *servingv1.Service, img string) *servingv1.Service {
-// 	o.Spec.Template.Spec.Containers[0].Image = img
-// 	return o
-// }
-
-// /* Events */
-
-// // TODO(antoineco): make event generators public inside pkg/reconciler for
-// // easy reuse in tests
-
-// func createAdapterEvent() string {
-// 	return Eventf(corev1.EventTypeNormal, "KServiceCreated", "created kservice: \"%s/%s\"",
-// 		tNs, tGenName)
-// }
-
-// func updateAdapterEvent() string {
-// 	return Eventf(corev1.EventTypeNormal, "KServiceUpdated", "updated kservice: \"%s/%s\"",
-// 		tNs, tGenName)
-// }
-// func failCreateAdapterEvent() string {
-// 	return Eventf(corev1.EventTypeWarning, "InternalError", "inducing failure for create services")
-// }
-
-// func failUpdateAdapterEvent() string {
-// 	return Eventf(corev1.EventTypeWarning, "InternalError", "inducing failure for update services")
-// }
+func failCreateServiceEvent() string {
+	return Eventf(corev1.EventTypeWarning, "InternalError", "inducing failure for create services")
+}
