@@ -44,8 +44,8 @@ func NewDeployment(ns, name string, opts ...ObjectOption) *appsv1.Deployment {
 	return d
 }
 
-// AddDeploymentSelector adds a label selector to a Deployment's spec.
-func AddDeploymentSelector(key, val string) ObjectOption {
+// Selector adds a label selector to a Deployment's spec.
+func Selector(key, val string) ObjectOption {
 	return func(object interface{}) {
 		d := object.(*appsv1.Deployment)
 

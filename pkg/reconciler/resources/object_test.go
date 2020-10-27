@@ -24,6 +24,7 @@ import (
 
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/apimachinery/pkg/labels"
 
 	"knative.dev/pkg/kmeta"
 
@@ -54,6 +55,7 @@ func TestMetaObjectOptions(t *testing.T) {
 		Label("test.label/2", "val2"),
 		Controller(DummyOwnerRefable()),
 		Label("test.label/1", "val1"),
+		// Labels(labels.Set{"test.label/1": "val1"}),
 	).ObjectMeta
 
 	expectObjMeta := metav1.ObjectMeta{
@@ -62,6 +64,28 @@ func TestMetaObjectOptions(t *testing.T) {
 		OwnerReferences: []metav1.OwnerReference{
 			*kmeta.NewControllerRef(DummyOwnerRefable()),
 		},
+		Labels: map[string]string{
+			"test.label/1": "val1",
+			"test.label/2": "val2",
+		},
+	}
+
+	if d := cmp.Diff(expectObjMeta, objMeta); d != "" {
+		t.Errorf("Unexpected diff: (-:expect, +:got) %s", d)
+	}
+}
+
+func TestMetaObjectLabels(t *testing.T) {
+	objMeta := NewDeployment(tNs, tName,
+		Labels(labels.Set{
+			"test.label/1": "val1",
+			"test.label/2": "val2",
+		}),
+	).ObjectMeta
+
+	expectObjMeta := metav1.ObjectMeta{
+		Namespace: tNs,
+		Name:      tName,
 		Labels: map[string]string{
 			"test.label/1": "val1",
 			"test.label/2": "val2",

@@ -24,12 +24,13 @@ import (
 	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/apimachinery/pkg/labels"
 	"k8s.io/apimachinery/pkg/util/intstr"
 )
 
 func TestNewDeploymentWithDefaultContainer(t *testing.T) {
 	ksvc := NewDeployment(tNs, tName,
-		PodLabel("test.podlabel/2", "val2"),
+		PodLabels(labels.Set{"test.podlabel/2": "val2"}),
 		Selector("test.selector/1", "val1"),
 		Port("h2c", 8080),
 		Image(tImg),
@@ -63,8 +64,6 @@ func TestNewDeploymentWithDefaultContainer(t *testing.T) {
 			Template: corev1.PodTemplateSpec{
 				ObjectMeta: metav1.ObjectMeta{
 					Labels: map[string]string{
-						"test.selector/1": "val1",
-						"test.selector/2": "val2",
 						"test.podlabel/1": "val1",
 						"test.podlabel/2": "val2",
 					},

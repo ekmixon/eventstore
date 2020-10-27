@@ -25,6 +25,22 @@ import (
 	servingv1 "knative.dev/serving/pkg/apis/serving/v1"
 )
 
+// PodLabel sets the value of a label of a PodSpecable's Pod template.
+func PodLabel(key, val string) ObjectOption {
+	return func(object interface{}) {
+		var metaObj metav1.Object
+
+		switch o := object.(type) {
+		case *appsv1.Deployment:
+			metaObj = &o.Spec.Template
+		case *servingv1.Service:
+			metaObj = &o.Spec.Template
+		}
+
+		Label(key, val)(metaObj)
+	}
+}
+
 // PodLabels sets the set of labels of a PodSpecable's Pod template.
 func PodLabels(ls labels.Set) ObjectOption {
 	return func(object interface{}) {

@@ -14,10 +14,5 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-package resources
-
-// Common environment variables propagated to adapters.
-const (
-	EnvName      = "NAME"
-	EnvNamespace = "NAMESPACE"
-)
+// Package testing contains test helpers for reconcilers.
+package testing
