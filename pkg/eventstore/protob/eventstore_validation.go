@@ -22,6 +22,10 @@ import (
 
 // Validate ScopeType
 func (x *ScopeType) Validate() error {
+	if x == nil {
+		return errors.New("scope cannot be nil")
+	}
+
 	switch x.Type {
 	case ScopeChoice_Global:
 		if x.Bridge != "" || x.Instance != "" {
