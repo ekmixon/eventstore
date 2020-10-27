@@ -98,6 +98,7 @@ func makeAdapterObjects(o *v1alpha1.InMemoryStore, cfg *adapterConfig) (*appsv1.
 		// Deployment
 		resources.Labels(labels),
 		resources.Selector(resources.AppNameLabel, adapterName),
+		resources.Selector(resources.AppInstanceLabel, o.Name),
 		resources.Controller(o),
 
 		// Pod

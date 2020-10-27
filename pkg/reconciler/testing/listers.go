@@ -19,14 +19,16 @@ package testing
 import (
 	"fmt"
 
+	appsv1 "k8s.io/api/apps/v1"
+	corev1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/runtime"
 	fakek8sclient "k8s.io/client-go/kubernetes/fake"
+	applistersv1 "k8s.io/client-go/listers/apps/v1"
+	corelistersv1 "k8s.io/client-go/listers/core/v1"
 	"k8s.io/client-go/tools/cache"
 
 	rt "knative.dev/pkg/reconciler/testing"
-	servingv1 "knative.dev/serving/pkg/apis/serving/v1"
 	fakeservingclient "knative.dev/serving/pkg/client/clientset/versioned/fake"
-	servinglistersv1 "knative.dev/serving/pkg/client/listers/serving/v1"
 
 	storesv1alpha1 "github.com/triggermesh/eventstore/pkg/apis/eventstores/v1alpha1"
 	fakestoresclient "github.com/triggermesh/eventstore/pkg/generated/client/clientset/internalclientset/fake"
@@ -92,7 +94,12 @@ func (l *Listers) GetInMemoryStoreLister() storeslisters.InMemoryStoreLister {
 	return storeslisters.NewInMemoryStoreLister(l.IndexerFor(&storesv1alpha1.InMemoryStore{}))
 }
 
+// GetDeploymentLister returns a lister for Deployment objects.
+func (l *Listers) GetDeploymentLister() applistersv1.DeploymentLister {
+	return applistersv1.NewDeploymentLister(l.IndexerFor(&appsv1.Deployment{}))
+}
+
 // GetServiceLister returns a lister for Service objects.
-func (l *Listers) GetServiceLister() servinglistersv1.ServiceLister {
-	return servinglistersv1.NewServiceLister(l.IndexerFor(&servingv1.Service{}))
+func (l *Listers) GetServiceLister() corelistersv1.ServiceLister {
+	return corelistersv1.NewServiceLister(l.IndexerFor(&corev1.Service{}))
 }

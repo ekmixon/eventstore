@@ -20,12 +20,14 @@ import (
 	"context"
 	"testing"
 
+	"k8s.io/apimachinery/pkg/types"
 	"k8s.io/client-go/tools/record"
 
 	fakek8sinjectionclient "knative.dev/pkg/client/injection/kube/client/fake"
 	"knative.dev/pkg/controller"
 	"knative.dev/pkg/logging"
 	logtesting "knative.dev/pkg/logging/testing"
+	"knative.dev/pkg/reconciler"
 	rt "knative.dev/pkg/reconciler/testing"
 	fakeservinginjectionclient "knative.dev/serving/pkg/client/injection/client/fake"
 
@@ -51,7 +53,7 @@ func MakeFactory(ctor Ctor) rt.Factory {
 		ctx = logging.WithLogger(ctx, logtesting.TestLogger(t))
 
 		// the controller.Reconciler uses an internal client to handle
-		// target objects
+		// store objects
 		ctx, imclient := fakestoresinjectionclient.With(ctx, ls.GetInMemoryStoreObjects()...)
 
 		// all clients used inside reconciler implementations should be
@@ -65,6 +67,14 @@ func MakeFactory(ctor Ctor) rt.Factory {
 
 		// set up Reconciler from fakes
 		r := ctor(t, ctx, &ls)
+
+		// promote the reconciler if it is leader aware
+		if la, ok := r.(reconciler.LeaderAware); ok {
+			err := la.Promote(reconciler.UniversalBucket(), func(reconciler.Bucket, types.NamespacedName) {})
+			if err != nil {
+				t.Fatalf("Failed to promote reconciler to leader: %s", err)
+			}
+		}
 
 		// inject reactors from table row
 		for _, reactor := range tr.WithReactors {
