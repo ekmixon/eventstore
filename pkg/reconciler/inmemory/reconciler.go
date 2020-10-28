@@ -27,7 +27,7 @@ import (
 )
 
 // Reconciler implements controller.Reconciler for the event store type.
-type reconciler struct {
+type Reconciler struct {
 	// adapter properties
 	adapterCfg *adapterConfig
 
@@ -37,10 +37,10 @@ type reconciler struct {
 }
 
 // Check that our Reconciler implements Interface
-var _ reconcilerv1alpha1.Interface = (*reconciler)(nil)
+var _ reconcilerv1alpha1.Interface = (*Reconciler)(nil)
 
 // ReconcileKind implements Interface.ReconcileKind.
-func (r *reconciler) ReconcileKind(ctx context.Context, o *v1alpha1.InMemoryStore) pkgreconciler.Event {
+func (r *Reconciler) ReconcileKind(ctx context.Context, o *v1alpha1.InMemoryStore) pkgreconciler.Event {
 	o.Status.InitializeConditions()
 	o.Status.ObservedGeneration = o.Generation
 
