@@ -14,8 +14,8 @@ if ! git rev-list ${RELEASE} >/dev/null 2>&1; then
 	exit
 fi
 
-KTARGET="eventstore"
-BASE_URL="https://github.com/triggermesh/${KTARGET}/releases/download/${RELEASE}"
+REPO="eventstore"
+BASE_URL="https://github.com/triggermesh/${REPO}/releases/download/${RELEASE}"
 PREV_RELEASE=${PREV_RELEASE:-$(git describe --tags --abbrev=0 ${RELEASE}^ 2>/dev/null)}
 PREV_RELEASE=${PREV_RELEASE:-$(git rev-list --max-parents=0 ${RELEASE}^ 2>/dev/null)}
 NOTABLE_CHANGES=$(git cat-file -p ${RELEASE} | sed '/-----BEGIN PGP SIGNATURE-----/,//d' | tail -n +6)
