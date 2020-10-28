@@ -244,7 +244,7 @@ var reconcilerCtor Ctor = func(t *testing.T, ctx context.Context, ls *Listers) c
 		configs: &source.EmptyVarsGenerator{},
 	}
 
-	r := &reconciler{
+	r := &Reconciler{
 		adapterCfg: adapterCfg,
 		dpr:        libreconciler.NewDeploymentReconciler(fakekubeclient.Get(ctx).AppsV1(), ls.GetDeploymentLister()),
 		svcr:       libreconciler.NewServiceReconciler(fakekubeclient.Get(ctx).CoreV1(), ls.GetServiceLister()),

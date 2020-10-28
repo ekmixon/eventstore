@@ -53,7 +53,7 @@ func NewController(
 	deploymentInformer := deploymentinformer.Get(ctx)
 	serviceInformer := serviceinformer.Get(ctx)
 
-	r := &reconciler{
+	r := &Reconciler{
 		dpr:  libreconciler.NewDeploymentReconciler(kubeclient.Get(ctx).AppsV1(), deploymentInformer.Lister()),
 		svcr: libreconciler.NewServiceReconciler(kubeclient.Get(ctx).CoreV1(), serviceInformer.Lister()),
 

@@ -41,7 +41,6 @@ const (
 )
 
 type tOperationType int
-type tLocationType int
 
 const (
 	loadOp = iota
