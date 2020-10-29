@@ -37,6 +37,6 @@ FROM gcr.io/distroless/static:nonroot
 ENV KO_DATA_PATH /kodata
 
 COPY --from=builder /kodata/ ${KO_DATA_PATH}/
-COPY --from=builder /bin/eventstore-controller /
+COPY --from=builder /bin/eventstore-client /
 
 ENTRYPOINT ["/sleep infinity"]

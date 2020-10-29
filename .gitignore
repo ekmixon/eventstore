@@ -5,8 +5,6 @@
 # Continuous integration
 
 # Editors and IDEs
-*.tar.gz
-*.tar.bz2
 *.swo
 *.swp
 *~
@@ -17,4 +15,4 @@
 /.vscode/
 
 # Build artifacts
-**/_output/
+**/_output
