@@ -54,6 +54,10 @@ func (x *ScopeType) Validate() error {
 
 // Validate LocationType
 func (x *LocationType) Validate() error {
+	if x == nil {
+		return errors.New("location cannot be nil")
+	}
+
 	if err := x.Scope.Validate(); err != nil {
 		return err
 	}
@@ -67,7 +71,11 @@ func (x *LocationType) Validate() error {
 
 // Validate SaveRequest
 func (x *SaveRequest) Validate() error {
-	if err := x.Location.Scope.Validate(); err != nil {
+	if x == nil {
+		return errors.New("save request cannot be nil")
+	}
+
+	if err := x.Location.Validate(); err != nil {
 		return err
 	}
 
@@ -80,10 +88,10 @@ func (x *SaveRequest) Validate() error {
 
 // Validate LoadRequest
 func (x *LoadRequest) Validate() error {
-	return x.Location.Scope.Validate()
+	return x.Location.Validate()
 }
 
 // Validate DeleteRequest
 func (x *DeleteRequest) Validate() error {
-	return x.Location.Scope.Validate()
+	return x.Location.Validate()
 }
