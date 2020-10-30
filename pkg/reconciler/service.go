@@ -32,12 +32,13 @@ import (
 	"knative.dev/pkg/logging"
 	pkgreconciler "knative.dev/pkg/reconciler"
 
+	"github.com/triggermesh/eventstore/pkg/reconciler/event"
 	"github.com/triggermesh/eventstore/pkg/reconciler/semantic"
 )
 
 // ServiceReconciler performs reconciliation for Services
 type ServiceReconciler interface {
-	ReconcileService(context.Context, kmeta.OwnerRefable, *corev1.Service) (*corev1.Service, pkgreconciler.Event)
+	ReconcileService(context.Context, kmeta.OwnerRefableAccessor, *corev1.Service) (*corev1.Service, pkgreconciler.Event)
 }
 
 // NewServiceReconciler creates the default implementation for Service reconciler.
@@ -55,13 +56,14 @@ type serviceReconciler struct {
 }
 
 // ReconcileService does reconciliation of a desired Service
-func (r *serviceReconciler) ReconcileService(ctx context.Context, owner kmeta.OwnerRefable, expected *corev1.Service) (*corev1.Service, pkgreconciler.Event) {
+func (r *serviceReconciler) ReconcileService(ctx context.Context, owner kmeta.OwnerRefableAccessor, expected *corev1.Service) (*corev1.Service, pkgreconciler.Event) {
 	s, err := r.findOwned(ctx, owner)
 	if apierrors.IsNotFound(err) {
 		s, err := r.coreClientSet.Services(expected.Namespace).Create(ctx, expected, metav1.CreateOptions{})
 		if err != nil {
 			return nil, err
 		}
+		event.Record(ctx, owner, corev1.EventTypeNormal, "ServiceCreated", `created service: "%s/%s"`, s.Namespace, s.Name)
 		return s, nil
 	}
 
@@ -79,7 +81,7 @@ func (r *serviceReconciler) ReconcileService(ctx context.Context, owner kmeta.Ow
 		if err != nil {
 			return nil, err
 		}
-
+		event.Record(ctx, owner, corev1.EventTypeWarning, "ServiceDeleted", `deleted service: "%s/%s"`, s.Namespace, s.Name)
 		return s, nil
 	}
 
@@ -97,6 +99,7 @@ func (r *serviceReconciler) ReconcileService(ctx context.Context, owner kmeta.Ow
 		if err != nil {
 			return nil, err
 		}
+		event.Record(ctx, owner, corev1.EventTypeNormal, "ServiceUpdated", `updated service: "%s/%s"`, s.Namespace, s.Name)
 		return s, nil
 	}
 
@@ -104,7 +107,7 @@ func (r *serviceReconciler) ReconcileService(ctx context.Context, owner kmeta.Ow
 }
 
 // findOwned returns a Service owned by the passed object and matched by labels.
-func (r *serviceReconciler) findOwned(ctx context.Context, owner kmeta.OwnerRefable) (*corev1.Service, error) {
+func (r *serviceReconciler) findOwned(ctx context.Context, owner kmeta.OwnerRefableAccessor) (*corev1.Service, error) {
 	sl, err := r.serviceLister.Services(owner.GetObjectMeta().GetNamespace()).List(labels.Everything())
 	if err != nil {
 		logging.FromContext(ctx).Error("Unable to list services: %v", zap.Error(err))
