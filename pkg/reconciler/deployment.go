@@ -70,7 +70,7 @@ func (r *deploymentReconciler) ReconcileDeployment(ctx context.Context, owner km
 		return nil, fmt.Errorf("error getting deployment %q: %v", expected.Name, err)
 	}
 
-	// Deploymnet owned by the eventstore but with an incorrect name is not expected.
+	// Deployment owned by the eventstore but with an incorrect name is not expected.
 	// If found, delete and let the controller create a new one during the next sync.
 	if d.Name != expected.Name {
 		logging.FromContext(ctx).Warnf("Deleting Deployment %s/%s owned by eventstore %s because its name differs "+

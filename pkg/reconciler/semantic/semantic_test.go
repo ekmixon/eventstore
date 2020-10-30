@@ -170,6 +170,15 @@ func TestServiceEqual(t *testing.T) {
 			},
 			false,
 		},
+		"equal if ": {
+			func() *corev1.Service {
+				desired := current.DeepCopy()
+				desired.Spec.Type = ""
+				desired.Spec.ClusterIP = ""
+				return desired
+			},
+			true,
+		},
 	}
 
 	for name, tc := range testCases {

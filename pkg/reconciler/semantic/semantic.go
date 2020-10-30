@@ -96,11 +96,7 @@ func serviceEqual(a, b *corev1.Service) bool {
 		return false
 	}
 
-	if !eq.DeepDerivative(&a.Spec.Selector, &b.Spec.Selector) {
-		return false
-	}
-
-	if !eq.DeepDerivative(&a.Spec.Ports, &b.Spec.Ports) {
+	if !eq.DeepDerivative(&a.Spec, &b.Spec) {
 		return false
 	}
 

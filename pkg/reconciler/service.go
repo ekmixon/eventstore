@@ -69,7 +69,7 @@ func (r *serviceReconciler) ReconcileService(ctx context.Context, owner kmeta.Ow
 		return nil, fmt.Errorf("error getting service %q: %v", expected.Name, err)
 	}
 
-	// Deploymnet owned by the eventstore but with an incorrect name is not expected.
+	// Service owned by the eventstore but with an incorrect name is not expected.
 	// If found, delete and let the controller create a new one during the next sync.
 	if s.Name != expected.Name {
 		logging.FromContext(ctx).Warnf("Deleting Service %s/%s owned by eventstore %s because its name differs "+
