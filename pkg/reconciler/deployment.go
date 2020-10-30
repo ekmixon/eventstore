@@ -22,6 +22,7 @@ import (
 
 	"go.uber.org/zap"
 	appsv1 "k8s.io/api/apps/v1"
+	corev1 "k8s.io/api/core/v1"
 	apierrors "k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	appsv1client "k8s.io/client-go/kubernetes/typed/apps/v1"
@@ -32,12 +33,13 @@ import (
 	"knative.dev/pkg/logging"
 	pkgreconciler "knative.dev/pkg/reconciler"
 
+	"github.com/triggermesh/eventstore/pkg/reconciler/event"
 	"github.com/triggermesh/eventstore/pkg/reconciler/semantic"
 )
 
 // DeploymentReconciler performs reconciliation for Deployments
 type DeploymentReconciler interface {
-	ReconcileDeployment(context.Context, kmeta.OwnerRefable, *appsv1.Deployment) (*appsv1.Deployment, pkgreconciler.Event)
+	ReconcileDeployment(context.Context, kmeta.OwnerRefableAccessor, *appsv1.Deployment) (*appsv1.Deployment, pkgreconciler.Event)
 }
 
 // NewDeploymentReconciler creates the default implementation for Deployment reconciler.
@@ -55,14 +57,15 @@ type deploymentReconciler struct {
 }
 
 // ReconcileDeployment does reconciliation of a desired Deployment
-func (r *deploymentReconciler) ReconcileDeployment(ctx context.Context, owner kmeta.OwnerRefable, expected *appsv1.Deployment) (*appsv1.Deployment, pkgreconciler.Event) {
+func (r *deploymentReconciler) ReconcileDeployment(ctx context.Context, owner kmeta.OwnerRefableAccessor, expected *appsv1.Deployment) (*appsv1.Deployment, pkgreconciler.Event) {
 	d, err := r.findOwned(ctx, owner)
 	if apierrors.IsNotFound(err) {
 		d, err := r.appsClientSet.Deployments(expected.Namespace).Create(ctx, expected, metav1.CreateOptions{})
 		if err != nil {
 			return nil, err
 		}
-		//return d, newDeploymentCreated(d.Namespace, d.Name)
+
+		event.Record(ctx, owner, corev1.EventTypeNormal, "DeploymentCreated", `created deployment: "%s/%s"`, d.Namespace, d.Name)
 		return d, nil
 	}
 
@@ -80,6 +83,7 @@ func (r *deploymentReconciler) ReconcileDeployment(ctx context.Context, owner km
 		if err != nil {
 			return nil, err
 		}
+		event.Record(ctx, owner, corev1.EventTypeWarning, "DeploymentDeleted", `deleted deployment: "%s/%s"`, d.Namespace, d.Name)
 		return d, nil
 	}
 
@@ -96,6 +100,7 @@ func (r *deploymentReconciler) ReconcileDeployment(ctx context.Context, owner km
 		if err != nil {
 			return nil, err
 		}
+		event.Record(ctx, owner, corev1.EventTypeNormal, "DeploymentUpdated", `updated deployment: "%s/%s"`, d.Namespace, d.Name)
 		return d, nil
 	}
 

@@ -98,6 +98,10 @@ func TestReconcile(t *testing.T) {
 					withAddress(tURI),
 				),
 			}},
+			WantEvents: []string{
+				deploymentCreatedEvent(),
+				serviceCreatedEvent(),
+			},
 		},
 
 		// Lifecycle
@@ -163,6 +167,9 @@ func TestReconcile(t *testing.T) {
 					withAddress(tURI),
 				),
 			}},
+			WantEvents: []string{
+				deploymentUpdatedEvent(),
+			},
 		},
 
 		// Errors
@@ -188,6 +195,7 @@ func TestReconcile(t *testing.T) {
 				),
 			}},
 			WantEvents: []string{
+				deploymentCreatedEvent(),
 				failCreateServiceEvent(),
 			},
 			WantErr: true,
@@ -460,6 +468,21 @@ func newService(opts ...serviceOptions) *corev1.Service {
 		opt(s)
 	}
 	return s
+}
+
+func deploymentCreatedEvent() string {
+	return Eventf(corev1.EventTypeNormal, "DeploymentCreated", "created deployment: \"%s/%s\"",
+		tNs, tGenName)
+}
+
+func serviceCreatedEvent() string {
+	return Eventf(corev1.EventTypeNormal, "ServiceCreated", "created service: \"%s/%s\"",
+		tNs, tGenName)
+}
+
+func deploymentUpdatedEvent() string {
+	return Eventf(corev1.EventTypeNormal, "DeploymentUpdated", "updated deployment: \"%s/%s\"",
+		tNs, tGenName)
 }
 
 func failUpdateDeploymentEvent() string {
