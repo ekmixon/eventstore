@@ -1,7 +1,7 @@
 KREPO              = eventstore
 KREPO_DESC         = Triggermesh Event Store
 
-COMMANDS           = eventstore-controller eventstore-inmemory eventstore-client
+COMMANDS           = eventstore-client
 TARGETS           ?= linux/amd64
 
 BASE_DIR          ?= $(CURDIR)
@@ -29,7 +29,7 @@ GOLINT            ?= golangci-lint run
 GOTOOL            ?= go tool
 GOTEST            ?= gotestsum --junitfile $(TEST_OUTPUT_DIR)/$(KREPO)-unit-tests.xml --format pkgname-and-test-fails --
 
-GOPKGS             = ./cmd/... ./pkg/apis/... ./pkg/backend/... ./pkg/reconciler/... ./pkg/eventstore/...
+GOPKGS             = ./cmd/... ./pkg/eventstore/...
 LDFLAGS            = -extldflags=-static -w -s
 
 HAS_GOTESTSUM     := $(shell command -v gotestsum;)
@@ -128,6 +128,3 @@ protoc:
 	@protoc --go_out=. --go_opt=paths=source_relative \
 		--go-grpc_out=. --go-grpc_opt=paths=source_relative \
 		pkg/eventstore/protob/eventstore.proto
-
-# Code generation
-include $(BASE_DIR)/hack/inc.Codegen.mk
