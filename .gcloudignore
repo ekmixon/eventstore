@@ -9,4 +9,3 @@
 !.git/refs/
 !/hack/
 /hack/*
-!/hack/inc.Codegen.mk
