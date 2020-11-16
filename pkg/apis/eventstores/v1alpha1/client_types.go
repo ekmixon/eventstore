@@ -19,14 +19,6 @@ package v1alpha1
 // +genduck
 // +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
 
-// EventStoreClientSpec defines the fields that clients need to configure
-// to access EventStorage servers.
-type EventStoreClientSpec struct {
-	// EventStoreConnection to the store instance
-	// +optional
-	EventStoreConnection *EventStoreConnection `json:"eventStore,omitempty"`
-}
-
 // EventStoreConnection contains the data to connect to
 // an EventStore instance
 type EventStoreConnection struct {
