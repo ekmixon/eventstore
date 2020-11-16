@@ -95,7 +95,7 @@ type UnsafeEventStoreServer interface {
 	mustEmbedUnimplementedEventStoreServer()
 }
 
-func RegisterEventStoreServer(s *grpc.Server, srv EventStoreServer) {
+func RegisterEventStoreServer(s grpc.ServiceRegistrar, srv EventStoreServer) {
 	s.RegisterService(&_EventStore_serviceDesc, srv)
 }
 
