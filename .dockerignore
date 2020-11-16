@@ -3,6 +3,7 @@
 /.git/
 /test/
 /hack/
+!/hack/inc.Codegen.mk
 /.dockerignore
 /.gcloudignore
 /cloudbuild.yaml
