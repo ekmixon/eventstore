@@ -29,7 +29,7 @@ GOLINT            ?= golangci-lint run
 GOTOOL            ?= go tool
 GOTEST            ?= gotestsum --junitfile $(TEST_OUTPUT_DIR)/$(KREPO)-unit-tests.xml --format pkgname-and-test-fails --
 
-GOPKGS             = ./cmd/... ./pkg/eventstore/...
+GOPKGS             = ./cmd/... ./pkg/protob/...
 LDFLAGS            = -extldflags=-static -w -s
 
 HAS_GOTESTSUM     := $(shell command -v gotestsum;)
@@ -127,7 +127,7 @@ protoc:
          google.golang.org/grpc/cmd/protoc-gen-go-grpc
 	@protoc --go_out=. --go_opt=paths=source_relative \
 		--go-grpc_out=. --go-grpc_opt=paths=source_relative \
-		pkg/eventstore/protob/eventstore.proto
+		pkg/protob/eventstore.proto
 
 # Code generation
 include $(BASE_DIR)/hack/inc.Codegen.mk

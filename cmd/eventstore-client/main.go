@@ -23,7 +23,7 @@ import (
 	"google.golang.org/grpc"
 	"gopkg.in/alecthomas/kingpin.v2"
 
-	"github.com/triggermesh/eventstore/pkg/eventstore/protob"
+	"github.com/triggermesh/eventstore/pkg/protob"
 )
 
 var (
