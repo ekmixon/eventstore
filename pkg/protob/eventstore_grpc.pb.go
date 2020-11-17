@@ -171,5 +171,5 @@ var _EventStore_serviceDesc = grpc.ServiceDesc{
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "pkg/eventstore/protob/eventstore.proto",
+	Metadata: "pkg/protob/eventstore.proto",
 }
