@@ -16,9 +16,6 @@ limitations under the License.
 
 package v1alpha1
 
-// +genduck
-// +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
-
 // EventStoreConnection contains the data to connect to
 // an EventStore instance
 type EventStoreConnection struct {
