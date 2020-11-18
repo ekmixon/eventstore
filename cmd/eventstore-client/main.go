@@ -20,10 +20,9 @@ import (
 	"context"
 	"log"
 
-	"google.golang.org/grpc"
 	"gopkg.in/alecthomas/kingpin.v2"
 
-	"github.com/triggermesh/eventstore/pkg/protob"
+	"github.com/triggermesh/eventstore/pkg/client"
 )
 
 var (
@@ -43,78 +42,53 @@ func main() {
 	kingpin.Parse()
 
 	// flag validation
+	ctx := context.Background()
 
-	sc, ok := protob.ScopeChoice_value[*scope]
-	if !ok {
-		kingpin.FatalUsage("not valid scope %q", *scope)
-	}
-	scopeTypeChoice := protob.ScopeChoice(sc)
-
-	location := &protob.LocationType{
-		Scope: &protob.ScopeType{
-			Type:     scopeTypeChoice,
-			Bridge:   *bridge,
-			Instance: *instance,
-		},
-		Key: *key,
+	c := client.New(*server, *timeout)
+	if err := c.Connect(ctx); err != nil {
+		log.Fatalf("Failed to dial %s: %v", *server, err)
 	}
 
-	// connection
-	ctx, cancel := context.WithTimeout(context.Background(), *timeout)
-	defer cancel()
+	defer func() { _ = c.Disconnect() }()
 
-	conn, err := grpc.DialContext(ctx, *server, grpc.WithInsecure(), grpc.WithBlock())
-	if err != nil {
-		log.Fatalf("failed to dial %s: %v", *server, err)
+	var sc client.Interface
+
+	switch {
+	case *scope == "Global":
+		sc = c.Global()
+	case *scope == "Bridge":
+		sc = c.Bridge(*bridge)
+	case *scope == "Instance":
+		sc = c.Instance(*bridge, *instance)
+	default:
+		log.Fatalf("Incorrect scope %q", *scope)
 	}
-
-	defer conn.Close()
-	client := protob.NewEventStoreClient(conn)
 
 	// execution
 
 	switch *command {
 	case "load":
-		req := &protob.LoadRequest{Location: location}
-		if err := req.Validate(); err != nil {
-			log.Fatalf("Wrong request: %v", err)
-		}
-
-		lr, err := client.Load(ctx, req)
+		r, err := sc.LoadValue(ctx, *key)
 		if err != nil {
-			log.Fatalf("could not load: %v", err)
+			log.Fatalf("could not load %q: %v", *key, err)
 		}
-		log.Printf("Loaded value: %s", lr.GetValue())
+		log.Printf("Loaded value (string): %s", string(r))
 
 	case "save":
-		req := &protob.SaveRequest{
-			Location: location,
-			Value:    []byte(*value),
-			Ttl:      *ttl,
-		}
-		if err := req.Validate(); err != nil {
-			log.Fatalf("Wrong request: %v", err)
-		}
-
-		_, err = client.Save(ctx, req)
+		err := sc.SaveValue(ctx, *key, []byte(*value), *ttl)
 		if err != nil {
-			log.Fatalf("could not save: %v", err)
+			log.Fatalf("could not save key %q: %v", *key, err)
 		}
 		log.Print("Saved.")
 
 	case "delete":
-		req := &protob.DeleteRequest{Location: location}
-		if err := req.Validate(); err != nil {
-			log.Fatalf("Wrong request: %v", err)
-		}
-
-		_, err = client.Delete(ctx, req)
+		err := sc.DeleteValue(ctx, *key)
 		if err != nil {
-			log.Fatalf("could not delete value: %v", err)
+			log.Fatalf("could not delete key %q: %v", *key, err)
 		}
-		log.Println("Deleted.")
+		log.Print("Deleted.")
 
 	default:
-		kingpin.FatalUsage("not valid command %q", *command)
+		kingpin.FatalUsage("Not valid command %q", *command)
 	}
 }
