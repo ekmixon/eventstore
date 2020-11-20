@@ -98,7 +98,7 @@ ko apply -n mynamespace -f ./config/
 Once the pod is running, you can exec bash in it and interact with the backing EventStore:
 
 ```sh
-$ kubectl exec -ti -n tmsamples eventstores-client -- bash
+$ kubectl exec -ti -n mynamespace eventstores-client -- bash
 
 # eventstore-client  \
     --command load \
