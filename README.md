@@ -12,9 +12,11 @@ A recommended go client with a much simpler interface [is also provided](./pkg/c
 
 The EventStore interface stores data at three eventing levels: global, bridge and instance
 
-- Global: data stored at the global level is shared among all components that use the same EventStore by just specifying the key where the values are stored.
-- Bridge: the term bridge is used at Triggermesh as the grouping of eventing components that play a role in an event flow, which are marked with the bridge name they belong to. The bridge level stored values can be used by components at the same bridge only. Note that only the name _bridge_ is borrowed, and no dependency exists with Triggermesh bridges.
-- Instance: a bridge flow is started by one component that might be able to stamp an instance identifier on it. As long as that identifier exists and is propagate through the event flow, it can be used to store data only available at that single instance inside the bridge.
+- `Global`: data stored at the global level is shared among all components that use the same EventStore by just specifying the key where the values are stored.
+
+- `Bridge`: the term bridge is used at Triggermesh as the grouping of eventing components that play a role in an event flow, which are marked with the bridge name they belong to. The bridge level stored values can be used by components at the same bridge only. Note that only the name _bridge_ is borrowed, and no dependency exists with Triggermesh bridges.
+
+- `Instance`: a bridge flow is started by one component that might be able to stamp an instance identifier on it. As long as that identifier exists and is propagate through the event flow, it can be used to store data only available at that single instance inside the bridge.
 
 Depending on the level where data is stored a location needs to be specified:
 
@@ -64,7 +66,7 @@ Each of the EventStore levels can be chosen by informing their parameters.
 ```go
 global := c.Global()
 myBrige := c.Bridge("my-bridge")
-myBrigeInstance := c.Bridge("my-bridge","aaee-1122")
+myBrigeInstance := c.Instance("my-bridge","aaee-1122")
 ```
 
 ### Interface Methods
