@@ -28,17 +28,16 @@ fi
 COMMANDS=$(sed -n -e "s/^\(COMMANDS[[:space:]]*=[[:space:]]*\)\(.*\)$/\2/p" Makefile)
 PLATFORMS=$(sed -n -e "s/^\(TARGETS[[:space:]]*?=[[:space:]]*\)\(.*\)$/\2/p" Makefile)
 RELEASE_ASSETS_TABLE=$(
-  echo -n "|"; for command in ${COMMANDS}; do echo -n " ${command} |"; done ; echo
-  echo -n "|"; for command in ${COMMANDS}; do echo -n "--|"; done ; echo
-  echo -n "|"
   for command in ${COMMANDS}; do
-    echo -n " ([container](https://gcr.io/triggermesh/${command}:${RELEASE}))"
+    echo "### ${command}"
+    echo ""
+    echo "- [container](https://gcr.io/triggermesh/${command}:${RELEASE})"
     for platform in ${PLATFORMS}; do
-      echo -n " ([${platform}](${BASE_URL}/${command}-${platform%/*}-${platform#*/}))"
+      echo "- [${platform}](${BASE_URL}/${command}-${platform%/*}-${platform#*/})"
     done
-    echo -n " |"
+    echo ""
+    echo ""
   done
-  echo
 )
 
 cat <<EOF
