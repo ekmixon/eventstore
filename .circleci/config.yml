@@ -72,50 +72,6 @@ jobs:
           name: Publishing docker image
           command: IMAGE_SHA=${CIRCLE_SHA1} IMAGE_TAG=${CIRCLE_TAG:-latest} make -j6 cloudbuild
 
-  deploy:
-    description: Patches target cluster configuration
-    executor:
-      name: go/default
-      tag: '1.15'
-    parameters:
-      cluster:
-        type: string
-      committer_name:
-        type: string
-        default: TriggerMesh Bot
-      committer_email:
-        type: string
-        default: bot@triggermesh.com
-    steps:
-      - attach_workspace:
-          at: ~/
-      - add_ssh_keys
-      - run: ssh-keyscan github.com >> ~/.ssh/known_hosts
-      - run:
-          name: Configuring git
-          command: |
-            git config --global user.name '<< parameters.committer_name >>'
-            git config --global user.email '<< parameters.committer_email >>'
-      - run:
-          name: Cloning config repository
-          command: git clone --single-branch git@github.com:triggermesh/config.git tmconfig
-      - run:
-          name: Updating overlays/<< parameters.cluster >>/eventstore manifests
-          working_directory: tmconfig/
-          command: |
-            for cmd in $(sed -n -e 's/^COMMANDS[[:space:]]*=[[:space:]]*\(.*\)$/\1/p' ~/project/Makefile); do
-              sed -i overlays/<< parameters.cluster >>/eventstore/deployments.yaml \
-                -e "s|\(gcr.io/triggermesh/${cmd}:\).*|\1${CIRCLE_TAG:-${CIRCLE_SHA1}}|g"
-            done
-            git --no-pager diff
-      - run:
-          name: Committing overlays/<< parameters.cluster >>/eventstore updates
-          working_directory: tmconfig/
-          command: |
-            git add overlays
-            git commit -m "Update overlays/<< parameters.cluster >>/eventstore deployments to '${CIRCLE_TAG:-${CIRCLE_SHA1}}'"
-            git push origin master
-
   release:
     executor:
       name: go/default
@@ -147,7 +103,7 @@ workflows:
             tags:
               only: /^v([0-9]+)\.([0-9]+)\.([0-9]+)(?:-([0-9A-Za-z-]+(?:\.[0-9A-Za-z-]+)*))?(?:\+[0-9A-Za-z-]+)?$/
       - build:
-          context: private
+          context: production
           requires:
             - checkout
           filters:
@@ -160,7 +116,7 @@ workflows:
             tags:
               only: /^v([0-9]+)\.([0-9]+)\.([0-9]+)(?:-([0-9A-Za-z-]+(?:\.[0-9A-Za-z-]+)*))?(?:\+[0-9A-Za-z-]+)?$/
       - publish-image:
-          context: private
+          context: production
           requires:
             - build
             - test
@@ -170,7 +126,7 @@ workflows:
             branches:
               only: master
       - release:
-          context: private
+          context: production
           requires:
             - publish-image
           filters:
