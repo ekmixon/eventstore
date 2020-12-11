@@ -19,7 +19,7 @@ MV                ?= mv
 MKDIR             ?= mkdir
 
 DOCKER            ?= docker
-IMAGE_REPO        ?= gcr.io/triggermesh-private
+IMAGE_REPO        ?= gcr.io/triggermesh
 IMAGE_TAG         ?= latest
 IMAGE_SHA         ?= $(shell git rev-parse HEAD)
 
