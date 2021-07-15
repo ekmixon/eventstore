@@ -121,7 +121,7 @@ clean: ## Clean build artifacts
 	@$(RM) -v $(TEST_OUTPUT_DIR)/$(KREPO)-c.out $(TEST_OUTPUT_DIR)/$(KREPO)-unit-tests.xml
 	@$(RM) -v $(COVER_OUTPUT_DIR)/$(KREPO)-coverage.html
 
-protoc:
+protoc: ## Generates protoc code
 	@echo "+ Generating protoc code"
 	@go get github.com/golang/protobuf/protoc-gen-go \
          google.golang.org/grpc/cmd/protoc-gen-go-grpc
