@@ -81,6 +81,7 @@ func TestGlobalEventStoreClient(t *testing.T) {
 	assert.Equal(t, len(expected), len(requests), "Unexpected number of requests")
 
 	for i := range requests {
+		//nolint:govet
 		assert.Equal(t, expected[i], requests[i],
 			"unexpected request at %s/%s",
 			expected[i].Location.Scope.Type.String(),

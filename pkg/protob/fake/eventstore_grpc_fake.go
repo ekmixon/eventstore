@@ -105,9 +105,10 @@ func (c *client) GetRequests() []Request {
 func (c *client) Save(ctx context.Context, in *protob.SaveRequest, opts ...grpc.CallOption) (*protob.SaveResponse, error) {
 	c.requests = append(c.requests, Request{
 		Operation: "Save",
-		Location:  *in.Location,
-		Value:     in.Value,
-		TTL:       in.Ttl,
+		//nolint:govet
+		Location: *in.Location,
+		Value:    in.Value,
+		TTL:      in.Ttl,
 	})
 
 	return c.save(in)
@@ -117,7 +118,8 @@ func (c *client) Save(ctx context.Context, in *protob.SaveRequest, opts ...grpc.
 func (c *client) Load(ctx context.Context, in *protob.LoadRequest, opts ...grpc.CallOption) (*protob.LoadResponse, error) {
 	c.requests = append(c.requests, Request{
 		Operation: "Load",
-		Location:  *in.Location,
+		//nolint:govet
+		Location: *in.Location,
 	})
 
 	return c.load(in)
@@ -127,7 +129,8 @@ func (c *client) Load(ctx context.Context, in *protob.LoadRequest, opts ...grpc.
 func (c *client) Delete(ctx context.Context, in *protob.DeleteRequest, opts ...grpc.CallOption) (*protob.DeleteResponse, error) {
 	c.requests = append(c.requests, Request{
 		Operation: "Delete",
-		Location:  *in.Location,
+		//nolint:govet
+		Location: *in.Location,
 	})
 
 	return c.delete(in)

@@ -128,6 +128,3 @@ protoc:
 	@protoc --go_out=. --go_opt=paths=source_relative \
 		--go-grpc_out=. --go-grpc_opt=paths=source_relative \
 		pkg/protob/eventstore.proto
-
-# Code generation
-include $(BASE_DIR)/hack/inc.Codegen.mk
