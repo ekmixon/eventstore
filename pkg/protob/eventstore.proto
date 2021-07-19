@@ -90,28 +90,85 @@ service KVStore {
   rpc Get(GetRequest) returns (GetResponse) {}
 }
 
+message SetMapRequest {
+  LocationType location = 1;
+  int32 ttl = 2;
+  string field = 3;
+  bytes value = 4;
+}
+
+message SetMapResponse {}
+
+message IncrMapRequest {
+  LocationType location = 1;
+  string field = 2;
+  int32 incr = 3;
+}
+
+message IncrMapResponse {}
+
+message DecrMapRequest {
+  LocationType location = 1;
+  string field = 2;
+  int32 decr = 3;
+}
+
+message DecrMapResponse {}
+
+message DelMapRequest {
+  LocationType location = 1;
+  string field = 2;
+}
+
+message DelMapResponse {}
+
+message GetMapRequest {
+  LocationType location = 1;
+  string field = 2;
+}
+
+message GetMapResponse {
+  bytes value = 1;
+}
+
+message GetAllMapRequest {
+  LocationType location = 1;
+}
+
+message GetAllMapResponse {
+  map<string, bytes> values = 1;
+}
+
+message LenMapRequest {
+  LocationType location = 1;
+}
+
+message LenMapResponse {
+  int32 len = 1;
+}
+
 // Map interface
 service Map {
   // Set KV at map
-  rpc Set(SetRequest) returns (SetResponse) {}
+  rpc Set(SetMapRequest) returns (SetMapResponse) {}
 
   // Incr increments integer value at map
-  rpc Incr(IncrRequest) returns (IncrResponse) {}
+  rpc Incr(IncrMapRequest) returns (IncrMapResponse) {}
 
   // Decr decrements integer value at map
-  rpc Decr(DecrRequest) returns (DecrResponse) {}
+  rpc Decr(DecrMapRequest) returns (DecrMapResponse) {}
 
   // Del key at map
-  rpc Del(DelRequest) returns (DelResponse) {}
+  rpc Del(DelMapRequest) returns (DelMapResponse) {}
 
   // Get value at key
-  rpc Get(GetRequest) returns (GetResponse) {}
+  rpc Get(GetMapRequest) returns (GetMapResponse) {}
 
   // GetAll all KVs in map
-  rpc GetAll(GetAllRequest) returns (GetAllResponse) {}
+  rpc GetAll(GetAllMapRequest) returns (GetAllMapResponse) {}
 
   // Len for the map
-  rpc Len(LenRequest) returns (LenResponse) {}
+  rpc Len(LenMapRequest) returns (LenMapResponse) {}
 }
 
 // Queue interface
