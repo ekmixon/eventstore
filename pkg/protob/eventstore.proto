@@ -36,36 +36,105 @@ message LocationType {
   string key = 2;
 }
 
-message SaveRequest {
+message SetRequest {
   LocationType location = 1;
   int32 ttl = 2;
   bytes value = 3;
 }
 
-message SaveResponse {}
+message SetResponse {}
 
-message LoadRequest {
+message IncrRequest {
+  LocationType location = 1;
+  int32 incr = 2;
+}
+
+message IncrResponse {}
+
+message DecrRequest {
+  LocationType location = 1;
+  int32 decr = 2;
+}
+
+message DecrResponse {}
+
+message GetRequest {
   LocationType location = 1;
 }
 
-message LoadResponse {
+message GetResponse {
   bytes value = 1;
 }
 
-message DeleteRequest {
+message DelRequest {
   LocationType location = 1;
 }
 
-message DeleteResponse {}
+message DelResponse {}
 
-// EventStore interface
-service EventStore {
-  // Save variable to storage
-  rpc Save(SaveRequest) returns (SaveResponse) {}
+// KVStore interface
+service KVStore {
+  // Set KV at storage
+  rpc Set(SetRequest) returns (SetResponse) {}
 
-  // Load variable from storage
-  rpc Load(LoadRequest) returns (LoadResponse) {}
+  // Incr increments an integer value from storage
+  rpc Incr(IncrRequest) returns (IncrResponse) {}
 
-  // Delete variable from storage
-  rpc Delete(DeleteRequest) returns (DeleteResponse) {}
+  // Decr decrements an integer value from storage
+  rpc Decr(DecrRequest) returns (DecrResponse) {}
+
+  // Del item from storage
+  rpc Del(DelRequest) returns (DelResponse) {}
+
+  // Get item from storage
+  rpc Get(GetRequest) returns (GetResponse) {}
 }
+
+// Map interface
+service Map {
+  // Set KV at map
+  rpc Set(SetRequest) returns (SetResponse) {}
+
+  // Incr increments integer value at map
+  rpc Incr(IncrRequest) returns (IncrResponse) {}
+
+  // Decr decrements integer value at map
+  rpc Decr(DecrRequest) returns (DecrResponse) {}
+
+  // Del key at map
+  rpc Del(DelRequest) returns (DelResponse) {}
+
+  // Get value at key
+  rpc Get(GetRequest) returns (GetResponse) {}
+
+  // GetAll all KVs in map
+  rpc GetAll(GetAllRequest) returns (GetAllResponse) {}
+
+  // Len for the map
+  rpc Len(LenRequest) returns (LenResponse) {}
+}
+
+// Queue interface
+service Queue {
+  // Push value in map
+  rpc Push(PushRequest) returns (PushResponse) {}
+
+  // Index returns the element at the index
+  rpc Index(IndexRequest) returns (IndexResponse) {}
+
+  // Len for the queue
+  rpc Len(LenRequest) returns (LenResponse) {}
+
+  // Pop retrieves and removes an element from the queue
+  rpc Pop(PopRequest) returns (PopResponse) {}
+
+  // Peek retrieves an element from the queue
+  rpc Peek(PeekRequest) returns (PeekResponse) {}
+
+  // Lock the queue for exclusive access
+  rpc Lock(LockRequest) returns (LockRequest) {}
+
+  // Unlock the queue
+  rpc Unlock(UnlockRequest) returns (UnlockResponse) {}
+}
+
