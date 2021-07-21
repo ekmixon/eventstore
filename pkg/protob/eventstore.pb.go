@@ -202,7 +202,7 @@ func (x *LocationType) GetKey() string {
 	return ""
 }
 
-type SaveRequest struct {
+type SetKVRequest struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
@@ -212,8 +212,8 @@ type SaveRequest struct {
 	Value    []byte        `protobuf:"bytes,3,opt,name=value,proto3" json:"value,omitempty"`
 }
 
-func (x *SaveRequest) Reset() {
-	*x = SaveRequest{}
+func (x *SetKVRequest) Reset() {
+	*x = SetKVRequest{}
 	if protoimpl.UnsafeEnabled {
 		mi := &file_pkg_protob_eventstore_proto_msgTypes[2]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -221,13 +221,13 @@ func (x *SaveRequest) Reset() {
 	}
 }
 
-func (x *SaveRequest) String() string {
+func (x *SetKVRequest) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*SaveRequest) ProtoMessage() {}
+func (*SetKVRequest) ProtoMessage() {}
 
-func (x *SaveRequest) ProtoReflect() protoreflect.Message {
+func (x *SetKVRequest) ProtoReflect() protoreflect.Message {
 	mi := &file_pkg_protob_eventstore_proto_msgTypes[2]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -239,40 +239,40 @@ func (x *SaveRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use SaveRequest.ProtoReflect.Descriptor instead.
-func (*SaveRequest) Descriptor() ([]byte, []int) {
+// Deprecated: Use SetKVRequest.ProtoReflect.Descriptor instead.
+func (*SetKVRequest) Descriptor() ([]byte, []int) {
 	return file_pkg_protob_eventstore_proto_rawDescGZIP(), []int{2}
 }
 
-func (x *SaveRequest) GetLocation() *LocationType {
+func (x *SetKVRequest) GetLocation() *LocationType {
 	if x != nil {
 		return x.Location
 	}
 	return nil
 }
 
-func (x *SaveRequest) GetTtl() int32 {
+func (x *SetKVRequest) GetTtl() int32 {
 	if x != nil {
 		return x.Ttl
 	}
 	return 0
 }
 
-func (x *SaveRequest) GetValue() []byte {
+func (x *SetKVRequest) GetValue() []byte {
 	if x != nil {
 		return x.Value
 	}
 	return nil
 }
 
-type SaveResponse struct {
+type SetKVResponse struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 }
 
-func (x *SaveResponse) Reset() {
-	*x = SaveResponse{}
+func (x *SetKVResponse) Reset() {
+	*x = SetKVResponse{}
 	if protoimpl.UnsafeEnabled {
 		mi := &file_pkg_protob_eventstore_proto_msgTypes[3]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -280,13 +280,13 @@ func (x *SaveResponse) Reset() {
 	}
 }
 
-func (x *SaveResponse) String() string {
+func (x *SetKVResponse) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*SaveResponse) ProtoMessage() {}
+func (*SetKVResponse) ProtoMessage() {}
 
-func (x *SaveResponse) ProtoReflect() protoreflect.Message {
+func (x *SetKVResponse) ProtoReflect() protoreflect.Message {
 	mi := &file_pkg_protob_eventstore_proto_msgTypes[3]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -298,21 +298,22 @@ func (x *SaveResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use SaveResponse.ProtoReflect.Descriptor instead.
-func (*SaveResponse) Descriptor() ([]byte, []int) {
+// Deprecated: Use SetKVResponse.ProtoReflect.Descriptor instead.
+func (*SetKVResponse) Descriptor() ([]byte, []int) {
 	return file_pkg_protob_eventstore_proto_rawDescGZIP(), []int{3}
 }
 
-type LoadRequest struct {
+type IncrKVRequest struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
 	Location *LocationType `protobuf:"bytes,1,opt,name=location,proto3" json:"location,omitempty"`
+	Incr     int32         `protobuf:"varint,2,opt,name=incr,proto3" json:"incr,omitempty"`
 }
 
-func (x *LoadRequest) Reset() {
-	*x = LoadRequest{}
+func (x *IncrKVRequest) Reset() {
+	*x = IncrKVRequest{}
 	if protoimpl.UnsafeEnabled {
 		mi := &file_pkg_protob_eventstore_proto_msgTypes[4]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -320,13 +321,13 @@ func (x *LoadRequest) Reset() {
 	}
 }
 
-func (x *LoadRequest) String() string {
+func (x *IncrKVRequest) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*LoadRequest) ProtoMessage() {}
+func (*IncrKVRequest) ProtoMessage() {}
 
-func (x *LoadRequest) ProtoReflect() protoreflect.Message {
+func (x *IncrKVRequest) ProtoReflect() protoreflect.Message {
 	mi := &file_pkg_protob_eventstore_proto_msgTypes[4]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -338,28 +339,33 @@ func (x *LoadRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use LoadRequest.ProtoReflect.Descriptor instead.
-func (*LoadRequest) Descriptor() ([]byte, []int) {
+// Deprecated: Use IncrKVRequest.ProtoReflect.Descriptor instead.
+func (*IncrKVRequest) Descriptor() ([]byte, []int) {
 	return file_pkg_protob_eventstore_proto_rawDescGZIP(), []int{4}
 }
 
-func (x *LoadRequest) GetLocation() *LocationType {
+func (x *IncrKVRequest) GetLocation() *LocationType {
 	if x != nil {
 		return x.Location
 	}
 	return nil
 }
 
-type LoadResponse struct {
+func (x *IncrKVRequest) GetIncr() int32 {
+	if x != nil {
+		return x.Incr
+	}
+	return 0
+}
+
+type IncrKVResponse struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
-
-	Value []byte `protobuf:"bytes,1,opt,name=value,proto3" json:"value,omitempty"`
 }
 
-func (x *LoadResponse) Reset() {
-	*x = LoadResponse{}
+func (x *IncrKVResponse) Reset() {
+	*x = IncrKVResponse{}
 	if protoimpl.UnsafeEnabled {
 		mi := &file_pkg_protob_eventstore_proto_msgTypes[5]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -367,13 +373,13 @@ func (x *LoadResponse) Reset() {
 	}
 }
 
-func (x *LoadResponse) String() string {
+func (x *IncrKVResponse) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*LoadResponse) ProtoMessage() {}
+func (*IncrKVResponse) ProtoMessage() {}
 
-func (x *LoadResponse) ProtoReflect() protoreflect.Message {
+func (x *IncrKVResponse) ProtoReflect() protoreflect.Message {
 	mi := &file_pkg_protob_eventstore_proto_msgTypes[5]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -385,28 +391,22 @@ func (x *LoadResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use LoadResponse.ProtoReflect.Descriptor instead.
-func (*LoadResponse) Descriptor() ([]byte, []int) {
+// Deprecated: Use IncrKVResponse.ProtoReflect.Descriptor instead.
+func (*IncrKVResponse) Descriptor() ([]byte, []int) {
 	return file_pkg_protob_eventstore_proto_rawDescGZIP(), []int{5}
 }
 
-func (x *LoadResponse) GetValue() []byte {
-	if x != nil {
-		return x.Value
-	}
-	return nil
-}
-
-type DeleteRequest struct {
+type DecrKVRequest struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
 	Location *LocationType `protobuf:"bytes,1,opt,name=location,proto3" json:"location,omitempty"`
+	Decr     int32         `protobuf:"varint,2,opt,name=decr,proto3" json:"decr,omitempty"`
 }
 
-func (x *DeleteRequest) Reset() {
-	*x = DeleteRequest{}
+func (x *DecrKVRequest) Reset() {
+	*x = DecrKVRequest{}
 	if protoimpl.UnsafeEnabled {
 		mi := &file_pkg_protob_eventstore_proto_msgTypes[6]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -414,13 +414,13 @@ func (x *DeleteRequest) Reset() {
 	}
 }
 
-func (x *DeleteRequest) String() string {
+func (x *DecrKVRequest) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*DeleteRequest) ProtoMessage() {}
+func (*DecrKVRequest) ProtoMessage() {}
 
-func (x *DeleteRequest) ProtoReflect() protoreflect.Message {
+func (x *DecrKVRequest) ProtoReflect() protoreflect.Message {
 	mi := &file_pkg_protob_eventstore_proto_msgTypes[6]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -432,26 +432,33 @@ func (x *DeleteRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use DeleteRequest.ProtoReflect.Descriptor instead.
-func (*DeleteRequest) Descriptor() ([]byte, []int) {
+// Deprecated: Use DecrKVRequest.ProtoReflect.Descriptor instead.
+func (*DecrKVRequest) Descriptor() ([]byte, []int) {
 	return file_pkg_protob_eventstore_proto_rawDescGZIP(), []int{6}
 }
 
-func (x *DeleteRequest) GetLocation() *LocationType {
+func (x *DecrKVRequest) GetLocation() *LocationType {
 	if x != nil {
 		return x.Location
 	}
 	return nil
 }
 
-type DeleteResponse struct {
+func (x *DecrKVRequest) GetDecr() int32 {
+	if x != nil {
+		return x.Decr
+	}
+	return 0
+}
+
+type DecrKVResponse struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 }
 
-func (x *DeleteResponse) Reset() {
-	*x = DeleteResponse{}
+func (x *DecrKVResponse) Reset() {
+	*x = DecrKVResponse{}
 	if protoimpl.UnsafeEnabled {
 		mi := &file_pkg_protob_eventstore_proto_msgTypes[7]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -459,13 +466,13 @@ func (x *DeleteResponse) Reset() {
 	}
 }
 
-func (x *DeleteResponse) String() string {
+func (x *DecrKVResponse) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*DeleteResponse) ProtoMessage() {}
+func (*DecrKVResponse) ProtoMessage() {}
 
-func (x *DeleteResponse) ProtoReflect() protoreflect.Message {
+func (x *DecrKVResponse) ProtoReflect() protoreflect.Message {
 	mi := &file_pkg_protob_eventstore_proto_msgTypes[7]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -477,9 +484,2012 @@ func (x *DeleteResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use DeleteResponse.ProtoReflect.Descriptor instead.
-func (*DeleteResponse) Descriptor() ([]byte, []int) {
+// Deprecated: Use DecrKVResponse.ProtoReflect.Descriptor instead.
+func (*DecrKVResponse) Descriptor() ([]byte, []int) {
 	return file_pkg_protob_eventstore_proto_rawDescGZIP(), []int{7}
+}
+
+type GetKVRequest struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Location *LocationType `protobuf:"bytes,1,opt,name=location,proto3" json:"location,omitempty"`
+}
+
+func (x *GetKVRequest) Reset() {
+	*x = GetKVRequest{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_pkg_protob_eventstore_proto_msgTypes[8]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *GetKVRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetKVRequest) ProtoMessage() {}
+
+func (x *GetKVRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_pkg_protob_eventstore_proto_msgTypes[8]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetKVRequest.ProtoReflect.Descriptor instead.
+func (*GetKVRequest) Descriptor() ([]byte, []int) {
+	return file_pkg_protob_eventstore_proto_rawDescGZIP(), []int{8}
+}
+
+func (x *GetKVRequest) GetLocation() *LocationType {
+	if x != nil {
+		return x.Location
+	}
+	return nil
+}
+
+type GetKVResponse struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Value []byte `protobuf:"bytes,1,opt,name=value,proto3" json:"value,omitempty"`
+}
+
+func (x *GetKVResponse) Reset() {
+	*x = GetKVResponse{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_pkg_protob_eventstore_proto_msgTypes[9]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *GetKVResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetKVResponse) ProtoMessage() {}
+
+func (x *GetKVResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_pkg_protob_eventstore_proto_msgTypes[9]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetKVResponse.ProtoReflect.Descriptor instead.
+func (*GetKVResponse) Descriptor() ([]byte, []int) {
+	return file_pkg_protob_eventstore_proto_rawDescGZIP(), []int{9}
+}
+
+func (x *GetKVResponse) GetValue() []byte {
+	if x != nil {
+		return x.Value
+	}
+	return nil
+}
+
+type DelKVRequest struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Location *LocationType `protobuf:"bytes,1,opt,name=location,proto3" json:"location,omitempty"`
+}
+
+func (x *DelKVRequest) Reset() {
+	*x = DelKVRequest{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_pkg_protob_eventstore_proto_msgTypes[10]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *DelKVRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DelKVRequest) ProtoMessage() {}
+
+func (x *DelKVRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_pkg_protob_eventstore_proto_msgTypes[10]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use DelKVRequest.ProtoReflect.Descriptor instead.
+func (*DelKVRequest) Descriptor() ([]byte, []int) {
+	return file_pkg_protob_eventstore_proto_rawDescGZIP(), []int{10}
+}
+
+func (x *DelKVRequest) GetLocation() *LocationType {
+	if x != nil {
+		return x.Location
+	}
+	return nil
+}
+
+type DelKVResponse struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+}
+
+func (x *DelKVResponse) Reset() {
+	*x = DelKVResponse{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_pkg_protob_eventstore_proto_msgTypes[11]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *DelKVResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DelKVResponse) ProtoMessage() {}
+
+func (x *DelKVResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_pkg_protob_eventstore_proto_msgTypes[11]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use DelKVResponse.ProtoReflect.Descriptor instead.
+func (*DelKVResponse) Descriptor() ([]byte, []int) {
+	return file_pkg_protob_eventstore_proto_rawDescGZIP(), []int{11}
+}
+
+type LockRequest struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Location *LocationType `protobuf:"bytes,1,opt,name=location,proto3" json:"location,omitempty"`
+	Timeout  int32         `protobuf:"varint,2,opt,name=timeout,proto3" json:"timeout,omitempty"`
+}
+
+func (x *LockRequest) Reset() {
+	*x = LockRequest{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_pkg_protob_eventstore_proto_msgTypes[12]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *LockRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*LockRequest) ProtoMessage() {}
+
+func (x *LockRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_pkg_protob_eventstore_proto_msgTypes[12]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use LockRequest.ProtoReflect.Descriptor instead.
+func (*LockRequest) Descriptor() ([]byte, []int) {
+	return file_pkg_protob_eventstore_proto_rawDescGZIP(), []int{12}
+}
+
+func (x *LockRequest) GetLocation() *LocationType {
+	if x != nil {
+		return x.Location
+	}
+	return nil
+}
+
+func (x *LockRequest) GetTimeout() int32 {
+	if x != nil {
+		return x.Timeout
+	}
+	return 0
+}
+
+type LockResponse struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Unlock string `protobuf:"bytes,1,opt,name=unlock,proto3" json:"unlock,omitempty"`
+}
+
+func (x *LockResponse) Reset() {
+	*x = LockResponse{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_pkg_protob_eventstore_proto_msgTypes[13]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *LockResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*LockResponse) ProtoMessage() {}
+
+func (x *LockResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_pkg_protob_eventstore_proto_msgTypes[13]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use LockResponse.ProtoReflect.Descriptor instead.
+func (*LockResponse) Descriptor() ([]byte, []int) {
+	return file_pkg_protob_eventstore_proto_rawDescGZIP(), []int{13}
+}
+
+func (x *LockResponse) GetUnlock() string {
+	if x != nil {
+		return x.Unlock
+	}
+	return ""
+}
+
+type UnlockRequest struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Location *LocationType `protobuf:"bytes,1,opt,name=location,proto3" json:"location,omitempty"`
+	Unlock   string        `protobuf:"bytes,2,opt,name=unlock,proto3" json:"unlock,omitempty"`
+}
+
+func (x *UnlockRequest) Reset() {
+	*x = UnlockRequest{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_pkg_protob_eventstore_proto_msgTypes[14]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *UnlockRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UnlockRequest) ProtoMessage() {}
+
+func (x *UnlockRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_pkg_protob_eventstore_proto_msgTypes[14]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UnlockRequest.ProtoReflect.Descriptor instead.
+func (*UnlockRequest) Descriptor() ([]byte, []int) {
+	return file_pkg_protob_eventstore_proto_rawDescGZIP(), []int{14}
+}
+
+func (x *UnlockRequest) GetLocation() *LocationType {
+	if x != nil {
+		return x.Location
+	}
+	return nil
+}
+
+func (x *UnlockRequest) GetUnlock() string {
+	if x != nil {
+		return x.Unlock
+	}
+	return ""
+}
+
+type UnlockResponse struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+}
+
+func (x *UnlockResponse) Reset() {
+	*x = UnlockResponse{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_pkg_protob_eventstore_proto_msgTypes[15]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *UnlockResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UnlockResponse) ProtoMessage() {}
+
+func (x *UnlockResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_pkg_protob_eventstore_proto_msgTypes[15]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UnlockResponse.ProtoReflect.Descriptor instead.
+func (*UnlockResponse) Descriptor() ([]byte, []int) {
+	return file_pkg_protob_eventstore_proto_rawDescGZIP(), []int{15}
+}
+
+type NewMapRequest struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Location *LocationType `protobuf:"bytes,1,opt,name=location,proto3" json:"location,omitempty"`
+	Ttl      int32         `protobuf:"varint,2,opt,name=ttl,proto3" json:"ttl,omitempty"`
+}
+
+func (x *NewMapRequest) Reset() {
+	*x = NewMapRequest{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_pkg_protob_eventstore_proto_msgTypes[16]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *NewMapRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*NewMapRequest) ProtoMessage() {}
+
+func (x *NewMapRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_pkg_protob_eventstore_proto_msgTypes[16]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use NewMapRequest.ProtoReflect.Descriptor instead.
+func (*NewMapRequest) Descriptor() ([]byte, []int) {
+	return file_pkg_protob_eventstore_proto_rawDescGZIP(), []int{16}
+}
+
+func (x *NewMapRequest) GetLocation() *LocationType {
+	if x != nil {
+		return x.Location
+	}
+	return nil
+}
+
+func (x *NewMapRequest) GetTtl() int32 {
+	if x != nil {
+		return x.Ttl
+	}
+	return 0
+}
+
+type NewMapResponse struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+}
+
+func (x *NewMapResponse) Reset() {
+	*x = NewMapResponse{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_pkg_protob_eventstore_proto_msgTypes[17]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *NewMapResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*NewMapResponse) ProtoMessage() {}
+
+func (x *NewMapResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_pkg_protob_eventstore_proto_msgTypes[17]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use NewMapResponse.ProtoReflect.Descriptor instead.
+func (*NewMapResponse) Descriptor() ([]byte, []int) {
+	return file_pkg_protob_eventstore_proto_rawDescGZIP(), []int{17}
+}
+
+type DelMapRequest struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Location *LocationType `protobuf:"bytes,1,opt,name=location,proto3" json:"location,omitempty"`
+}
+
+func (x *DelMapRequest) Reset() {
+	*x = DelMapRequest{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_pkg_protob_eventstore_proto_msgTypes[18]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *DelMapRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DelMapRequest) ProtoMessage() {}
+
+func (x *DelMapRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_pkg_protob_eventstore_proto_msgTypes[18]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use DelMapRequest.ProtoReflect.Descriptor instead.
+func (*DelMapRequest) Descriptor() ([]byte, []int) {
+	return file_pkg_protob_eventstore_proto_rawDescGZIP(), []int{18}
+}
+
+func (x *DelMapRequest) GetLocation() *LocationType {
+	if x != nil {
+		return x.Location
+	}
+	return nil
+}
+
+type DelMapResponse struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+}
+
+func (x *DelMapResponse) Reset() {
+	*x = DelMapResponse{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_pkg_protob_eventstore_proto_msgTypes[19]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *DelMapResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DelMapResponse) ProtoMessage() {}
+
+func (x *DelMapResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_pkg_protob_eventstore_proto_msgTypes[19]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use DelMapResponse.ProtoReflect.Descriptor instead.
+func (*DelMapResponse) Descriptor() ([]byte, []int) {
+	return file_pkg_protob_eventstore_proto_rawDescGZIP(), []int{19}
+}
+
+type GetAllMapFieldsRequest struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Location *LocationType `protobuf:"bytes,1,opt,name=location,proto3" json:"location,omitempty"`
+}
+
+func (x *GetAllMapFieldsRequest) Reset() {
+	*x = GetAllMapFieldsRequest{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_pkg_protob_eventstore_proto_msgTypes[20]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *GetAllMapFieldsRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetAllMapFieldsRequest) ProtoMessage() {}
+
+func (x *GetAllMapFieldsRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_pkg_protob_eventstore_proto_msgTypes[20]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetAllMapFieldsRequest.ProtoReflect.Descriptor instead.
+func (*GetAllMapFieldsRequest) Descriptor() ([]byte, []int) {
+	return file_pkg_protob_eventstore_proto_rawDescGZIP(), []int{20}
+}
+
+func (x *GetAllMapFieldsRequest) GetLocation() *LocationType {
+	if x != nil {
+		return x.Location
+	}
+	return nil
+}
+
+type GetAllMapFieldsResponse struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Values map[string][]byte `protobuf:"bytes,1,rep,name=values,proto3" json:"values,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
+}
+
+func (x *GetAllMapFieldsResponse) Reset() {
+	*x = GetAllMapFieldsResponse{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_pkg_protob_eventstore_proto_msgTypes[21]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *GetAllMapFieldsResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetAllMapFieldsResponse) ProtoMessage() {}
+
+func (x *GetAllMapFieldsResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_pkg_protob_eventstore_proto_msgTypes[21]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetAllMapFieldsResponse.ProtoReflect.Descriptor instead.
+func (*GetAllMapFieldsResponse) Descriptor() ([]byte, []int) {
+	return file_pkg_protob_eventstore_proto_rawDescGZIP(), []int{21}
+}
+
+func (x *GetAllMapFieldsResponse) GetValues() map[string][]byte {
+	if x != nil {
+		return x.Values
+	}
+	return nil
+}
+
+type LenMapRequest struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Location *LocationType `protobuf:"bytes,1,opt,name=location,proto3" json:"location,omitempty"`
+}
+
+func (x *LenMapRequest) Reset() {
+	*x = LenMapRequest{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_pkg_protob_eventstore_proto_msgTypes[22]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *LenMapRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*LenMapRequest) ProtoMessage() {}
+
+func (x *LenMapRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_pkg_protob_eventstore_proto_msgTypes[22]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use LenMapRequest.ProtoReflect.Descriptor instead.
+func (*LenMapRequest) Descriptor() ([]byte, []int) {
+	return file_pkg_protob_eventstore_proto_rawDescGZIP(), []int{22}
+}
+
+func (x *LenMapRequest) GetLocation() *LocationType {
+	if x != nil {
+		return x.Location
+	}
+	return nil
+}
+
+type LenMapResponse struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Len int32 `protobuf:"varint,1,opt,name=len,proto3" json:"len,omitempty"`
+}
+
+func (x *LenMapResponse) Reset() {
+	*x = LenMapResponse{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_pkg_protob_eventstore_proto_msgTypes[23]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *LenMapResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*LenMapResponse) ProtoMessage() {}
+
+func (x *LenMapResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_pkg_protob_eventstore_proto_msgTypes[23]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use LenMapResponse.ProtoReflect.Descriptor instead.
+func (*LenMapResponse) Descriptor() ([]byte, []int) {
+	return file_pkg_protob_eventstore_proto_rawDescGZIP(), []int{23}
+}
+
+func (x *LenMapResponse) GetLen() int32 {
+	if x != nil {
+		return x.Len
+	}
+	return 0
+}
+
+type SetMapFieldRequest struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Location *LocationType `protobuf:"bytes,1,opt,name=location,proto3" json:"location,omitempty"`
+	Field    string        `protobuf:"bytes,2,opt,name=field,proto3" json:"field,omitempty"`
+	Value    []byte        `protobuf:"bytes,3,opt,name=value,proto3" json:"value,omitempty"`
+}
+
+func (x *SetMapFieldRequest) Reset() {
+	*x = SetMapFieldRequest{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_pkg_protob_eventstore_proto_msgTypes[24]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *SetMapFieldRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*SetMapFieldRequest) ProtoMessage() {}
+
+func (x *SetMapFieldRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_pkg_protob_eventstore_proto_msgTypes[24]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use SetMapFieldRequest.ProtoReflect.Descriptor instead.
+func (*SetMapFieldRequest) Descriptor() ([]byte, []int) {
+	return file_pkg_protob_eventstore_proto_rawDescGZIP(), []int{24}
+}
+
+func (x *SetMapFieldRequest) GetLocation() *LocationType {
+	if x != nil {
+		return x.Location
+	}
+	return nil
+}
+
+func (x *SetMapFieldRequest) GetField() string {
+	if x != nil {
+		return x.Field
+	}
+	return ""
+}
+
+func (x *SetMapFieldRequest) GetValue() []byte {
+	if x != nil {
+		return x.Value
+	}
+	return nil
+}
+
+type SetMapFieldResponse struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+}
+
+func (x *SetMapFieldResponse) Reset() {
+	*x = SetMapFieldResponse{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_pkg_protob_eventstore_proto_msgTypes[25]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *SetMapFieldResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*SetMapFieldResponse) ProtoMessage() {}
+
+func (x *SetMapFieldResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_pkg_protob_eventstore_proto_msgTypes[25]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use SetMapFieldResponse.ProtoReflect.Descriptor instead.
+func (*SetMapFieldResponse) Descriptor() ([]byte, []int) {
+	return file_pkg_protob_eventstore_proto_rawDescGZIP(), []int{25}
+}
+
+type IncrMapFieldRequest struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Location *LocationType `protobuf:"bytes,1,opt,name=location,proto3" json:"location,omitempty"`
+	Field    string        `protobuf:"bytes,2,opt,name=field,proto3" json:"field,omitempty"`
+	Incr     int32         `protobuf:"varint,3,opt,name=incr,proto3" json:"incr,omitempty"`
+}
+
+func (x *IncrMapFieldRequest) Reset() {
+	*x = IncrMapFieldRequest{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_pkg_protob_eventstore_proto_msgTypes[26]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *IncrMapFieldRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*IncrMapFieldRequest) ProtoMessage() {}
+
+func (x *IncrMapFieldRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_pkg_protob_eventstore_proto_msgTypes[26]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use IncrMapFieldRequest.ProtoReflect.Descriptor instead.
+func (*IncrMapFieldRequest) Descriptor() ([]byte, []int) {
+	return file_pkg_protob_eventstore_proto_rawDescGZIP(), []int{26}
+}
+
+func (x *IncrMapFieldRequest) GetLocation() *LocationType {
+	if x != nil {
+		return x.Location
+	}
+	return nil
+}
+
+func (x *IncrMapFieldRequest) GetField() string {
+	if x != nil {
+		return x.Field
+	}
+	return ""
+}
+
+func (x *IncrMapFieldRequest) GetIncr() int32 {
+	if x != nil {
+		return x.Incr
+	}
+	return 0
+}
+
+type IncrMapFieldResponse struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+}
+
+func (x *IncrMapFieldResponse) Reset() {
+	*x = IncrMapFieldResponse{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_pkg_protob_eventstore_proto_msgTypes[27]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *IncrMapFieldResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*IncrMapFieldResponse) ProtoMessage() {}
+
+func (x *IncrMapFieldResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_pkg_protob_eventstore_proto_msgTypes[27]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use IncrMapFieldResponse.ProtoReflect.Descriptor instead.
+func (*IncrMapFieldResponse) Descriptor() ([]byte, []int) {
+	return file_pkg_protob_eventstore_proto_rawDescGZIP(), []int{27}
+}
+
+type DecrMapFieldRequest struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Location *LocationType `protobuf:"bytes,1,opt,name=location,proto3" json:"location,omitempty"`
+	Field    string        `protobuf:"bytes,2,opt,name=field,proto3" json:"field,omitempty"`
+	Decr     int32         `protobuf:"varint,3,opt,name=decr,proto3" json:"decr,omitempty"`
+}
+
+func (x *DecrMapFieldRequest) Reset() {
+	*x = DecrMapFieldRequest{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_pkg_protob_eventstore_proto_msgTypes[28]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *DecrMapFieldRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DecrMapFieldRequest) ProtoMessage() {}
+
+func (x *DecrMapFieldRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_pkg_protob_eventstore_proto_msgTypes[28]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use DecrMapFieldRequest.ProtoReflect.Descriptor instead.
+func (*DecrMapFieldRequest) Descriptor() ([]byte, []int) {
+	return file_pkg_protob_eventstore_proto_rawDescGZIP(), []int{28}
+}
+
+func (x *DecrMapFieldRequest) GetLocation() *LocationType {
+	if x != nil {
+		return x.Location
+	}
+	return nil
+}
+
+func (x *DecrMapFieldRequest) GetField() string {
+	if x != nil {
+		return x.Field
+	}
+	return ""
+}
+
+func (x *DecrMapFieldRequest) GetDecr() int32 {
+	if x != nil {
+		return x.Decr
+	}
+	return 0
+}
+
+type DecrMapFieldResponse struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+}
+
+func (x *DecrMapFieldResponse) Reset() {
+	*x = DecrMapFieldResponse{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_pkg_protob_eventstore_proto_msgTypes[29]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *DecrMapFieldResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DecrMapFieldResponse) ProtoMessage() {}
+
+func (x *DecrMapFieldResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_pkg_protob_eventstore_proto_msgTypes[29]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use DecrMapFieldResponse.ProtoReflect.Descriptor instead.
+func (*DecrMapFieldResponse) Descriptor() ([]byte, []int) {
+	return file_pkg_protob_eventstore_proto_rawDescGZIP(), []int{29}
+}
+
+type DelMapFieldRequest struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Location *LocationType `protobuf:"bytes,1,opt,name=location,proto3" json:"location,omitempty"`
+	Field    string        `protobuf:"bytes,2,opt,name=field,proto3" json:"field,omitempty"`
+}
+
+func (x *DelMapFieldRequest) Reset() {
+	*x = DelMapFieldRequest{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_pkg_protob_eventstore_proto_msgTypes[30]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *DelMapFieldRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DelMapFieldRequest) ProtoMessage() {}
+
+func (x *DelMapFieldRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_pkg_protob_eventstore_proto_msgTypes[30]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use DelMapFieldRequest.ProtoReflect.Descriptor instead.
+func (*DelMapFieldRequest) Descriptor() ([]byte, []int) {
+	return file_pkg_protob_eventstore_proto_rawDescGZIP(), []int{30}
+}
+
+func (x *DelMapFieldRequest) GetLocation() *LocationType {
+	if x != nil {
+		return x.Location
+	}
+	return nil
+}
+
+func (x *DelMapFieldRequest) GetField() string {
+	if x != nil {
+		return x.Field
+	}
+	return ""
+}
+
+type DelMapFieldResponse struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+}
+
+func (x *DelMapFieldResponse) Reset() {
+	*x = DelMapFieldResponse{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_pkg_protob_eventstore_proto_msgTypes[31]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *DelMapFieldResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DelMapFieldResponse) ProtoMessage() {}
+
+func (x *DelMapFieldResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_pkg_protob_eventstore_proto_msgTypes[31]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use DelMapFieldResponse.ProtoReflect.Descriptor instead.
+func (*DelMapFieldResponse) Descriptor() ([]byte, []int) {
+	return file_pkg_protob_eventstore_proto_rawDescGZIP(), []int{31}
+}
+
+type GetMapFieldRequest struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Location *LocationType `protobuf:"bytes,1,opt,name=location,proto3" json:"location,omitempty"`
+	Field    string        `protobuf:"bytes,2,opt,name=field,proto3" json:"field,omitempty"`
+}
+
+func (x *GetMapFieldRequest) Reset() {
+	*x = GetMapFieldRequest{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_pkg_protob_eventstore_proto_msgTypes[32]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *GetMapFieldRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetMapFieldRequest) ProtoMessage() {}
+
+func (x *GetMapFieldRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_pkg_protob_eventstore_proto_msgTypes[32]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetMapFieldRequest.ProtoReflect.Descriptor instead.
+func (*GetMapFieldRequest) Descriptor() ([]byte, []int) {
+	return file_pkg_protob_eventstore_proto_rawDescGZIP(), []int{32}
+}
+
+func (x *GetMapFieldRequest) GetLocation() *LocationType {
+	if x != nil {
+		return x.Location
+	}
+	return nil
+}
+
+func (x *GetMapFieldRequest) GetField() string {
+	if x != nil {
+		return x.Field
+	}
+	return ""
+}
+
+type GetMapFieldResponse struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Value []byte `protobuf:"bytes,1,opt,name=value,proto3" json:"value,omitempty"`
+}
+
+func (x *GetMapFieldResponse) Reset() {
+	*x = GetMapFieldResponse{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_pkg_protob_eventstore_proto_msgTypes[33]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *GetMapFieldResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetMapFieldResponse) ProtoMessage() {}
+
+func (x *GetMapFieldResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_pkg_protob_eventstore_proto_msgTypes[33]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetMapFieldResponse.ProtoReflect.Descriptor instead.
+func (*GetMapFieldResponse) Descriptor() ([]byte, []int) {
+	return file_pkg_protob_eventstore_proto_rawDescGZIP(), []int{33}
+}
+
+func (x *GetMapFieldResponse) GetValue() []byte {
+	if x != nil {
+		return x.Value
+	}
+	return nil
+}
+
+type NewQueueRequest struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Location *LocationType `protobuf:"bytes,1,opt,name=location,proto3" json:"location,omitempty"`
+	Ttl      int32         `protobuf:"varint,2,opt,name=ttl,proto3" json:"ttl,omitempty"`
+}
+
+func (x *NewQueueRequest) Reset() {
+	*x = NewQueueRequest{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_pkg_protob_eventstore_proto_msgTypes[34]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *NewQueueRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*NewQueueRequest) ProtoMessage() {}
+
+func (x *NewQueueRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_pkg_protob_eventstore_proto_msgTypes[34]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use NewQueueRequest.ProtoReflect.Descriptor instead.
+func (*NewQueueRequest) Descriptor() ([]byte, []int) {
+	return file_pkg_protob_eventstore_proto_rawDescGZIP(), []int{34}
+}
+
+func (x *NewQueueRequest) GetLocation() *LocationType {
+	if x != nil {
+		return x.Location
+	}
+	return nil
+}
+
+func (x *NewQueueRequest) GetTtl() int32 {
+	if x != nil {
+		return x.Ttl
+	}
+	return 0
+}
+
+type NewQueueResponse struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+}
+
+func (x *NewQueueResponse) Reset() {
+	*x = NewQueueResponse{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_pkg_protob_eventstore_proto_msgTypes[35]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *NewQueueResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*NewQueueResponse) ProtoMessage() {}
+
+func (x *NewQueueResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_pkg_protob_eventstore_proto_msgTypes[35]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use NewQueueResponse.ProtoReflect.Descriptor instead.
+func (*NewQueueResponse) Descriptor() ([]byte, []int) {
+	return file_pkg_protob_eventstore_proto_rawDescGZIP(), []int{35}
+}
+
+type DelQueueRequest struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Location *LocationType `protobuf:"bytes,1,opt,name=location,proto3" json:"location,omitempty"`
+}
+
+func (x *DelQueueRequest) Reset() {
+	*x = DelQueueRequest{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_pkg_protob_eventstore_proto_msgTypes[36]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *DelQueueRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DelQueueRequest) ProtoMessage() {}
+
+func (x *DelQueueRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_pkg_protob_eventstore_proto_msgTypes[36]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use DelQueueRequest.ProtoReflect.Descriptor instead.
+func (*DelQueueRequest) Descriptor() ([]byte, []int) {
+	return file_pkg_protob_eventstore_proto_rawDescGZIP(), []int{36}
+}
+
+func (x *DelQueueRequest) GetLocation() *LocationType {
+	if x != nil {
+		return x.Location
+	}
+	return nil
+}
+
+type DelQueueResponse struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+}
+
+func (x *DelQueueResponse) Reset() {
+	*x = DelQueueResponse{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_pkg_protob_eventstore_proto_msgTypes[37]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *DelQueueResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DelQueueResponse) ProtoMessage() {}
+
+func (x *DelQueueResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_pkg_protob_eventstore_proto_msgTypes[37]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use DelQueueResponse.ProtoReflect.Descriptor instead.
+func (*DelQueueResponse) Descriptor() ([]byte, []int) {
+	return file_pkg_protob_eventstore_proto_rawDescGZIP(), []int{37}
+}
+
+type GetAllQueuesRequest struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Location *LocationType `protobuf:"bytes,1,opt,name=location,proto3" json:"location,omitempty"`
+}
+
+func (x *GetAllQueuesRequest) Reset() {
+	*x = GetAllQueuesRequest{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_pkg_protob_eventstore_proto_msgTypes[38]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *GetAllQueuesRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetAllQueuesRequest) ProtoMessage() {}
+
+func (x *GetAllQueuesRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_pkg_protob_eventstore_proto_msgTypes[38]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetAllQueuesRequest.ProtoReflect.Descriptor instead.
+func (*GetAllQueuesRequest) Descriptor() ([]byte, []int) {
+	return file_pkg_protob_eventstore_proto_rawDescGZIP(), []int{38}
+}
+
+func (x *GetAllQueuesRequest) GetLocation() *LocationType {
+	if x != nil {
+		return x.Location
+	}
+	return nil
+}
+
+type GetAllQueuesResponse struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Values [][]byte `protobuf:"bytes,1,rep,name=values,proto3" json:"values,omitempty"`
+}
+
+func (x *GetAllQueuesResponse) Reset() {
+	*x = GetAllQueuesResponse{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_pkg_protob_eventstore_proto_msgTypes[39]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *GetAllQueuesResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetAllQueuesResponse) ProtoMessage() {}
+
+func (x *GetAllQueuesResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_pkg_protob_eventstore_proto_msgTypes[39]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetAllQueuesResponse.ProtoReflect.Descriptor instead.
+func (*GetAllQueuesResponse) Descriptor() ([]byte, []int) {
+	return file_pkg_protob_eventstore_proto_rawDescGZIP(), []int{39}
+}
+
+func (x *GetAllQueuesResponse) GetValues() [][]byte {
+	if x != nil {
+		return x.Values
+	}
+	return nil
+}
+
+type LenQueueRequest struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Location *LocationType `protobuf:"bytes,1,opt,name=location,proto3" json:"location,omitempty"`
+}
+
+func (x *LenQueueRequest) Reset() {
+	*x = LenQueueRequest{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_pkg_protob_eventstore_proto_msgTypes[40]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *LenQueueRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*LenQueueRequest) ProtoMessage() {}
+
+func (x *LenQueueRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_pkg_protob_eventstore_proto_msgTypes[40]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use LenQueueRequest.ProtoReflect.Descriptor instead.
+func (*LenQueueRequest) Descriptor() ([]byte, []int) {
+	return file_pkg_protob_eventstore_proto_rawDescGZIP(), []int{40}
+}
+
+func (x *LenQueueRequest) GetLocation() *LocationType {
+	if x != nil {
+		return x.Location
+	}
+	return nil
+}
+
+type LenQueueResponse struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Len int32 `protobuf:"varint,1,opt,name=len,proto3" json:"len,omitempty"`
+}
+
+func (x *LenQueueResponse) Reset() {
+	*x = LenQueueResponse{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_pkg_protob_eventstore_proto_msgTypes[41]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *LenQueueResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*LenQueueResponse) ProtoMessage() {}
+
+func (x *LenQueueResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_pkg_protob_eventstore_proto_msgTypes[41]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use LenQueueResponse.ProtoReflect.Descriptor instead.
+func (*LenQueueResponse) Descriptor() ([]byte, []int) {
+	return file_pkg_protob_eventstore_proto_rawDescGZIP(), []int{41}
+}
+
+func (x *LenQueueResponse) GetLen() int32 {
+	if x != nil {
+		return x.Len
+	}
+	return 0
+}
+
+type PushQueueRequest struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Location *LocationType `protobuf:"bytes,1,opt,name=location,proto3" json:"location,omitempty"`
+	Value    []byte        `protobuf:"bytes,2,opt,name=value,proto3" json:"value,omitempty"`
+}
+
+func (x *PushQueueRequest) Reset() {
+	*x = PushQueueRequest{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_pkg_protob_eventstore_proto_msgTypes[42]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *PushQueueRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*PushQueueRequest) ProtoMessage() {}
+
+func (x *PushQueueRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_pkg_protob_eventstore_proto_msgTypes[42]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use PushQueueRequest.ProtoReflect.Descriptor instead.
+func (*PushQueueRequest) Descriptor() ([]byte, []int) {
+	return file_pkg_protob_eventstore_proto_rawDescGZIP(), []int{42}
+}
+
+func (x *PushQueueRequest) GetLocation() *LocationType {
+	if x != nil {
+		return x.Location
+	}
+	return nil
+}
+
+func (x *PushQueueRequest) GetValue() []byte {
+	if x != nil {
+		return x.Value
+	}
+	return nil
+}
+
+type PushQueueResponse struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+}
+
+func (x *PushQueueResponse) Reset() {
+	*x = PushQueueResponse{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_pkg_protob_eventstore_proto_msgTypes[43]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *PushQueueResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*PushQueueResponse) ProtoMessage() {}
+
+func (x *PushQueueResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_pkg_protob_eventstore_proto_msgTypes[43]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use PushQueueResponse.ProtoReflect.Descriptor instead.
+func (*PushQueueResponse) Descriptor() ([]byte, []int) {
+	return file_pkg_protob_eventstore_proto_rawDescGZIP(), []int{43}
+}
+
+type IndexQueueRequest struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Location *LocationType `protobuf:"bytes,1,opt,name=location,proto3" json:"location,omitempty"`
+	Field    int32         `protobuf:"varint,2,opt,name=field,proto3" json:"field,omitempty"`
+}
+
+func (x *IndexQueueRequest) Reset() {
+	*x = IndexQueueRequest{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_pkg_protob_eventstore_proto_msgTypes[44]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *IndexQueueRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*IndexQueueRequest) ProtoMessage() {}
+
+func (x *IndexQueueRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_pkg_protob_eventstore_proto_msgTypes[44]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use IndexQueueRequest.ProtoReflect.Descriptor instead.
+func (*IndexQueueRequest) Descriptor() ([]byte, []int) {
+	return file_pkg_protob_eventstore_proto_rawDescGZIP(), []int{44}
+}
+
+func (x *IndexQueueRequest) GetLocation() *LocationType {
+	if x != nil {
+		return x.Location
+	}
+	return nil
+}
+
+func (x *IndexQueueRequest) GetField() int32 {
+	if x != nil {
+		return x.Field
+	}
+	return 0
+}
+
+type IndexQueueResponse struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Value []byte `protobuf:"bytes,1,opt,name=value,proto3" json:"value,omitempty"`
+}
+
+func (x *IndexQueueResponse) Reset() {
+	*x = IndexQueueResponse{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_pkg_protob_eventstore_proto_msgTypes[45]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *IndexQueueResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*IndexQueueResponse) ProtoMessage() {}
+
+func (x *IndexQueueResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_pkg_protob_eventstore_proto_msgTypes[45]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use IndexQueueResponse.ProtoReflect.Descriptor instead.
+func (*IndexQueueResponse) Descriptor() ([]byte, []int) {
+	return file_pkg_protob_eventstore_proto_rawDescGZIP(), []int{45}
+}
+
+func (x *IndexQueueResponse) GetValue() []byte {
+	if x != nil {
+		return x.Value
+	}
+	return nil
+}
+
+type PopQueueRequest struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Location *LocationType `protobuf:"bytes,1,opt,name=location,proto3" json:"location,omitempty"`
+	Field    string        `protobuf:"bytes,2,opt,name=field,proto3" json:"field,omitempty"`
+}
+
+func (x *PopQueueRequest) Reset() {
+	*x = PopQueueRequest{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_pkg_protob_eventstore_proto_msgTypes[46]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *PopQueueRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*PopQueueRequest) ProtoMessage() {}
+
+func (x *PopQueueRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_pkg_protob_eventstore_proto_msgTypes[46]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use PopQueueRequest.ProtoReflect.Descriptor instead.
+func (*PopQueueRequest) Descriptor() ([]byte, []int) {
+	return file_pkg_protob_eventstore_proto_rawDescGZIP(), []int{46}
+}
+
+func (x *PopQueueRequest) GetLocation() *LocationType {
+	if x != nil {
+		return x.Location
+	}
+	return nil
+}
+
+func (x *PopQueueRequest) GetField() string {
+	if x != nil {
+		return x.Field
+	}
+	return ""
+}
+
+type PopQueueResponse struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Value []byte `protobuf:"bytes,1,opt,name=value,proto3" json:"value,omitempty"`
+}
+
+func (x *PopQueueResponse) Reset() {
+	*x = PopQueueResponse{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_pkg_protob_eventstore_proto_msgTypes[47]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *PopQueueResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*PopQueueResponse) ProtoMessage() {}
+
+func (x *PopQueueResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_pkg_protob_eventstore_proto_msgTypes[47]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use PopQueueResponse.ProtoReflect.Descriptor instead.
+func (*PopQueueResponse) Descriptor() ([]byte, []int) {
+	return file_pkg_protob_eventstore_proto_rawDescGZIP(), []int{47}
+}
+
+func (x *PopQueueResponse) GetValue() []byte {
+	if x != nil {
+		return x.Value
+	}
+	return nil
+}
+
+type PeekQueueRequest struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Location *LocationType `protobuf:"bytes,1,opt,name=location,proto3" json:"location,omitempty"`
+	Field    string        `protobuf:"bytes,2,opt,name=field,proto3" json:"field,omitempty"`
+}
+
+func (x *PeekQueueRequest) Reset() {
+	*x = PeekQueueRequest{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_pkg_protob_eventstore_proto_msgTypes[48]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *PeekQueueRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*PeekQueueRequest) ProtoMessage() {}
+
+func (x *PeekQueueRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_pkg_protob_eventstore_proto_msgTypes[48]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use PeekQueueRequest.ProtoReflect.Descriptor instead.
+func (*PeekQueueRequest) Descriptor() ([]byte, []int) {
+	return file_pkg_protob_eventstore_proto_rawDescGZIP(), []int{48}
+}
+
+func (x *PeekQueueRequest) GetLocation() *LocationType {
+	if x != nil {
+		return x.Location
+	}
+	return nil
+}
+
+func (x *PeekQueueRequest) GetField() string {
+	if x != nil {
+		return x.Field
+	}
+	return ""
+}
+
+type PeekQueueResponse struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Value []byte `protobuf:"bytes,1,opt,name=value,proto3" json:"value,omitempty"`
+}
+
+func (x *PeekQueueResponse) Reset() {
+	*x = PeekQueueResponse{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_pkg_protob_eventstore_proto_msgTypes[49]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *PeekQueueResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*PeekQueueResponse) ProtoMessage() {}
+
+func (x *PeekQueueResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_pkg_protob_eventstore_proto_msgTypes[49]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use PeekQueueResponse.ProtoReflect.Descriptor instead.
+func (*PeekQueueResponse) Descriptor() ([]byte, []int) {
+	return file_pkg_protob_eventstore_proto_rawDescGZIP(), []int{49}
+}
+
+func (x *PeekQueueResponse) GetValue() []byte {
+	if x != nil {
+		return x.Value
+	}
+	return nil
 }
 
 var File_pkg_protob_eventstore_proto protoreflect.FileDescriptor
@@ -498,44 +2508,304 @@ var file_pkg_protob_eventstore_proto_rawDesc = []byte{
 	0x27, 0x0a, 0x05, 0x73, 0x63, 0x6f, 0x70, 0x65, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x11,
 	0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62, 0x2e, 0x53, 0x63, 0x6f, 0x70, 0x65, 0x54, 0x79, 0x70,
 	0x65, 0x52, 0x05, 0x73, 0x63, 0x6f, 0x70, 0x65, 0x12, 0x10, 0x0a, 0x03, 0x6b, 0x65, 0x79, 0x18,
-	0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x03, 0x6b, 0x65, 0x79, 0x22, 0x67, 0x0a, 0x0b, 0x53, 0x61,
-	0x76, 0x65, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x30, 0x0a, 0x08, 0x6c, 0x6f, 0x63,
-	0x61, 0x74, 0x69, 0x6f, 0x6e, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x14, 0x2e, 0x70, 0x72,
-	0x6f, 0x74, 0x6f, 0x62, 0x2e, 0x4c, 0x6f, 0x63, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x54, 0x79, 0x70,
-	0x65, 0x52, 0x08, 0x6c, 0x6f, 0x63, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x12, 0x10, 0x0a, 0x03, 0x74,
-	0x74, 0x6c, 0x18, 0x02, 0x20, 0x01, 0x28, 0x05, 0x52, 0x03, 0x74, 0x74, 0x6c, 0x12, 0x14, 0x0a,
-	0x05, 0x76, 0x61, 0x6c, 0x75, 0x65, 0x18, 0x03, 0x20, 0x01, 0x28, 0x0c, 0x52, 0x05, 0x76, 0x61,
-	0x6c, 0x75, 0x65, 0x22, 0x0e, 0x0a, 0x0c, 0x53, 0x61, 0x76, 0x65, 0x52, 0x65, 0x73, 0x70, 0x6f,
-	0x6e, 0x73, 0x65, 0x22, 0x3f, 0x0a, 0x0b, 0x4c, 0x6f, 0x61, 0x64, 0x52, 0x65, 0x71, 0x75, 0x65,
+	0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x03, 0x6b, 0x65, 0x79, 0x22, 0x68, 0x0a, 0x0c, 0x53, 0x65,
+	0x74, 0x4b, 0x56, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x30, 0x0a, 0x08, 0x6c, 0x6f,
+	0x63, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x14, 0x2e, 0x70,
+	0x72, 0x6f, 0x74, 0x6f, 0x62, 0x2e, 0x4c, 0x6f, 0x63, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x54, 0x79,
+	0x70, 0x65, 0x52, 0x08, 0x6c, 0x6f, 0x63, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x12, 0x10, 0x0a, 0x03,
+	0x74, 0x74, 0x6c, 0x18, 0x02, 0x20, 0x01, 0x28, 0x05, 0x52, 0x03, 0x74, 0x74, 0x6c, 0x12, 0x14,
+	0x0a, 0x05, 0x76, 0x61, 0x6c, 0x75, 0x65, 0x18, 0x03, 0x20, 0x01, 0x28, 0x0c, 0x52, 0x05, 0x76,
+	0x61, 0x6c, 0x75, 0x65, 0x22, 0x0f, 0x0a, 0x0d, 0x53, 0x65, 0x74, 0x4b, 0x56, 0x52, 0x65, 0x73,
+	0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x55, 0x0a, 0x0d, 0x49, 0x6e, 0x63, 0x72, 0x4b, 0x56, 0x52,
+	0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x30, 0x0a, 0x08, 0x6c, 0x6f, 0x63, 0x61, 0x74, 0x69,
+	0x6f, 0x6e, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x14, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f,
+	0x62, 0x2e, 0x4c, 0x6f, 0x63, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x54, 0x79, 0x70, 0x65, 0x52, 0x08,
+	0x6c, 0x6f, 0x63, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x12, 0x12, 0x0a, 0x04, 0x69, 0x6e, 0x63, 0x72,
+	0x18, 0x02, 0x20, 0x01, 0x28, 0x05, 0x52, 0x04, 0x69, 0x6e, 0x63, 0x72, 0x22, 0x10, 0x0a, 0x0e,
+	0x49, 0x6e, 0x63, 0x72, 0x4b, 0x56, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x55,
+	0x0a, 0x0d, 0x44, 0x65, 0x63, 0x72, 0x4b, 0x56, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12,
+	0x30, 0x0a, 0x08, 0x6c, 0x6f, 0x63, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x18, 0x01, 0x20, 0x01, 0x28,
+	0x0b, 0x32, 0x14, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62, 0x2e, 0x4c, 0x6f, 0x63, 0x61, 0x74,
+	0x69, 0x6f, 0x6e, 0x54, 0x79, 0x70, 0x65, 0x52, 0x08, 0x6c, 0x6f, 0x63, 0x61, 0x74, 0x69, 0x6f,
+	0x6e, 0x12, 0x12, 0x0a, 0x04, 0x64, 0x65, 0x63, 0x72, 0x18, 0x02, 0x20, 0x01, 0x28, 0x05, 0x52,
+	0x04, 0x64, 0x65, 0x63, 0x72, 0x22, 0x10, 0x0a, 0x0e, 0x44, 0x65, 0x63, 0x72, 0x4b, 0x56, 0x52,
+	0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x40, 0x0a, 0x0c, 0x47, 0x65, 0x74, 0x4b, 0x56,
+	0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x30, 0x0a, 0x08, 0x6c, 0x6f, 0x63, 0x61, 0x74,
+	0x69, 0x6f, 0x6e, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x14, 0x2e, 0x70, 0x72, 0x6f, 0x74,
+	0x6f, 0x62, 0x2e, 0x4c, 0x6f, 0x63, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x54, 0x79, 0x70, 0x65, 0x52,
+	0x08, 0x6c, 0x6f, 0x63, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x22, 0x25, 0x0a, 0x0d, 0x47, 0x65, 0x74,
+	0x4b, 0x56, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x14, 0x0a, 0x05, 0x76, 0x61,
+	0x6c, 0x75, 0x65, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0c, 0x52, 0x05, 0x76, 0x61, 0x6c, 0x75, 0x65,
+	0x22, 0x40, 0x0a, 0x0c, 0x44, 0x65, 0x6c, 0x4b, 0x56, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74,
+	0x12, 0x30, 0x0a, 0x08, 0x6c, 0x6f, 0x63, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x18, 0x01, 0x20, 0x01,
+	0x28, 0x0b, 0x32, 0x14, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62, 0x2e, 0x4c, 0x6f, 0x63, 0x61,
+	0x74, 0x69, 0x6f, 0x6e, 0x54, 0x79, 0x70, 0x65, 0x52, 0x08, 0x6c, 0x6f, 0x63, 0x61, 0x74, 0x69,
+	0x6f, 0x6e, 0x22, 0x0f, 0x0a, 0x0d, 0x44, 0x65, 0x6c, 0x4b, 0x56, 0x52, 0x65, 0x73, 0x70, 0x6f,
+	0x6e, 0x73, 0x65, 0x22, 0x59, 0x0a, 0x0b, 0x4c, 0x6f, 0x63, 0x6b, 0x52, 0x65, 0x71, 0x75, 0x65,
 	0x73, 0x74, 0x12, 0x30, 0x0a, 0x08, 0x6c, 0x6f, 0x63, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x18, 0x01,
 	0x20, 0x01, 0x28, 0x0b, 0x32, 0x14, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62, 0x2e, 0x4c, 0x6f,
 	0x63, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x54, 0x79, 0x70, 0x65, 0x52, 0x08, 0x6c, 0x6f, 0x63, 0x61,
-	0x74, 0x69, 0x6f, 0x6e, 0x22, 0x24, 0x0a, 0x0c, 0x4c, 0x6f, 0x61, 0x64, 0x52, 0x65, 0x73, 0x70,
-	0x6f, 0x6e, 0x73, 0x65, 0x12, 0x14, 0x0a, 0x05, 0x76, 0x61, 0x6c, 0x75, 0x65, 0x18, 0x01, 0x20,
-	0x01, 0x28, 0x0c, 0x52, 0x05, 0x76, 0x61, 0x6c, 0x75, 0x65, 0x22, 0x41, 0x0a, 0x0d, 0x44, 0x65,
-	0x6c, 0x65, 0x74, 0x65, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x30, 0x0a, 0x08, 0x6c,
+	0x74, 0x69, 0x6f, 0x6e, 0x12, 0x18, 0x0a, 0x07, 0x74, 0x69, 0x6d, 0x65, 0x6f, 0x75, 0x74, 0x18,
+	0x02, 0x20, 0x01, 0x28, 0x05, 0x52, 0x07, 0x74, 0x69, 0x6d, 0x65, 0x6f, 0x75, 0x74, 0x22, 0x26,
+	0x0a, 0x0c, 0x4c, 0x6f, 0x63, 0x6b, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x16,
+	0x0a, 0x06, 0x75, 0x6e, 0x6c, 0x6f, 0x63, 0x6b, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x06,
+	0x75, 0x6e, 0x6c, 0x6f, 0x63, 0x6b, 0x22, 0x59, 0x0a, 0x0d, 0x55, 0x6e, 0x6c, 0x6f, 0x63, 0x6b,
+	0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x30, 0x0a, 0x08, 0x6c, 0x6f, 0x63, 0x61, 0x74,
+	0x69, 0x6f, 0x6e, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x14, 0x2e, 0x70, 0x72, 0x6f, 0x74,
+	0x6f, 0x62, 0x2e, 0x4c, 0x6f, 0x63, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x54, 0x79, 0x70, 0x65, 0x52,
+	0x08, 0x6c, 0x6f, 0x63, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x12, 0x16, 0x0a, 0x06, 0x75, 0x6e, 0x6c,
+	0x6f, 0x63, 0x6b, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x06, 0x75, 0x6e, 0x6c, 0x6f, 0x63,
+	0x6b, 0x22, 0x10, 0x0a, 0x0e, 0x55, 0x6e, 0x6c, 0x6f, 0x63, 0x6b, 0x52, 0x65, 0x73, 0x70, 0x6f,
+	0x6e, 0x73, 0x65, 0x22, 0x53, 0x0a, 0x0d, 0x4e, 0x65, 0x77, 0x4d, 0x61, 0x70, 0x52, 0x65, 0x71,
+	0x75, 0x65, 0x73, 0x74, 0x12, 0x30, 0x0a, 0x08, 0x6c, 0x6f, 0x63, 0x61, 0x74, 0x69, 0x6f, 0x6e,
+	0x18, 0x01, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x14, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62, 0x2e,
+	0x4c, 0x6f, 0x63, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x54, 0x79, 0x70, 0x65, 0x52, 0x08, 0x6c, 0x6f,
+	0x63, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x12, 0x10, 0x0a, 0x03, 0x74, 0x74, 0x6c, 0x18, 0x02, 0x20,
+	0x01, 0x28, 0x05, 0x52, 0x03, 0x74, 0x74, 0x6c, 0x22, 0x10, 0x0a, 0x0e, 0x4e, 0x65, 0x77, 0x4d,
+	0x61, 0x70, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x41, 0x0a, 0x0d, 0x44, 0x65,
+	0x6c, 0x4d, 0x61, 0x70, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x30, 0x0a, 0x08, 0x6c,
 	0x6f, 0x63, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x14, 0x2e,
 	0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62, 0x2e, 0x4c, 0x6f, 0x63, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x54,
 	0x79, 0x70, 0x65, 0x52, 0x08, 0x6c, 0x6f, 0x63, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x22, 0x10, 0x0a,
-	0x0e, 0x44, 0x65, 0x6c, 0x65, 0x74, 0x65, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x2a,
-	0x33, 0x0a, 0x0b, 0x53, 0x63, 0x6f, 0x70, 0x65, 0x43, 0x68, 0x6f, 0x69, 0x63, 0x65, 0x12, 0x0c,
-	0x0a, 0x08, 0x49, 0x6e, 0x73, 0x74, 0x61, 0x6e, 0x63, 0x65, 0x10, 0x00, 0x12, 0x0a, 0x0a, 0x06,
-	0x42, 0x72, 0x69, 0x64, 0x67, 0x65, 0x10, 0x01, 0x12, 0x0a, 0x0a, 0x06, 0x47, 0x6c, 0x6f, 0x62,
-	0x61, 0x6c, 0x10, 0x02, 0x32, 0xb1, 0x01, 0x0a, 0x0a, 0x45, 0x76, 0x65, 0x6e, 0x74, 0x53, 0x74,
-	0x6f, 0x72, 0x65, 0x12, 0x33, 0x0a, 0x04, 0x53, 0x61, 0x76, 0x65, 0x12, 0x13, 0x2e, 0x70, 0x72,
-	0x6f, 0x74, 0x6f, 0x62, 0x2e, 0x53, 0x61, 0x76, 0x65, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74,
-	0x1a, 0x14, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62, 0x2e, 0x53, 0x61, 0x76, 0x65, 0x52, 0x65,
-	0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x00, 0x12, 0x33, 0x0a, 0x04, 0x4c, 0x6f, 0x61, 0x64,
-	0x12, 0x13, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62, 0x2e, 0x4c, 0x6f, 0x61, 0x64, 0x52, 0x65,
-	0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x14, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62, 0x2e, 0x4c,
-	0x6f, 0x61, 0x64, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x00, 0x12, 0x39, 0x0a,
-	0x06, 0x44, 0x65, 0x6c, 0x65, 0x74, 0x65, 0x12, 0x15, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62,
-	0x2e, 0x44, 0x65, 0x6c, 0x65, 0x74, 0x65, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x16,
-	0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62, 0x2e, 0x44, 0x65, 0x6c, 0x65, 0x74, 0x65, 0x52, 0x65,
-	0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x00, 0x42, 0x2e, 0x5a, 0x2c, 0x67, 0x69, 0x74, 0x68,
-	0x75, 0x62, 0x2e, 0x63, 0x6f, 0x6d, 0x2f, 0x74, 0x72, 0x69, 0x67, 0x67, 0x65, 0x72, 0x6d, 0x65,
-	0x73, 0x68, 0x2f, 0x65, 0x76, 0x65, 0x6e, 0x74, 0x73, 0x74, 0x6f, 0x72, 0x65, 0x2f, 0x70, 0x6b,
-	0x67, 0x2f, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
+	0x0e, 0x44, 0x65, 0x6c, 0x4d, 0x61, 0x70, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22,
+	0x4a, 0x0a, 0x16, 0x47, 0x65, 0x74, 0x41, 0x6c, 0x6c, 0x4d, 0x61, 0x70, 0x46, 0x69, 0x65, 0x6c,
+	0x64, 0x73, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x30, 0x0a, 0x08, 0x6c, 0x6f, 0x63,
+	0x61, 0x74, 0x69, 0x6f, 0x6e, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x14, 0x2e, 0x70, 0x72,
+	0x6f, 0x74, 0x6f, 0x62, 0x2e, 0x4c, 0x6f, 0x63, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x54, 0x79, 0x70,
+	0x65, 0x52, 0x08, 0x6c, 0x6f, 0x63, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x22, 0x99, 0x01, 0x0a, 0x17,
+	0x47, 0x65, 0x74, 0x41, 0x6c, 0x6c, 0x4d, 0x61, 0x70, 0x46, 0x69, 0x65, 0x6c, 0x64, 0x73, 0x52,
+	0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x43, 0x0a, 0x06, 0x76, 0x61, 0x6c, 0x75, 0x65,
+	0x73, 0x18, 0x01, 0x20, 0x03, 0x28, 0x0b, 0x32, 0x2b, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62,
+	0x2e, 0x47, 0x65, 0x74, 0x41, 0x6c, 0x6c, 0x4d, 0x61, 0x70, 0x46, 0x69, 0x65, 0x6c, 0x64, 0x73,
+	0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x2e, 0x56, 0x61, 0x6c, 0x75, 0x65, 0x73, 0x45,
+	0x6e, 0x74, 0x72, 0x79, 0x52, 0x06, 0x76, 0x61, 0x6c, 0x75, 0x65, 0x73, 0x1a, 0x39, 0x0a, 0x0b,
+	0x56, 0x61, 0x6c, 0x75, 0x65, 0x73, 0x45, 0x6e, 0x74, 0x72, 0x79, 0x12, 0x10, 0x0a, 0x03, 0x6b,
+	0x65, 0x79, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x03, 0x6b, 0x65, 0x79, 0x12, 0x14, 0x0a,
+	0x05, 0x76, 0x61, 0x6c, 0x75, 0x65, 0x18, 0x02, 0x20, 0x01, 0x28, 0x0c, 0x52, 0x05, 0x76, 0x61,
+	0x6c, 0x75, 0x65, 0x3a, 0x02, 0x38, 0x01, 0x22, 0x41, 0x0a, 0x0d, 0x4c, 0x65, 0x6e, 0x4d, 0x61,
+	0x70, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x30, 0x0a, 0x08, 0x6c, 0x6f, 0x63, 0x61,
+	0x74, 0x69, 0x6f, 0x6e, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x14, 0x2e, 0x70, 0x72, 0x6f,
+	0x74, 0x6f, 0x62, 0x2e, 0x4c, 0x6f, 0x63, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x54, 0x79, 0x70, 0x65,
+	0x52, 0x08, 0x6c, 0x6f, 0x63, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x22, 0x22, 0x0a, 0x0e, 0x4c, 0x65,
+	0x6e, 0x4d, 0x61, 0x70, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x10, 0x0a, 0x03,
+	0x6c, 0x65, 0x6e, 0x18, 0x01, 0x20, 0x01, 0x28, 0x05, 0x52, 0x03, 0x6c, 0x65, 0x6e, 0x22, 0x72,
+	0x0a, 0x12, 0x53, 0x65, 0x74, 0x4d, 0x61, 0x70, 0x46, 0x69, 0x65, 0x6c, 0x64, 0x52, 0x65, 0x71,
+	0x75, 0x65, 0x73, 0x74, 0x12, 0x30, 0x0a, 0x08, 0x6c, 0x6f, 0x63, 0x61, 0x74, 0x69, 0x6f, 0x6e,
+	0x18, 0x01, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x14, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62, 0x2e,
+	0x4c, 0x6f, 0x63, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x54, 0x79, 0x70, 0x65, 0x52, 0x08, 0x6c, 0x6f,
+	0x63, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x12, 0x14, 0x0a, 0x05, 0x66, 0x69, 0x65, 0x6c, 0x64, 0x18,
+	0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x05, 0x66, 0x69, 0x65, 0x6c, 0x64, 0x12, 0x14, 0x0a, 0x05,
+	0x76, 0x61, 0x6c, 0x75, 0x65, 0x18, 0x03, 0x20, 0x01, 0x28, 0x0c, 0x52, 0x05, 0x76, 0x61, 0x6c,
+	0x75, 0x65, 0x22, 0x15, 0x0a, 0x13, 0x53, 0x65, 0x74, 0x4d, 0x61, 0x70, 0x46, 0x69, 0x65, 0x6c,
+	0x64, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x71, 0x0a, 0x13, 0x49, 0x6e, 0x63,
+	0x72, 0x4d, 0x61, 0x70, 0x46, 0x69, 0x65, 0x6c, 0x64, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74,
+	0x12, 0x30, 0x0a, 0x08, 0x6c, 0x6f, 0x63, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x18, 0x01, 0x20, 0x01,
+	0x28, 0x0b, 0x32, 0x14, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62, 0x2e, 0x4c, 0x6f, 0x63, 0x61,
+	0x74, 0x69, 0x6f, 0x6e, 0x54, 0x79, 0x70, 0x65, 0x52, 0x08, 0x6c, 0x6f, 0x63, 0x61, 0x74, 0x69,
+	0x6f, 0x6e, 0x12, 0x14, 0x0a, 0x05, 0x66, 0x69, 0x65, 0x6c, 0x64, 0x18, 0x02, 0x20, 0x01, 0x28,
+	0x09, 0x52, 0x05, 0x66, 0x69, 0x65, 0x6c, 0x64, 0x12, 0x12, 0x0a, 0x04, 0x69, 0x6e, 0x63, 0x72,
+	0x18, 0x03, 0x20, 0x01, 0x28, 0x05, 0x52, 0x04, 0x69, 0x6e, 0x63, 0x72, 0x22, 0x16, 0x0a, 0x14,
+	0x49, 0x6e, 0x63, 0x72, 0x4d, 0x61, 0x70, 0x46, 0x69, 0x65, 0x6c, 0x64, 0x52, 0x65, 0x73, 0x70,
+	0x6f, 0x6e, 0x73, 0x65, 0x22, 0x71, 0x0a, 0x13, 0x44, 0x65, 0x63, 0x72, 0x4d, 0x61, 0x70, 0x46,
+	0x69, 0x65, 0x6c, 0x64, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x30, 0x0a, 0x08, 0x6c,
+	0x6f, 0x63, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x14, 0x2e,
+	0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62, 0x2e, 0x4c, 0x6f, 0x63, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x54,
+	0x79, 0x70, 0x65, 0x52, 0x08, 0x6c, 0x6f, 0x63, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x12, 0x14, 0x0a,
+	0x05, 0x66, 0x69, 0x65, 0x6c, 0x64, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x05, 0x66, 0x69,
+	0x65, 0x6c, 0x64, 0x12, 0x12, 0x0a, 0x04, 0x64, 0x65, 0x63, 0x72, 0x18, 0x03, 0x20, 0x01, 0x28,
+	0x05, 0x52, 0x04, 0x64, 0x65, 0x63, 0x72, 0x22, 0x16, 0x0a, 0x14, 0x44, 0x65, 0x63, 0x72, 0x4d,
+	0x61, 0x70, 0x46, 0x69, 0x65, 0x6c, 0x64, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22,
+	0x5c, 0x0a, 0x12, 0x44, 0x65, 0x6c, 0x4d, 0x61, 0x70, 0x46, 0x69, 0x65, 0x6c, 0x64, 0x52, 0x65,
+	0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x30, 0x0a, 0x08, 0x6c, 0x6f, 0x63, 0x61, 0x74, 0x69, 0x6f,
+	0x6e, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x14, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62,
+	0x2e, 0x4c, 0x6f, 0x63, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x54, 0x79, 0x70, 0x65, 0x52, 0x08, 0x6c,
+	0x6f, 0x63, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x12, 0x14, 0x0a, 0x05, 0x66, 0x69, 0x65, 0x6c, 0x64,
+	0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x05, 0x66, 0x69, 0x65, 0x6c, 0x64, 0x22, 0x15, 0x0a,
+	0x13, 0x44, 0x65, 0x6c, 0x4d, 0x61, 0x70, 0x46, 0x69, 0x65, 0x6c, 0x64, 0x52, 0x65, 0x73, 0x70,
+	0x6f, 0x6e, 0x73, 0x65, 0x22, 0x5c, 0x0a, 0x12, 0x47, 0x65, 0x74, 0x4d, 0x61, 0x70, 0x46, 0x69,
+	0x65, 0x6c, 0x64, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x30, 0x0a, 0x08, 0x6c, 0x6f,
+	0x63, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x14, 0x2e, 0x70,
+	0x72, 0x6f, 0x74, 0x6f, 0x62, 0x2e, 0x4c, 0x6f, 0x63, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x54, 0x79,
+	0x70, 0x65, 0x52, 0x08, 0x6c, 0x6f, 0x63, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x12, 0x14, 0x0a, 0x05,
+	0x66, 0x69, 0x65, 0x6c, 0x64, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x05, 0x66, 0x69, 0x65,
+	0x6c, 0x64, 0x22, 0x2b, 0x0a, 0x13, 0x47, 0x65, 0x74, 0x4d, 0x61, 0x70, 0x46, 0x69, 0x65, 0x6c,
+	0x64, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x14, 0x0a, 0x05, 0x76, 0x61, 0x6c,
+	0x75, 0x65, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0c, 0x52, 0x05, 0x76, 0x61, 0x6c, 0x75, 0x65, 0x22,
+	0x55, 0x0a, 0x0f, 0x4e, 0x65, 0x77, 0x51, 0x75, 0x65, 0x75, 0x65, 0x52, 0x65, 0x71, 0x75, 0x65,
+	0x73, 0x74, 0x12, 0x30, 0x0a, 0x08, 0x6c, 0x6f, 0x63, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x18, 0x01,
+	0x20, 0x01, 0x28, 0x0b, 0x32, 0x14, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62, 0x2e, 0x4c, 0x6f,
+	0x63, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x54, 0x79, 0x70, 0x65, 0x52, 0x08, 0x6c, 0x6f, 0x63, 0x61,
+	0x74, 0x69, 0x6f, 0x6e, 0x12, 0x10, 0x0a, 0x03, 0x74, 0x74, 0x6c, 0x18, 0x02, 0x20, 0x01, 0x28,
+	0x05, 0x52, 0x03, 0x74, 0x74, 0x6c, 0x22, 0x12, 0x0a, 0x10, 0x4e, 0x65, 0x77, 0x51, 0x75, 0x65,
+	0x75, 0x65, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x43, 0x0a, 0x0f, 0x44, 0x65,
+	0x6c, 0x51, 0x75, 0x65, 0x75, 0x65, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x30, 0x0a,
+	0x08, 0x6c, 0x6f, 0x63, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0b, 0x32,
+	0x14, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62, 0x2e, 0x4c, 0x6f, 0x63, 0x61, 0x74, 0x69, 0x6f,
+	0x6e, 0x54, 0x79, 0x70, 0x65, 0x52, 0x08, 0x6c, 0x6f, 0x63, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x22,
+	0x12, 0x0a, 0x10, 0x44, 0x65, 0x6c, 0x51, 0x75, 0x65, 0x75, 0x65, 0x52, 0x65, 0x73, 0x70, 0x6f,
+	0x6e, 0x73, 0x65, 0x22, 0x47, 0x0a, 0x13, 0x47, 0x65, 0x74, 0x41, 0x6c, 0x6c, 0x51, 0x75, 0x65,
+	0x75, 0x65, 0x73, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x30, 0x0a, 0x08, 0x6c, 0x6f,
+	0x63, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x14, 0x2e, 0x70,
+	0x72, 0x6f, 0x74, 0x6f, 0x62, 0x2e, 0x4c, 0x6f, 0x63, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x54, 0x79,
+	0x70, 0x65, 0x52, 0x08, 0x6c, 0x6f, 0x63, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x22, 0x2e, 0x0a, 0x14,
+	0x47, 0x65, 0x74, 0x41, 0x6c, 0x6c, 0x51, 0x75, 0x65, 0x75, 0x65, 0x73, 0x52, 0x65, 0x73, 0x70,
+	0x6f, 0x6e, 0x73, 0x65, 0x12, 0x16, 0x0a, 0x06, 0x76, 0x61, 0x6c, 0x75, 0x65, 0x73, 0x18, 0x01,
+	0x20, 0x03, 0x28, 0x0c, 0x52, 0x06, 0x76, 0x61, 0x6c, 0x75, 0x65, 0x73, 0x22, 0x43, 0x0a, 0x0f,
+	0x4c, 0x65, 0x6e, 0x51, 0x75, 0x65, 0x75, 0x65, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12,
+	0x30, 0x0a, 0x08, 0x6c, 0x6f, 0x63, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x18, 0x01, 0x20, 0x01, 0x28,
+	0x0b, 0x32, 0x14, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62, 0x2e, 0x4c, 0x6f, 0x63, 0x61, 0x74,
+	0x69, 0x6f, 0x6e, 0x54, 0x79, 0x70, 0x65, 0x52, 0x08, 0x6c, 0x6f, 0x63, 0x61, 0x74, 0x69, 0x6f,
+	0x6e, 0x22, 0x24, 0x0a, 0x10, 0x4c, 0x65, 0x6e, 0x51, 0x75, 0x65, 0x75, 0x65, 0x52, 0x65, 0x73,
+	0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x10, 0x0a, 0x03, 0x6c, 0x65, 0x6e, 0x18, 0x01, 0x20, 0x01,
+	0x28, 0x05, 0x52, 0x03, 0x6c, 0x65, 0x6e, 0x22, 0x5a, 0x0a, 0x10, 0x50, 0x75, 0x73, 0x68, 0x51,
+	0x75, 0x65, 0x75, 0x65, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x30, 0x0a, 0x08, 0x6c,
+	0x6f, 0x63, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x14, 0x2e,
+	0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62, 0x2e, 0x4c, 0x6f, 0x63, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x54,
+	0x79, 0x70, 0x65, 0x52, 0x08, 0x6c, 0x6f, 0x63, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x12, 0x14, 0x0a,
+	0x05, 0x76, 0x61, 0x6c, 0x75, 0x65, 0x18, 0x02, 0x20, 0x01, 0x28, 0x0c, 0x52, 0x05, 0x76, 0x61,
+	0x6c, 0x75, 0x65, 0x22, 0x13, 0x0a, 0x11, 0x50, 0x75, 0x73, 0x68, 0x51, 0x75, 0x65, 0x75, 0x65,
+	0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x5b, 0x0a, 0x11, 0x49, 0x6e, 0x64, 0x65,
+	0x78, 0x51, 0x75, 0x65, 0x75, 0x65, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x30, 0x0a,
+	0x08, 0x6c, 0x6f, 0x63, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0b, 0x32,
+	0x14, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62, 0x2e, 0x4c, 0x6f, 0x63, 0x61, 0x74, 0x69, 0x6f,
+	0x6e, 0x54, 0x79, 0x70, 0x65, 0x52, 0x08, 0x6c, 0x6f, 0x63, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x12,
+	0x14, 0x0a, 0x05, 0x66, 0x69, 0x65, 0x6c, 0x64, 0x18, 0x02, 0x20, 0x01, 0x28, 0x05, 0x52, 0x05,
+	0x66, 0x69, 0x65, 0x6c, 0x64, 0x22, 0x2a, 0x0a, 0x12, 0x49, 0x6e, 0x64, 0x65, 0x78, 0x51, 0x75,
+	0x65, 0x75, 0x65, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x14, 0x0a, 0x05, 0x76,
+	0x61, 0x6c, 0x75, 0x65, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0c, 0x52, 0x05, 0x76, 0x61, 0x6c, 0x75,
+	0x65, 0x22, 0x59, 0x0a, 0x0f, 0x50, 0x6f, 0x70, 0x51, 0x75, 0x65, 0x75, 0x65, 0x52, 0x65, 0x71,
+	0x75, 0x65, 0x73, 0x74, 0x12, 0x30, 0x0a, 0x08, 0x6c, 0x6f, 0x63, 0x61, 0x74, 0x69, 0x6f, 0x6e,
+	0x18, 0x01, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x14, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62, 0x2e,
+	0x4c, 0x6f, 0x63, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x54, 0x79, 0x70, 0x65, 0x52, 0x08, 0x6c, 0x6f,
+	0x63, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x12, 0x14, 0x0a, 0x05, 0x66, 0x69, 0x65, 0x6c, 0x64, 0x18,
+	0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x05, 0x66, 0x69, 0x65, 0x6c, 0x64, 0x22, 0x28, 0x0a, 0x10,
+	0x50, 0x6f, 0x70, 0x51, 0x75, 0x65, 0x75, 0x65, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65,
+	0x12, 0x14, 0x0a, 0x05, 0x76, 0x61, 0x6c, 0x75, 0x65, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0c, 0x52,
+	0x05, 0x76, 0x61, 0x6c, 0x75, 0x65, 0x22, 0x5a, 0x0a, 0x10, 0x50, 0x65, 0x65, 0x6b, 0x51, 0x75,
+	0x65, 0x75, 0x65, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x30, 0x0a, 0x08, 0x6c, 0x6f,
+	0x63, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x14, 0x2e, 0x70,
+	0x72, 0x6f, 0x74, 0x6f, 0x62, 0x2e, 0x4c, 0x6f, 0x63, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x54, 0x79,
+	0x70, 0x65, 0x52, 0x08, 0x6c, 0x6f, 0x63, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x12, 0x14, 0x0a, 0x05,
+	0x66, 0x69, 0x65, 0x6c, 0x64, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x05, 0x66, 0x69, 0x65,
+	0x6c, 0x64, 0x22, 0x29, 0x0a, 0x11, 0x50, 0x65, 0x65, 0x6b, 0x51, 0x75, 0x65, 0x75, 0x65, 0x52,
+	0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x14, 0x0a, 0x05, 0x76, 0x61, 0x6c, 0x75, 0x65,
+	0x18, 0x01, 0x20, 0x01, 0x28, 0x0c, 0x52, 0x05, 0x76, 0x61, 0x6c, 0x75, 0x65, 0x2a, 0x33, 0x0a,
+	0x0b, 0x53, 0x63, 0x6f, 0x70, 0x65, 0x43, 0x68, 0x6f, 0x69, 0x63, 0x65, 0x12, 0x0c, 0x0a, 0x08,
+	0x49, 0x6e, 0x73, 0x74, 0x61, 0x6e, 0x63, 0x65, 0x10, 0x00, 0x12, 0x0a, 0x0a, 0x06, 0x42, 0x72,
+	0x69, 0x64, 0x67, 0x65, 0x10, 0x01, 0x12, 0x0a, 0x0a, 0x06, 0x47, 0x6c, 0x6f, 0x62, 0x61, 0x6c,
+	0x10, 0x02, 0x32, 0x8d, 0x03, 0x0a, 0x07, 0x4b, 0x56, 0x53, 0x74, 0x6f, 0x72, 0x65, 0x12, 0x34,
+	0x0a, 0x03, 0x53, 0x65, 0x74, 0x12, 0x14, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62, 0x2e, 0x53,
+	0x65, 0x74, 0x4b, 0x56, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x15, 0x2e, 0x70, 0x72,
+	0x6f, 0x74, 0x6f, 0x62, 0x2e, 0x53, 0x65, 0x74, 0x4b, 0x56, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e,
+	0x73, 0x65, 0x22, 0x00, 0x12, 0x37, 0x0a, 0x04, 0x49, 0x6e, 0x63, 0x72, 0x12, 0x15, 0x2e, 0x70,
+	0x72, 0x6f, 0x74, 0x6f, 0x62, 0x2e, 0x49, 0x6e, 0x63, 0x72, 0x4b, 0x56, 0x52, 0x65, 0x71, 0x75,
+	0x65, 0x73, 0x74, 0x1a, 0x16, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62, 0x2e, 0x49, 0x6e, 0x63,
+	0x72, 0x4b, 0x56, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x00, 0x12, 0x37, 0x0a,
+	0x04, 0x44, 0x65, 0x63, 0x72, 0x12, 0x15, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62, 0x2e, 0x44,
+	0x65, 0x63, 0x72, 0x4b, 0x56, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x16, 0x2e, 0x70,
+	0x72, 0x6f, 0x74, 0x6f, 0x62, 0x2e, 0x44, 0x65, 0x63, 0x72, 0x4b, 0x56, 0x52, 0x65, 0x73, 0x70,
+	0x6f, 0x6e, 0x73, 0x65, 0x22, 0x00, 0x12, 0x34, 0x0a, 0x03, 0x44, 0x65, 0x6c, 0x12, 0x14, 0x2e,
+	0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62, 0x2e, 0x44, 0x65, 0x6c, 0x4b, 0x56, 0x52, 0x65, 0x71, 0x75,
+	0x65, 0x73, 0x74, 0x1a, 0x15, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62, 0x2e, 0x44, 0x65, 0x6c,
+	0x4b, 0x56, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x00, 0x12, 0x34, 0x0a, 0x03,
+	0x47, 0x65, 0x74, 0x12, 0x14, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62, 0x2e, 0x47, 0x65, 0x74,
+	0x4b, 0x56, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x15, 0x2e, 0x70, 0x72, 0x6f, 0x74,
+	0x6f, 0x62, 0x2e, 0x47, 0x65, 0x74, 0x4b, 0x56, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65,
+	0x22, 0x00, 0x12, 0x33, 0x0a, 0x04, 0x4c, 0x6f, 0x63, 0x6b, 0x12, 0x13, 0x2e, 0x70, 0x72, 0x6f,
+	0x74, 0x6f, 0x62, 0x2e, 0x4c, 0x6f, 0x63, 0x6b, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a,
+	0x14, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62, 0x2e, 0x4c, 0x6f, 0x63, 0x6b, 0x52, 0x65, 0x73,
+	0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x00, 0x12, 0x39, 0x0a, 0x06, 0x55, 0x6e, 0x6c, 0x6f, 0x63,
+	0x6b, 0x12, 0x15, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62, 0x2e, 0x55, 0x6e, 0x6c, 0x6f, 0x63,
+	0x6b, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x16, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f,
+	0x62, 0x2e, 0x55, 0x6e, 0x6c, 0x6f, 0x63, 0x6b, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65,
+	0x22, 0x00, 0x32, 0xd2, 0x05, 0x0a, 0x03, 0x4d, 0x61, 0x70, 0x12, 0x36, 0x0a, 0x03, 0x4e, 0x65,
+	0x77, 0x12, 0x15, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62, 0x2e, 0x4e, 0x65, 0x77, 0x4d, 0x61,
+	0x70, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x16, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f,
+	0x62, 0x2e, 0x4e, 0x65, 0x77, 0x4d, 0x61, 0x70, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65,
+	0x22, 0x00, 0x12, 0x4b, 0x0a, 0x06, 0x47, 0x65, 0x74, 0x41, 0x6c, 0x6c, 0x12, 0x1e, 0x2e, 0x70,
+	0x72, 0x6f, 0x74, 0x6f, 0x62, 0x2e, 0x47, 0x65, 0x74, 0x41, 0x6c, 0x6c, 0x4d, 0x61, 0x70, 0x46,
+	0x69, 0x65, 0x6c, 0x64, 0x73, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x1f, 0x2e, 0x70,
+	0x72, 0x6f, 0x74, 0x6f, 0x62, 0x2e, 0x47, 0x65, 0x74, 0x41, 0x6c, 0x6c, 0x4d, 0x61, 0x70, 0x46,
+	0x69, 0x65, 0x6c, 0x64, 0x73, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x00, 0x12,
+	0x36, 0x0a, 0x03, 0x4c, 0x65, 0x6e, 0x12, 0x15, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62, 0x2e,
+	0x4c, 0x65, 0x6e, 0x4d, 0x61, 0x70, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x16, 0x2e,
+	0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62, 0x2e, 0x4c, 0x65, 0x6e, 0x4d, 0x61, 0x70, 0x52, 0x65, 0x73,
+	0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x00, 0x12, 0x36, 0x0a, 0x03, 0x44, 0x65, 0x6c, 0x12, 0x15,
+	0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62, 0x2e, 0x44, 0x65, 0x6c, 0x4d, 0x61, 0x70, 0x52, 0x65,
+	0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x16, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62, 0x2e, 0x44,
+	0x65, 0x6c, 0x4d, 0x61, 0x70, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x00, 0x12,
+	0x45, 0x0a, 0x08, 0x46, 0x69, 0x65, 0x6c, 0x64, 0x53, 0x65, 0x74, 0x12, 0x1a, 0x2e, 0x70, 0x72,
+	0x6f, 0x74, 0x6f, 0x62, 0x2e, 0x53, 0x65, 0x74, 0x4d, 0x61, 0x70, 0x46, 0x69, 0x65, 0x6c, 0x64,
+	0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x1b, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62,
+	0x2e, 0x53, 0x65, 0x74, 0x4d, 0x61, 0x70, 0x46, 0x69, 0x65, 0x6c, 0x64, 0x52, 0x65, 0x73, 0x70,
+	0x6f, 0x6e, 0x73, 0x65, 0x22, 0x00, 0x12, 0x48, 0x0a, 0x09, 0x46, 0x69, 0x65, 0x6c, 0x64, 0x49,
+	0x6e, 0x63, 0x72, 0x12, 0x1b, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62, 0x2e, 0x49, 0x6e, 0x63,
+	0x72, 0x4d, 0x61, 0x70, 0x46, 0x69, 0x65, 0x6c, 0x64, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74,
+	0x1a, 0x1c, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62, 0x2e, 0x49, 0x6e, 0x63, 0x72, 0x4d, 0x61,
+	0x70, 0x46, 0x69, 0x65, 0x6c, 0x64, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x00,
+	0x12, 0x48, 0x0a, 0x09, 0x46, 0x69, 0x65, 0x6c, 0x64, 0x44, 0x65, 0x63, 0x72, 0x12, 0x1b, 0x2e,
+	0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62, 0x2e, 0x44, 0x65, 0x63, 0x72, 0x4d, 0x61, 0x70, 0x46, 0x69,
+	0x65, 0x6c, 0x64, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x1c, 0x2e, 0x70, 0x72, 0x6f,
+	0x74, 0x6f, 0x62, 0x2e, 0x44, 0x65, 0x63, 0x72, 0x4d, 0x61, 0x70, 0x46, 0x69, 0x65, 0x6c, 0x64,
+	0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x00, 0x12, 0x45, 0x0a, 0x08, 0x46, 0x69,
+	0x65, 0x6c, 0x64, 0x44, 0x65, 0x6c, 0x12, 0x1a, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62, 0x2e,
+	0x44, 0x65, 0x6c, 0x4d, 0x61, 0x70, 0x46, 0x69, 0x65, 0x6c, 0x64, 0x52, 0x65, 0x71, 0x75, 0x65,
+	0x73, 0x74, 0x1a, 0x1b, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62, 0x2e, 0x44, 0x65, 0x6c, 0x4d,
+	0x61, 0x70, 0x46, 0x69, 0x65, 0x6c, 0x64, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22,
+	0x00, 0x12, 0x45, 0x0a, 0x08, 0x46, 0x69, 0x65, 0x6c, 0x64, 0x47, 0x65, 0x74, 0x12, 0x1a, 0x2e,
+	0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62, 0x2e, 0x47, 0x65, 0x74, 0x4d, 0x61, 0x70, 0x46, 0x69, 0x65,
+	0x6c, 0x64, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x1b, 0x2e, 0x70, 0x72, 0x6f, 0x74,
+	0x6f, 0x62, 0x2e, 0x47, 0x65, 0x74, 0x4d, 0x61, 0x70, 0x46, 0x69, 0x65, 0x6c, 0x64, 0x52, 0x65,
+	0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x00, 0x12, 0x32, 0x0a, 0x04, 0x4c, 0x6f, 0x63, 0x6b,
+	0x12, 0x13, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62, 0x2e, 0x4c, 0x6f, 0x63, 0x6b, 0x52, 0x65,
+	0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x13, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62, 0x2e, 0x4c,
+	0x6f, 0x63, 0x6b, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x22, 0x00, 0x12, 0x39, 0x0a, 0x06,
+	0x55, 0x6e, 0x6c, 0x6f, 0x63, 0x6b, 0x12, 0x15, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62, 0x2e,
+	0x55, 0x6e, 0x6c, 0x6f, 0x63, 0x6b, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x16, 0x2e,
+	0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62, 0x2e, 0x55, 0x6e, 0x6c, 0x6f, 0x63, 0x6b, 0x52, 0x65, 0x73,
+	0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x00, 0x32, 0xed, 0x04, 0x0a, 0x05, 0x51, 0x75, 0x65, 0x75,
+	0x65, 0x12, 0x3a, 0x0a, 0x03, 0x4e, 0x65, 0x77, 0x12, 0x17, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f,
+	0x62, 0x2e, 0x4e, 0x65, 0x77, 0x51, 0x75, 0x65, 0x75, 0x65, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73,
+	0x74, 0x1a, 0x18, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62, 0x2e, 0x4e, 0x65, 0x77, 0x51, 0x75,
+	0x65, 0x75, 0x65, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x00, 0x12, 0x45, 0x0a,
+	0x06, 0x47, 0x65, 0x74, 0x41, 0x6c, 0x6c, 0x12, 0x1b, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62,
+	0x2e, 0x47, 0x65, 0x74, 0x41, 0x6c, 0x6c, 0x51, 0x75, 0x65, 0x75, 0x65, 0x73, 0x52, 0x65, 0x71,
+	0x75, 0x65, 0x73, 0x74, 0x1a, 0x1c, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62, 0x2e, 0x47, 0x65,
+	0x74, 0x41, 0x6c, 0x6c, 0x51, 0x75, 0x65, 0x75, 0x65, 0x73, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e,
+	0x73, 0x65, 0x22, 0x00, 0x12, 0x3a, 0x0a, 0x03, 0x4c, 0x65, 0x6e, 0x12, 0x17, 0x2e, 0x70, 0x72,
+	0x6f, 0x74, 0x6f, 0x62, 0x2e, 0x4c, 0x65, 0x6e, 0x51, 0x75, 0x65, 0x75, 0x65, 0x52, 0x65, 0x71,
+	0x75, 0x65, 0x73, 0x74, 0x1a, 0x18, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62, 0x2e, 0x4c, 0x65,
+	0x6e, 0x51, 0x75, 0x65, 0x75, 0x65, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x00,
+	0x12, 0x3a, 0x0a, 0x03, 0x44, 0x65, 0x6c, 0x12, 0x17, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62,
+	0x2e, 0x44, 0x65, 0x6c, 0x51, 0x75, 0x65, 0x75, 0x65, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74,
+	0x1a, 0x18, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62, 0x2e, 0x44, 0x65, 0x6c, 0x51, 0x75, 0x65,
+	0x75, 0x65, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x00, 0x12, 0x3d, 0x0a, 0x04,
+	0x50, 0x75, 0x73, 0x68, 0x12, 0x18, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62, 0x2e, 0x50, 0x75,
+	0x73, 0x68, 0x51, 0x75, 0x65, 0x75, 0x65, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x19,
+	0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62, 0x2e, 0x50, 0x75, 0x73, 0x68, 0x51, 0x75, 0x65, 0x75,
+	0x65, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x00, 0x12, 0x40, 0x0a, 0x05, 0x49,
+	0x6e, 0x64, 0x65, 0x78, 0x12, 0x19, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62, 0x2e, 0x49, 0x6e,
+	0x64, 0x65, 0x78, 0x51, 0x75, 0x65, 0x75, 0x65, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a,
+	0x1a, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62, 0x2e, 0x49, 0x6e, 0x64, 0x65, 0x78, 0x51, 0x75,
+	0x65, 0x75, 0x65, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x00, 0x12, 0x3a, 0x0a,
+	0x03, 0x50, 0x6f, 0x70, 0x12, 0x17, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62, 0x2e, 0x50, 0x6f,
+	0x70, 0x51, 0x75, 0x65, 0x75, 0x65, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x18, 0x2e,
+	0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62, 0x2e, 0x50, 0x6f, 0x70, 0x51, 0x75, 0x65, 0x75, 0x65, 0x52,
+	0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x00, 0x12, 0x3d, 0x0a, 0x04, 0x50, 0x65, 0x65,
+	0x6b, 0x12, 0x18, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62, 0x2e, 0x50, 0x65, 0x65, 0x6b, 0x51,
+	0x75, 0x65, 0x75, 0x65, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x19, 0x2e, 0x70, 0x72,
+	0x6f, 0x74, 0x6f, 0x62, 0x2e, 0x50, 0x65, 0x65, 0x6b, 0x51, 0x75, 0x65, 0x75, 0x65, 0x52, 0x65,
+	0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x00, 0x12, 0x32, 0x0a, 0x04, 0x4c, 0x6f, 0x63, 0x6b,
+	0x12, 0x13, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62, 0x2e, 0x4c, 0x6f, 0x63, 0x6b, 0x52, 0x65,
+	0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x13, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62, 0x2e, 0x4c,
+	0x6f, 0x63, 0x6b, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x22, 0x00, 0x12, 0x39, 0x0a, 0x06,
+	0x55, 0x6e, 0x6c, 0x6f, 0x63, 0x6b, 0x12, 0x15, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62, 0x2e,
+	0x55, 0x6e, 0x6c, 0x6f, 0x63, 0x6b, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x16, 0x2e,
+	0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62, 0x2e, 0x55, 0x6e, 0x6c, 0x6f, 0x63, 0x6b, 0x52, 0x65, 0x73,
+	0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x00, 0x42, 0x2e, 0x5a, 0x2c, 0x67, 0x69, 0x74, 0x68, 0x75,
+	0x62, 0x2e, 0x63, 0x6f, 0x6d, 0x2f, 0x74, 0x72, 0x69, 0x67, 0x67, 0x65, 0x72, 0x6d, 0x65, 0x73,
+	0x68, 0x2f, 0x65, 0x76, 0x65, 0x6e, 0x74, 0x73, 0x74, 0x6f, 0x72, 0x65, 0x2f, 0x70, 0x6b, 0x67,
+	0x2f, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
 }
 
 var (
@@ -551,35 +2821,150 @@ func file_pkg_protob_eventstore_proto_rawDescGZIP() []byte {
 }
 
 var file_pkg_protob_eventstore_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
-var file_pkg_protob_eventstore_proto_msgTypes = make([]protoimpl.MessageInfo, 8)
+var file_pkg_protob_eventstore_proto_msgTypes = make([]protoimpl.MessageInfo, 51)
 var file_pkg_protob_eventstore_proto_goTypes = []interface{}{
-	(ScopeChoice)(0),       // 0: protob.ScopeChoice
-	(*ScopeType)(nil),      // 1: protob.ScopeType
-	(*LocationType)(nil),   // 2: protob.LocationType
-	(*SaveRequest)(nil),    // 3: protob.SaveRequest
-	(*SaveResponse)(nil),   // 4: protob.SaveResponse
-	(*LoadRequest)(nil),    // 5: protob.LoadRequest
-	(*LoadResponse)(nil),   // 6: protob.LoadResponse
-	(*DeleteRequest)(nil),  // 7: protob.DeleteRequest
-	(*DeleteResponse)(nil), // 8: protob.DeleteResponse
+	(ScopeChoice)(0),                // 0: protob.ScopeChoice
+	(*ScopeType)(nil),               // 1: protob.ScopeType
+	(*LocationType)(nil),            // 2: protob.LocationType
+	(*SetKVRequest)(nil),            // 3: protob.SetKVRequest
+	(*SetKVResponse)(nil),           // 4: protob.SetKVResponse
+	(*IncrKVRequest)(nil),           // 5: protob.IncrKVRequest
+	(*IncrKVResponse)(nil),          // 6: protob.IncrKVResponse
+	(*DecrKVRequest)(nil),           // 7: protob.DecrKVRequest
+	(*DecrKVResponse)(nil),          // 8: protob.DecrKVResponse
+	(*GetKVRequest)(nil),            // 9: protob.GetKVRequest
+	(*GetKVResponse)(nil),           // 10: protob.GetKVResponse
+	(*DelKVRequest)(nil),            // 11: protob.DelKVRequest
+	(*DelKVResponse)(nil),           // 12: protob.DelKVResponse
+	(*LockRequest)(nil),             // 13: protob.LockRequest
+	(*LockResponse)(nil),            // 14: protob.LockResponse
+	(*UnlockRequest)(nil),           // 15: protob.UnlockRequest
+	(*UnlockResponse)(nil),          // 16: protob.UnlockResponse
+	(*NewMapRequest)(nil),           // 17: protob.NewMapRequest
+	(*NewMapResponse)(nil),          // 18: protob.NewMapResponse
+	(*DelMapRequest)(nil),           // 19: protob.DelMapRequest
+	(*DelMapResponse)(nil),          // 20: protob.DelMapResponse
+	(*GetAllMapFieldsRequest)(nil),  // 21: protob.GetAllMapFieldsRequest
+	(*GetAllMapFieldsResponse)(nil), // 22: protob.GetAllMapFieldsResponse
+	(*LenMapRequest)(nil),           // 23: protob.LenMapRequest
+	(*LenMapResponse)(nil),          // 24: protob.LenMapResponse
+	(*SetMapFieldRequest)(nil),      // 25: protob.SetMapFieldRequest
+	(*SetMapFieldResponse)(nil),     // 26: protob.SetMapFieldResponse
+	(*IncrMapFieldRequest)(nil),     // 27: protob.IncrMapFieldRequest
+	(*IncrMapFieldResponse)(nil),    // 28: protob.IncrMapFieldResponse
+	(*DecrMapFieldRequest)(nil),     // 29: protob.DecrMapFieldRequest
+	(*DecrMapFieldResponse)(nil),    // 30: protob.DecrMapFieldResponse
+	(*DelMapFieldRequest)(nil),      // 31: protob.DelMapFieldRequest
+	(*DelMapFieldResponse)(nil),     // 32: protob.DelMapFieldResponse
+	(*GetMapFieldRequest)(nil),      // 33: protob.GetMapFieldRequest
+	(*GetMapFieldResponse)(nil),     // 34: protob.GetMapFieldResponse
+	(*NewQueueRequest)(nil),         // 35: protob.NewQueueRequest
+	(*NewQueueResponse)(nil),        // 36: protob.NewQueueResponse
+	(*DelQueueRequest)(nil),         // 37: protob.DelQueueRequest
+	(*DelQueueResponse)(nil),        // 38: protob.DelQueueResponse
+	(*GetAllQueuesRequest)(nil),     // 39: protob.GetAllQueuesRequest
+	(*GetAllQueuesResponse)(nil),    // 40: protob.GetAllQueuesResponse
+	(*LenQueueRequest)(nil),         // 41: protob.LenQueueRequest
+	(*LenQueueResponse)(nil),        // 42: protob.LenQueueResponse
+	(*PushQueueRequest)(nil),        // 43: protob.PushQueueRequest
+	(*PushQueueResponse)(nil),       // 44: protob.PushQueueResponse
+	(*IndexQueueRequest)(nil),       // 45: protob.IndexQueueRequest
+	(*IndexQueueResponse)(nil),      // 46: protob.IndexQueueResponse
+	(*PopQueueRequest)(nil),         // 47: protob.PopQueueRequest
+	(*PopQueueResponse)(nil),        // 48: protob.PopQueueResponse
+	(*PeekQueueRequest)(nil),        // 49: protob.PeekQueueRequest
+	(*PeekQueueResponse)(nil),       // 50: protob.PeekQueueResponse
+	nil,                             // 51: protob.GetAllMapFieldsResponse.ValuesEntry
 }
 var file_pkg_protob_eventstore_proto_depIdxs = []int32{
-	0, // 0: protob.ScopeType.type:type_name -> protob.ScopeChoice
-	1, // 1: protob.LocationType.scope:type_name -> protob.ScopeType
-	2, // 2: protob.SaveRequest.location:type_name -> protob.LocationType
-	2, // 3: protob.LoadRequest.location:type_name -> protob.LocationType
-	2, // 4: protob.DeleteRequest.location:type_name -> protob.LocationType
-	3, // 5: protob.EventStore.Save:input_type -> protob.SaveRequest
-	5, // 6: protob.EventStore.Load:input_type -> protob.LoadRequest
-	7, // 7: protob.EventStore.Delete:input_type -> protob.DeleteRequest
-	4, // 8: protob.EventStore.Save:output_type -> protob.SaveResponse
-	6, // 9: protob.EventStore.Load:output_type -> protob.LoadResponse
-	8, // 10: protob.EventStore.Delete:output_type -> protob.DeleteResponse
-	8, // [8:11] is the sub-list for method output_type
-	5, // [5:8] is the sub-list for method input_type
-	5, // [5:5] is the sub-list for extension type_name
-	5, // [5:5] is the sub-list for extension extendee
-	0, // [0:5] is the sub-list for field type_name
+	0,  // 0: protob.ScopeType.type:type_name -> protob.ScopeChoice
+	1,  // 1: protob.LocationType.scope:type_name -> protob.ScopeType
+	2,  // 2: protob.SetKVRequest.location:type_name -> protob.LocationType
+	2,  // 3: protob.IncrKVRequest.location:type_name -> protob.LocationType
+	2,  // 4: protob.DecrKVRequest.location:type_name -> protob.LocationType
+	2,  // 5: protob.GetKVRequest.location:type_name -> protob.LocationType
+	2,  // 6: protob.DelKVRequest.location:type_name -> protob.LocationType
+	2,  // 7: protob.LockRequest.location:type_name -> protob.LocationType
+	2,  // 8: protob.UnlockRequest.location:type_name -> protob.LocationType
+	2,  // 9: protob.NewMapRequest.location:type_name -> protob.LocationType
+	2,  // 10: protob.DelMapRequest.location:type_name -> protob.LocationType
+	2,  // 11: protob.GetAllMapFieldsRequest.location:type_name -> protob.LocationType
+	51, // 12: protob.GetAllMapFieldsResponse.values:type_name -> protob.GetAllMapFieldsResponse.ValuesEntry
+	2,  // 13: protob.LenMapRequest.location:type_name -> protob.LocationType
+	2,  // 14: protob.SetMapFieldRequest.location:type_name -> protob.LocationType
+	2,  // 15: protob.IncrMapFieldRequest.location:type_name -> protob.LocationType
+	2,  // 16: protob.DecrMapFieldRequest.location:type_name -> protob.LocationType
+	2,  // 17: protob.DelMapFieldRequest.location:type_name -> protob.LocationType
+	2,  // 18: protob.GetMapFieldRequest.location:type_name -> protob.LocationType
+	2,  // 19: protob.NewQueueRequest.location:type_name -> protob.LocationType
+	2,  // 20: protob.DelQueueRequest.location:type_name -> protob.LocationType
+	2,  // 21: protob.GetAllQueuesRequest.location:type_name -> protob.LocationType
+	2,  // 22: protob.LenQueueRequest.location:type_name -> protob.LocationType
+	2,  // 23: protob.PushQueueRequest.location:type_name -> protob.LocationType
+	2,  // 24: protob.IndexQueueRequest.location:type_name -> protob.LocationType
+	2,  // 25: protob.PopQueueRequest.location:type_name -> protob.LocationType
+	2,  // 26: protob.PeekQueueRequest.location:type_name -> protob.LocationType
+	3,  // 27: protob.KVStore.Set:input_type -> protob.SetKVRequest
+	5,  // 28: protob.KVStore.Incr:input_type -> protob.IncrKVRequest
+	7,  // 29: protob.KVStore.Decr:input_type -> protob.DecrKVRequest
+	11, // 30: protob.KVStore.Del:input_type -> protob.DelKVRequest
+	9,  // 31: protob.KVStore.Get:input_type -> protob.GetKVRequest
+	13, // 32: protob.KVStore.Lock:input_type -> protob.LockRequest
+	15, // 33: protob.KVStore.Unlock:input_type -> protob.UnlockRequest
+	17, // 34: protob.Map.New:input_type -> protob.NewMapRequest
+	21, // 35: protob.Map.GetAll:input_type -> protob.GetAllMapFieldsRequest
+	23, // 36: protob.Map.Len:input_type -> protob.LenMapRequest
+	19, // 37: protob.Map.Del:input_type -> protob.DelMapRequest
+	25, // 38: protob.Map.FieldSet:input_type -> protob.SetMapFieldRequest
+	27, // 39: protob.Map.FieldIncr:input_type -> protob.IncrMapFieldRequest
+	29, // 40: protob.Map.FieldDecr:input_type -> protob.DecrMapFieldRequest
+	31, // 41: protob.Map.FieldDel:input_type -> protob.DelMapFieldRequest
+	33, // 42: protob.Map.FieldGet:input_type -> protob.GetMapFieldRequest
+	13, // 43: protob.Map.Lock:input_type -> protob.LockRequest
+	15, // 44: protob.Map.Unlock:input_type -> protob.UnlockRequest
+	35, // 45: protob.Queue.New:input_type -> protob.NewQueueRequest
+	39, // 46: protob.Queue.GetAll:input_type -> protob.GetAllQueuesRequest
+	41, // 47: protob.Queue.Len:input_type -> protob.LenQueueRequest
+	37, // 48: protob.Queue.Del:input_type -> protob.DelQueueRequest
+	43, // 49: protob.Queue.Push:input_type -> protob.PushQueueRequest
+	45, // 50: protob.Queue.Index:input_type -> protob.IndexQueueRequest
+	47, // 51: protob.Queue.Pop:input_type -> protob.PopQueueRequest
+	49, // 52: protob.Queue.Peek:input_type -> protob.PeekQueueRequest
+	13, // 53: protob.Queue.Lock:input_type -> protob.LockRequest
+	15, // 54: protob.Queue.Unlock:input_type -> protob.UnlockRequest
+	4,  // 55: protob.KVStore.Set:output_type -> protob.SetKVResponse
+	6,  // 56: protob.KVStore.Incr:output_type -> protob.IncrKVResponse
+	8,  // 57: protob.KVStore.Decr:output_type -> protob.DecrKVResponse
+	12, // 58: protob.KVStore.Del:output_type -> protob.DelKVResponse
+	10, // 59: protob.KVStore.Get:output_type -> protob.GetKVResponse
+	14, // 60: protob.KVStore.Lock:output_type -> protob.LockResponse
+	16, // 61: protob.KVStore.Unlock:output_type -> protob.UnlockResponse
+	18, // 62: protob.Map.New:output_type -> protob.NewMapResponse
+	22, // 63: protob.Map.GetAll:output_type -> protob.GetAllMapFieldsResponse
+	24, // 64: protob.Map.Len:output_type -> protob.LenMapResponse
+	20, // 65: protob.Map.Del:output_type -> protob.DelMapResponse
+	26, // 66: protob.Map.FieldSet:output_type -> protob.SetMapFieldResponse
+	28, // 67: protob.Map.FieldIncr:output_type -> protob.IncrMapFieldResponse
+	30, // 68: protob.Map.FieldDecr:output_type -> protob.DecrMapFieldResponse
+	32, // 69: protob.Map.FieldDel:output_type -> protob.DelMapFieldResponse
+	34, // 70: protob.Map.FieldGet:output_type -> protob.GetMapFieldResponse
+	13, // 71: protob.Map.Lock:output_type -> protob.LockRequest
+	16, // 72: protob.Map.Unlock:output_type -> protob.UnlockResponse
+	36, // 73: protob.Queue.New:output_type -> protob.NewQueueResponse
+	40, // 74: protob.Queue.GetAll:output_type -> protob.GetAllQueuesResponse
+	42, // 75: protob.Queue.Len:output_type -> protob.LenQueueResponse
+	38, // 76: protob.Queue.Del:output_type -> protob.DelQueueResponse
+	44, // 77: protob.Queue.Push:output_type -> protob.PushQueueResponse
+	46, // 78: protob.Queue.Index:output_type -> protob.IndexQueueResponse
+	48, // 79: protob.Queue.Pop:output_type -> protob.PopQueueResponse
+	50, // 80: protob.Queue.Peek:output_type -> protob.PeekQueueResponse
+	13, // 81: protob.Queue.Lock:output_type -> protob.LockRequest
+	16, // 82: protob.Queue.Unlock:output_type -> protob.UnlockResponse
+	55, // [55:83] is the sub-list for method output_type
+	27, // [27:55] is the sub-list for method input_type
+	27, // [27:27] is the sub-list for extension type_name
+	27, // [27:27] is the sub-list for extension extendee
+	0,  // [0:27] is the sub-list for field type_name
 }
 
 func init() { file_pkg_protob_eventstore_proto_init() }
@@ -613,7 +2998,7 @@ func file_pkg_protob_eventstore_proto_init() {
 			}
 		}
 		file_pkg_protob_eventstore_proto_msgTypes[2].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*SaveRequest); i {
+			switch v := v.(*SetKVRequest); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -625,7 +3010,7 @@ func file_pkg_protob_eventstore_proto_init() {
 			}
 		}
 		file_pkg_protob_eventstore_proto_msgTypes[3].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*SaveResponse); i {
+			switch v := v.(*SetKVResponse); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -637,7 +3022,7 @@ func file_pkg_protob_eventstore_proto_init() {
 			}
 		}
 		file_pkg_protob_eventstore_proto_msgTypes[4].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*LoadRequest); i {
+			switch v := v.(*IncrKVRequest); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -649,7 +3034,7 @@ func file_pkg_protob_eventstore_proto_init() {
 			}
 		}
 		file_pkg_protob_eventstore_proto_msgTypes[5].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*LoadResponse); i {
+			switch v := v.(*IncrKVResponse); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -661,7 +3046,7 @@ func file_pkg_protob_eventstore_proto_init() {
 			}
 		}
 		file_pkg_protob_eventstore_proto_msgTypes[6].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*DeleteRequest); i {
+			switch v := v.(*DecrKVRequest); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -673,7 +3058,511 @@ func file_pkg_protob_eventstore_proto_init() {
 			}
 		}
 		file_pkg_protob_eventstore_proto_msgTypes[7].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*DeleteResponse); i {
+			switch v := v.(*DecrKVResponse); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_pkg_protob_eventstore_proto_msgTypes[8].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*GetKVRequest); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_pkg_protob_eventstore_proto_msgTypes[9].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*GetKVResponse); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_pkg_protob_eventstore_proto_msgTypes[10].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*DelKVRequest); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_pkg_protob_eventstore_proto_msgTypes[11].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*DelKVResponse); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_pkg_protob_eventstore_proto_msgTypes[12].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*LockRequest); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_pkg_protob_eventstore_proto_msgTypes[13].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*LockResponse); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_pkg_protob_eventstore_proto_msgTypes[14].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*UnlockRequest); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_pkg_protob_eventstore_proto_msgTypes[15].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*UnlockResponse); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_pkg_protob_eventstore_proto_msgTypes[16].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*NewMapRequest); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_pkg_protob_eventstore_proto_msgTypes[17].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*NewMapResponse); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_pkg_protob_eventstore_proto_msgTypes[18].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*DelMapRequest); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_pkg_protob_eventstore_proto_msgTypes[19].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*DelMapResponse); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_pkg_protob_eventstore_proto_msgTypes[20].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*GetAllMapFieldsRequest); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_pkg_protob_eventstore_proto_msgTypes[21].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*GetAllMapFieldsResponse); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_pkg_protob_eventstore_proto_msgTypes[22].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*LenMapRequest); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_pkg_protob_eventstore_proto_msgTypes[23].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*LenMapResponse); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_pkg_protob_eventstore_proto_msgTypes[24].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*SetMapFieldRequest); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_pkg_protob_eventstore_proto_msgTypes[25].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*SetMapFieldResponse); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_pkg_protob_eventstore_proto_msgTypes[26].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*IncrMapFieldRequest); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_pkg_protob_eventstore_proto_msgTypes[27].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*IncrMapFieldResponse); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_pkg_protob_eventstore_proto_msgTypes[28].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*DecrMapFieldRequest); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_pkg_protob_eventstore_proto_msgTypes[29].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*DecrMapFieldResponse); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_pkg_protob_eventstore_proto_msgTypes[30].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*DelMapFieldRequest); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_pkg_protob_eventstore_proto_msgTypes[31].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*DelMapFieldResponse); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_pkg_protob_eventstore_proto_msgTypes[32].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*GetMapFieldRequest); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_pkg_protob_eventstore_proto_msgTypes[33].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*GetMapFieldResponse); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_pkg_protob_eventstore_proto_msgTypes[34].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*NewQueueRequest); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_pkg_protob_eventstore_proto_msgTypes[35].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*NewQueueResponse); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_pkg_protob_eventstore_proto_msgTypes[36].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*DelQueueRequest); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_pkg_protob_eventstore_proto_msgTypes[37].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*DelQueueResponse); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_pkg_protob_eventstore_proto_msgTypes[38].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*GetAllQueuesRequest); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_pkg_protob_eventstore_proto_msgTypes[39].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*GetAllQueuesResponse); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_pkg_protob_eventstore_proto_msgTypes[40].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*LenQueueRequest); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_pkg_protob_eventstore_proto_msgTypes[41].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*LenQueueResponse); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_pkg_protob_eventstore_proto_msgTypes[42].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*PushQueueRequest); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_pkg_protob_eventstore_proto_msgTypes[43].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*PushQueueResponse); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_pkg_protob_eventstore_proto_msgTypes[44].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*IndexQueueRequest); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_pkg_protob_eventstore_proto_msgTypes[45].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*IndexQueueResponse); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_pkg_protob_eventstore_proto_msgTypes[46].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*PopQueueRequest); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_pkg_protob_eventstore_proto_msgTypes[47].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*PopQueueResponse); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_pkg_protob_eventstore_proto_msgTypes[48].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*PeekQueueRequest); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_pkg_protob_eventstore_proto_msgTypes[49].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*PeekQueueResponse); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -691,9 +3580,9 @@ func file_pkg_protob_eventstore_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_pkg_protob_eventstore_proto_rawDesc,
 			NumEnums:      1,
-			NumMessages:   8,
+			NumMessages:   51,
 			NumExtensions: 0,
-			NumServices:   1,
+			NumServices:   3,
 		},
 		GoTypes:           file_pkg_protob_eventstore_proto_goTypes,
 		DependencyIndexes: file_pkg_protob_eventstore_proto_depIdxs,

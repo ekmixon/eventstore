@@ -37,6 +37,33 @@ type EventStore interface {
 	Instance(string, string) Interface
 }
 
+// KeyValue is the key value interface for storage.
+type KeyValue interface {
+	Set(ctx context.Context, key string, value []byte, ttlSec int32) error
+	Get(ctx context.Context, key string) ([]byte, error)
+	Del(ctx context.Context, key string) error
+	Incr(ctx context.Context, key string, value int) error
+	Decr(ctx context.Context, key string, value int) error
+}
+
+// MapInterface is the map structure interface for storage.
+type Map interface {
+	KeyValue
+
+	GetAll(ctx context.Context) (map[string][]byte, error)
+	Len(ctx context.Context) (int, error)
+	Exists(ctx context.Context, field string) (bool, error)
+}
+
+// Queue is a minimal FIFO interface.
+type Queue interface {
+	Push(ctx context.Context, value []byte) error
+	Index(ctx context.Context, index int) ([]byte, error)
+	Len(ctx context.Context) (int, error)
+	Pop(ctx context.Context) ([]byte, error)
+	Peek(ctx context.Context) ([]byte, error)
+}
+
 // Interface provides read, write and delete primitives at
 // the EventStore
 type Interface interface {
@@ -54,11 +81,11 @@ type client struct {
 	timeout time.Duration
 
 	conn     *grpc.ClientConn
-	esClient eventstore.EventStoreClient
+	esClient eventstore.KVStoreClient
 }
 
 type internalClient struct {
-	esClient eventstore.EventStoreClient
+	esClient eventstore.KVStoreClient
 
 	bridge   string
 	instance string
@@ -83,7 +110,7 @@ func (c *client) Connect(ctx context.Context) error {
 	}
 
 	c.conn = conn
-	c.esClient = eventstore.NewEventStoreClient(conn)
+	c.esClient = eventstore.NewKVStoreClient(conn)
 
 	return nil
 }
@@ -138,7 +165,7 @@ func (ic *internalClient) LoadValue(ctx context.Context, key string) ([]byte, er
 		return nil, errors.New("Event store client is not connected")
 	}
 
-	lr := &eventstore.LoadRequest{
+	lr := &eventstore.GetKVRequest{
 		Location: &eventstore.LocationType{
 			Key: key,
 			Scope: &eventstore.ScopeType{
@@ -159,7 +186,7 @@ func (ic *internalClient) LoadValue(ctx context.Context, key string) ([]byte, er
 		return nil, err
 	}
 
-	r, err := ic.esClient.Load(ctx, lr)
+	r, err := ic.esClient.Get(ctx, lr)
 	if err != nil {
 		return nil, err
 	}
@@ -173,7 +200,7 @@ func (ic *internalClient) SaveValue(ctx context.Context, key string, value []byt
 		return errors.New("Event store client is not connected")
 	}
 
-	sr := &eventstore.SaveRequest{
+	sr := &eventstore.SetKVRequest{
 		Location: &eventstore.LocationType{
 			Scope: &eventstore.ScopeType{
 				Bridge:   ic.bridge,
@@ -198,7 +225,7 @@ func (ic *internalClient) SaveValue(ctx context.Context, key string, value []byt
 		return err
 	}
 
-	_, err := ic.esClient.Save(ctx, sr)
+	_, err := ic.esClient.Set(ctx, sr)
 	return err
 }
 
@@ -208,7 +235,7 @@ func (ic *internalClient) DeleteValue(ctx context.Context, key string) error {
 		return errors.New("Event store client is not connected")
 	}
 
-	dr := &eventstore.DeleteRequest{
+	dr := &eventstore.DelKVRequest{
 		Location: &eventstore.LocationType{
 			Key: key,
 			Scope: &eventstore.ScopeType{
@@ -229,6 +256,6 @@ func (ic *internalClient) DeleteValue(ctx context.Context, key string) error {
 		return err
 	}
 
-	_, err := ic.esClient.Delete(ctx, dr)
+	_, err := ic.esClient.Del(ctx, dr)
 	return err
 }

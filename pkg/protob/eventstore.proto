@@ -36,41 +36,41 @@ message LocationType {
   string key = 2;
 }
 
-message SetRequest {
+message SetKVRequest {
   LocationType location = 1;
   int32 ttl = 2;
   bytes value = 3;
 }
 
-message SetResponse {}
+message SetKVResponse {}
 
-message IncrRequest {
+message IncrKVRequest {
   LocationType location = 1;
   int32 incr = 2;
 }
 
-message IncrResponse {}
+message IncrKVResponse {}
 
-message DecrRequest {
+message DecrKVRequest {
   LocationType location = 1;
   int32 decr = 2;
 }
 
-message DecrResponse {}
+message DecrKVResponse {}
 
-message GetRequest {
+message GetKVRequest {
   LocationType location = 1;
 }
 
-message GetResponse {
+message GetKVResponse {
   bytes value = 1;
 }
 
-message DelRequest {
+message DelKVRequest {
   LocationType location = 1;
 }
 
-message DelResponse {}
+message DelKVResponse {}
 
 message LockRequest {
   LocationType location = 1;
@@ -91,22 +91,22 @@ message UnlockResponse {}
 // KVStore interface
 service KVStore {
   // Set KV at storage
-  rpc Set(SetRequest) returns (SetResponse) {}
+  rpc Set(SetKVRequest) returns (SetKVResponse) {}
 
   // Incr increments an integer value from storage
-  rpc Incr(IncrRequest) returns (IncrResponse) {}
+  rpc Incr(IncrKVRequest) returns (IncrKVResponse) {}
 
   // Decr decrements an integer value from storage
-  rpc Decr(DecrRequest) returns (DecrResponse) {}
+  rpc Decr(DecrKVRequest) returns (DecrKVResponse) {}
 
   // Del item from storage
-  rpc Del(DelRequest) returns (DelResponse) {}
+  rpc Del(DelKVRequest) returns (DelKVResponse) {}
 
   // Get item from storage
-  rpc Get(GetRequest) returns (GetResponse) {}
+  rpc Get(GetKVRequest) returns (GetKVResponse) {}
 
   // Lock the key for exclusive access
-  rpc Lock(LockRequest) returns (LockRequest) {}
+  rpc Lock(LockRequest) returns (LockResponse) {}
 
   // Unlock the key
   rpc Unlock(UnlockRequest) returns (UnlockResponse) {}

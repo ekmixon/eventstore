@@ -69,8 +69,8 @@ func (x *LocationType) Validate() error {
 	return nil
 }
 
-// Validate SaveRequest
-func (x *SaveRequest) Validate() error {
+// Validate SetKVRequest
+func (x *SetKVRequest) Validate() error {
 	if x == nil {
 		return errors.New("save request cannot be nil")
 	}
@@ -86,12 +86,12 @@ func (x *SaveRequest) Validate() error {
 	return nil
 }
 
-// Validate LoadRequest
-func (x *LoadRequest) Validate() error {
+// Validate GetKVRequest
+func (x *GetKVRequest) Validate() error {
 	return x.Location.Validate()
 }
 
-// Validate DeleteRequest
-func (x *DeleteRequest) Validate() error {
+// Validate DelKVRequest
+func (x *DelKVRequest) Validate() error {
 	return x.Location.Validate()
 }

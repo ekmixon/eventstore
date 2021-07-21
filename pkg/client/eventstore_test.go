@@ -28,9 +28,9 @@ import (
 
 const (
 	// operation requests
-	tSave   = "Save"
-	tLoad   = "Load"
-	tDelete = "Delete"
+	tSet = "Set"
+	tGet = "Get"
+	tDel = "Del"
 
 	tBridge   = "test-bridge"
 	tInstance = "test-instance"
@@ -55,27 +55,27 @@ func TestGlobalEventStoreClient(t *testing.T) {
 
 	client := c.Global()
 	_ = client.SaveValue(ctx, tKey, []byte(tValue), tTTL)
-	expected = append(expected, expectedRequest(protob.ScopeChoice_Global, tSave, "", "", tKey, tValue, tTTL))
+	expected = append(expected, expectedRequest(protob.ScopeChoice_Global, tSet, "", "", tKey, tValue, tTTL))
 	_, _ = client.LoadValue(ctx, tKey)
-	expected = append(expected, expectedRequest(protob.ScopeChoice_Global, tLoad, "", "", tKey, tEmptyValue, 0))
+	expected = append(expected, expectedRequest(protob.ScopeChoice_Global, tGet, "", "", tKey, tEmptyValue, 0))
 	_ = client.DeleteValue(ctx, tKey)
-	expected = append(expected, expectedRequest(protob.ScopeChoice_Global, tDelete, "", "", tKey, tEmptyValue, 0))
+	expected = append(expected, expectedRequest(protob.ScopeChoice_Global, tDel, "", "", tKey, tEmptyValue, 0))
 
 	client = c.Bridge(tBridge)
 	_ = client.SaveValue(ctx, tKey, []byte(tValue), tTTL)
-	expected = append(expected, expectedRequest(protob.ScopeChoice_Bridge, tSave, tBridge, "", tKey, tValue, tTTL))
+	expected = append(expected, expectedRequest(protob.ScopeChoice_Bridge, tSet, tBridge, "", tKey, tValue, tTTL))
 	_, _ = client.LoadValue(ctx, tKey)
-	expected = append(expected, expectedRequest(protob.ScopeChoice_Bridge, tLoad, tBridge, "", tKey, tEmptyValue, 0))
+	expected = append(expected, expectedRequest(protob.ScopeChoice_Bridge, tGet, tBridge, "", tKey, tEmptyValue, 0))
 	_ = client.DeleteValue(ctx, tKey)
-	expected = append(expected, expectedRequest(protob.ScopeChoice_Bridge, tDelete, tBridge, "", tKey, tEmptyValue, 0))
+	expected = append(expected, expectedRequest(protob.ScopeChoice_Bridge, tDel, tBridge, "", tKey, tEmptyValue, 0))
 
 	client = c.Instance(tBridge, tInstance)
 	_ = client.SaveValue(ctx, tKey, []byte(tValue), tTTL)
-	expected = append(expected, expectedRequest(protob.ScopeChoice_Instance, tSave, tBridge, tInstance, tKey, tValue, tTTL))
+	expected = append(expected, expectedRequest(protob.ScopeChoice_Instance, tSet, tBridge, tInstance, tKey, tValue, tTTL))
 	_, _ = client.LoadValue(ctx, tKey)
-	expected = append(expected, expectedRequest(protob.ScopeChoice_Instance, tLoad, tBridge, tInstance, tKey, tEmptyValue, 0))
+	expected = append(expected, expectedRequest(protob.ScopeChoice_Instance, tGet, tBridge, tInstance, tKey, tEmptyValue, 0))
 	_ = client.DeleteValue(ctx, tKey)
-	expected = append(expected, expectedRequest(protob.ScopeChoice_Instance, tDelete, tBridge, tInstance, tKey, tEmptyValue, 0))
+	expected = append(expected, expectedRequest(protob.ScopeChoice_Instance, tDel, tBridge, tInstance, tKey, tEmptyValue, 0))
 
 	requests := esc.GetRequests()
 	assert.Equal(t, len(expected), len(requests), "Unexpected number of requests")
@@ -105,10 +105,10 @@ func expectedRequest(scope protob.ScopeChoice, operation, bridge, instance, key 
 	}
 }
 
-func newFakeClient() fakees.EventStoreClient {
+func newFakeClient() fakees.KVStoreClient {
 
 	esClient := fakees.NewEventStoreClientFake(
-		fakees.WithSave(func(in *protob.SaveRequest) (*protob.SaveResponse, error) {
+		fakees.WithSet(func(in *protob.SetKVRequest) (*protob.SetKVResponse, error) {
 			if in.Location.Key == "return error" {
 				return nil, errors.New("fake error")
 			}
