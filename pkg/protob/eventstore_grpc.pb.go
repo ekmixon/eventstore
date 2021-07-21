@@ -14,10 +14,10 @@ import (
 // Requires gRPC-Go v1.32.0 or later.
 const _ = grpc.SupportPackageIsVersion7
 
-// KVStoreClient is the client API for KVStore service.
+// KVClient is the client API for KV service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
-type KVStoreClient interface {
+type KVClient interface {
 	// Set KV at storage
 	Set(ctx context.Context, in *SetKVRequest, opts ...grpc.CallOption) (*SetKVResponse, error)
 	// Incr increments an integer value from storage
@@ -34,81 +34,81 @@ type KVStoreClient interface {
 	Unlock(ctx context.Context, in *UnlockRequest, opts ...grpc.CallOption) (*UnlockResponse, error)
 }
 
-type kVStoreClient struct {
+type kVClient struct {
 	cc grpc.ClientConnInterface
 }
 
-func NewKVStoreClient(cc grpc.ClientConnInterface) KVStoreClient {
-	return &kVStoreClient{cc}
+func NewKVClient(cc grpc.ClientConnInterface) KVClient {
+	return &kVClient{cc}
 }
 
-func (c *kVStoreClient) Set(ctx context.Context, in *SetKVRequest, opts ...grpc.CallOption) (*SetKVResponse, error) {
+func (c *kVClient) Set(ctx context.Context, in *SetKVRequest, opts ...grpc.CallOption) (*SetKVResponse, error) {
 	out := new(SetKVResponse)
-	err := c.cc.Invoke(ctx, "/protob.KVStore/Set", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/protob.KV/Set", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *kVStoreClient) Incr(ctx context.Context, in *IncrKVRequest, opts ...grpc.CallOption) (*IncrKVResponse, error) {
+func (c *kVClient) Incr(ctx context.Context, in *IncrKVRequest, opts ...grpc.CallOption) (*IncrKVResponse, error) {
 	out := new(IncrKVResponse)
-	err := c.cc.Invoke(ctx, "/protob.KVStore/Incr", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/protob.KV/Incr", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *kVStoreClient) Decr(ctx context.Context, in *DecrKVRequest, opts ...grpc.CallOption) (*DecrKVResponse, error) {
+func (c *kVClient) Decr(ctx context.Context, in *DecrKVRequest, opts ...grpc.CallOption) (*DecrKVResponse, error) {
 	out := new(DecrKVResponse)
-	err := c.cc.Invoke(ctx, "/protob.KVStore/Decr", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/protob.KV/Decr", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *kVStoreClient) Del(ctx context.Context, in *DelKVRequest, opts ...grpc.CallOption) (*DelKVResponse, error) {
+func (c *kVClient) Del(ctx context.Context, in *DelKVRequest, opts ...grpc.CallOption) (*DelKVResponse, error) {
 	out := new(DelKVResponse)
-	err := c.cc.Invoke(ctx, "/protob.KVStore/Del", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/protob.KV/Del", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *kVStoreClient) Get(ctx context.Context, in *GetKVRequest, opts ...grpc.CallOption) (*GetKVResponse, error) {
+func (c *kVClient) Get(ctx context.Context, in *GetKVRequest, opts ...grpc.CallOption) (*GetKVResponse, error) {
 	out := new(GetKVResponse)
-	err := c.cc.Invoke(ctx, "/protob.KVStore/Get", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/protob.KV/Get", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *kVStoreClient) Lock(ctx context.Context, in *LockRequest, opts ...grpc.CallOption) (*LockResponse, error) {
+func (c *kVClient) Lock(ctx context.Context, in *LockRequest, opts ...grpc.CallOption) (*LockResponse, error) {
 	out := new(LockResponse)
-	err := c.cc.Invoke(ctx, "/protob.KVStore/Lock", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/protob.KV/Lock", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *kVStoreClient) Unlock(ctx context.Context, in *UnlockRequest, opts ...grpc.CallOption) (*UnlockResponse, error) {
+func (c *kVClient) Unlock(ctx context.Context, in *UnlockRequest, opts ...grpc.CallOption) (*UnlockResponse, error) {
 	out := new(UnlockResponse)
-	err := c.cc.Invoke(ctx, "/protob.KVStore/Unlock", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/protob.KV/Unlock", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-// KVStoreServer is the server API for KVStore service.
-// All implementations must embed UnimplementedKVStoreServer
+// KVServer is the server API for KV service.
+// All implementations must embed UnimplementedKVServer
 // for forward compatibility
-type KVStoreServer interface {
+type KVServer interface {
 	// Set KV at storage
 	Set(context.Context, *SetKVRequest) (*SetKVResponse, error)
 	// Incr increments an integer value from storage
@@ -123,207 +123,207 @@ type KVStoreServer interface {
 	Lock(context.Context, *LockRequest) (*LockResponse, error)
 	// Unlock the key
 	Unlock(context.Context, *UnlockRequest) (*UnlockResponse, error)
-	mustEmbedUnimplementedKVStoreServer()
+	mustEmbedUnimplementedKVServer()
 }
 
-// UnimplementedKVStoreServer must be embedded to have forward compatible implementations.
-type UnimplementedKVStoreServer struct {
+// UnimplementedKVServer must be embedded to have forward compatible implementations.
+type UnimplementedKVServer struct {
 }
 
-func (UnimplementedKVStoreServer) Set(context.Context, *SetKVRequest) (*SetKVResponse, error) {
+func (UnimplementedKVServer) Set(context.Context, *SetKVRequest) (*SetKVResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Set not implemented")
 }
-func (UnimplementedKVStoreServer) Incr(context.Context, *IncrKVRequest) (*IncrKVResponse, error) {
+func (UnimplementedKVServer) Incr(context.Context, *IncrKVRequest) (*IncrKVResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Incr not implemented")
 }
-func (UnimplementedKVStoreServer) Decr(context.Context, *DecrKVRequest) (*DecrKVResponse, error) {
+func (UnimplementedKVServer) Decr(context.Context, *DecrKVRequest) (*DecrKVResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Decr not implemented")
 }
-func (UnimplementedKVStoreServer) Del(context.Context, *DelKVRequest) (*DelKVResponse, error) {
+func (UnimplementedKVServer) Del(context.Context, *DelKVRequest) (*DelKVResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Del not implemented")
 }
-func (UnimplementedKVStoreServer) Get(context.Context, *GetKVRequest) (*GetKVResponse, error) {
+func (UnimplementedKVServer) Get(context.Context, *GetKVRequest) (*GetKVResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Get not implemented")
 }
-func (UnimplementedKVStoreServer) Lock(context.Context, *LockRequest) (*LockResponse, error) {
+func (UnimplementedKVServer) Lock(context.Context, *LockRequest) (*LockResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Lock not implemented")
 }
-func (UnimplementedKVStoreServer) Unlock(context.Context, *UnlockRequest) (*UnlockResponse, error) {
+func (UnimplementedKVServer) Unlock(context.Context, *UnlockRequest) (*UnlockResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Unlock not implemented")
 }
-func (UnimplementedKVStoreServer) mustEmbedUnimplementedKVStoreServer() {}
+func (UnimplementedKVServer) mustEmbedUnimplementedKVServer() {}
 
-// UnsafeKVStoreServer may be embedded to opt out of forward compatibility for this service.
-// Use of this interface is not recommended, as added methods to KVStoreServer will
+// UnsafeKVServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to KVServer will
 // result in compilation errors.
-type UnsafeKVStoreServer interface {
-	mustEmbedUnimplementedKVStoreServer()
+type UnsafeKVServer interface {
+	mustEmbedUnimplementedKVServer()
 }
 
-func RegisterKVStoreServer(s grpc.ServiceRegistrar, srv KVStoreServer) {
-	s.RegisterService(&KVStore_ServiceDesc, srv)
+func RegisterKVServer(s grpc.ServiceRegistrar, srv KVServer) {
+	s.RegisterService(&KV_ServiceDesc, srv)
 }
 
-func _KVStore_Set_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _KV_Set_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(SetKVRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(KVStoreServer).Set(ctx, in)
+		return srv.(KVServer).Set(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/protob.KVStore/Set",
+		FullMethod: "/protob.KV/Set",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(KVStoreServer).Set(ctx, req.(*SetKVRequest))
+		return srv.(KVServer).Set(ctx, req.(*SetKVRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _KVStore_Incr_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _KV_Incr_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(IncrKVRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(KVStoreServer).Incr(ctx, in)
+		return srv.(KVServer).Incr(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/protob.KVStore/Incr",
+		FullMethod: "/protob.KV/Incr",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(KVStoreServer).Incr(ctx, req.(*IncrKVRequest))
+		return srv.(KVServer).Incr(ctx, req.(*IncrKVRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _KVStore_Decr_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _KV_Decr_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(DecrKVRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(KVStoreServer).Decr(ctx, in)
+		return srv.(KVServer).Decr(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/protob.KVStore/Decr",
+		FullMethod: "/protob.KV/Decr",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(KVStoreServer).Decr(ctx, req.(*DecrKVRequest))
+		return srv.(KVServer).Decr(ctx, req.(*DecrKVRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _KVStore_Del_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _KV_Del_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(DelKVRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(KVStoreServer).Del(ctx, in)
+		return srv.(KVServer).Del(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/protob.KVStore/Del",
+		FullMethod: "/protob.KV/Del",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(KVStoreServer).Del(ctx, req.(*DelKVRequest))
+		return srv.(KVServer).Del(ctx, req.(*DelKVRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _KVStore_Get_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _KV_Get_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetKVRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(KVStoreServer).Get(ctx, in)
+		return srv.(KVServer).Get(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/protob.KVStore/Get",
+		FullMethod: "/protob.KV/Get",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(KVStoreServer).Get(ctx, req.(*GetKVRequest))
+		return srv.(KVServer).Get(ctx, req.(*GetKVRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _KVStore_Lock_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _KV_Lock_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(LockRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(KVStoreServer).Lock(ctx, in)
+		return srv.(KVServer).Lock(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/protob.KVStore/Lock",
+		FullMethod: "/protob.KV/Lock",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(KVStoreServer).Lock(ctx, req.(*LockRequest))
+		return srv.(KVServer).Lock(ctx, req.(*LockRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _KVStore_Unlock_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _KV_Unlock_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(UnlockRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(KVStoreServer).Unlock(ctx, in)
+		return srv.(KVServer).Unlock(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/protob.KVStore/Unlock",
+		FullMethod: "/protob.KV/Unlock",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(KVStoreServer).Unlock(ctx, req.(*UnlockRequest))
+		return srv.(KVServer).Unlock(ctx, req.(*UnlockRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-// KVStore_ServiceDesc is the grpc.ServiceDesc for KVStore service.
+// KV_ServiceDesc is the grpc.ServiceDesc for KV service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
-var KVStore_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "protob.KVStore",
-	HandlerType: (*KVStoreServer)(nil),
+var KV_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "protob.KV",
+	HandlerType: (*KVServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
 			MethodName: "Set",
-			Handler:    _KVStore_Set_Handler,
+			Handler:    _KV_Set_Handler,
 		},
 		{
 			MethodName: "Incr",
-			Handler:    _KVStore_Incr_Handler,
+			Handler:    _KV_Incr_Handler,
 		},
 		{
 			MethodName: "Decr",
-			Handler:    _KVStore_Decr_Handler,
+			Handler:    _KV_Decr_Handler,
 		},
 		{
 			MethodName: "Del",
-			Handler:    _KVStore_Del_Handler,
+			Handler:    _KV_Del_Handler,
 		},
 		{
 			MethodName: "Get",
-			Handler:    _KVStore_Get_Handler,
+			Handler:    _KV_Get_Handler,
 		},
 		{
 			MethodName: "Lock",
-			Handler:    _KVStore_Lock_Handler,
+			Handler:    _KV_Lock_Handler,
 		},
 		{
 			MethodName: "Unlock",
-			Handler:    _KVStore_Unlock_Handler,
+			Handler:    _KV_Unlock_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
@@ -336,8 +336,8 @@ var KVStore_ServiceDesc = grpc.ServiceDesc{
 type MapClient interface {
 	// New map
 	New(ctx context.Context, in *NewMapRequest, opts ...grpc.CallOption) (*NewMapResponse, error)
-	// GetAll all KVs in map
-	GetAll(ctx context.Context, in *GetAllMapFieldsRequest, opts ...grpc.CallOption) (*GetAllMapFieldsResponse, error)
+	// GetFields all KVs in map
+	GetFields(ctx context.Context, in *GetAllMapFieldsRequest, opts ...grpc.CallOption) (*GetAllMapFieldsResponse, error)
 	// Len for the map
 	Len(ctx context.Context, in *LenMapRequest, opts ...grpc.CallOption) (*LenMapResponse, error)
 	// Del map
@@ -375,9 +375,9 @@ func (c *mapClient) New(ctx context.Context, in *NewMapRequest, opts ...grpc.Cal
 	return out, nil
 }
 
-func (c *mapClient) GetAll(ctx context.Context, in *GetAllMapFieldsRequest, opts ...grpc.CallOption) (*GetAllMapFieldsResponse, error) {
+func (c *mapClient) GetFields(ctx context.Context, in *GetAllMapFieldsRequest, opts ...grpc.CallOption) (*GetAllMapFieldsResponse, error) {
 	out := new(GetAllMapFieldsResponse)
-	err := c.cc.Invoke(ctx, "/protob.Map/GetAll", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/protob.Map/GetFields", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -471,8 +471,8 @@ func (c *mapClient) Unlock(ctx context.Context, in *UnlockRequest, opts ...grpc.
 type MapServer interface {
 	// New map
 	New(context.Context, *NewMapRequest) (*NewMapResponse, error)
-	// GetAll all KVs in map
-	GetAll(context.Context, *GetAllMapFieldsRequest) (*GetAllMapFieldsResponse, error)
+	// GetFields all KVs in map
+	GetFields(context.Context, *GetAllMapFieldsRequest) (*GetAllMapFieldsResponse, error)
 	// Len for the map
 	Len(context.Context, *LenMapRequest) (*LenMapResponse, error)
 	// Del map
@@ -501,8 +501,8 @@ type UnimplementedMapServer struct {
 func (UnimplementedMapServer) New(context.Context, *NewMapRequest) (*NewMapResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method New not implemented")
 }
-func (UnimplementedMapServer) GetAll(context.Context, *GetAllMapFieldsRequest) (*GetAllMapFieldsResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetAll not implemented")
+func (UnimplementedMapServer) GetFields(context.Context, *GetAllMapFieldsRequest) (*GetAllMapFieldsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetFields not implemented")
 }
 func (UnimplementedMapServer) Len(context.Context, *LenMapRequest) (*LenMapResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Len not implemented")
@@ -562,20 +562,20 @@ func _Map_New_Handler(srv interface{}, ctx context.Context, dec func(interface{}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Map_GetAll_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Map_GetFields_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetAllMapFieldsRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(MapServer).GetAll(ctx, in)
+		return srv.(MapServer).GetFields(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/protob.Map/GetAll",
+		FullMethod: "/protob.Map/GetFields",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(MapServer).GetAll(ctx, req.(*GetAllMapFieldsRequest))
+		return srv.(MapServer).GetFields(ctx, req.(*GetAllMapFieldsRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -754,8 +754,8 @@ var Map_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _Map_New_Handler,
 		},
 		{
-			MethodName: "GetAll",
-			Handler:    _Map_GetAll_Handler,
+			MethodName: "GetFields",
+			Handler:    _Map_GetFields_Handler,
 		},
 		{
 			MethodName: "Len",
