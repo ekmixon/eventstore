@@ -36,36 +36,284 @@ message LocationType {
   string key = 2;
 }
 
-message SaveRequest {
+message SetKVRequest {
   LocationType location = 1;
   int32 ttl = 2;
   bytes value = 3;
 }
 
-message SaveResponse {}
+message SetKVResponse {}
 
-message LoadRequest {
+message IncrKVRequest {
+  LocationType location = 1;
+  int32 incr = 2;
+}
+
+message IncrKVResponse {}
+
+message DecrKVRequest {
+  LocationType location = 1;
+  int32 decr = 2;
+}
+
+message DecrKVResponse {}
+
+message GetKVRequest {
   LocationType location = 1;
 }
 
-message LoadResponse {
+message GetKVResponse {
   bytes value = 1;
 }
 
-message DeleteRequest {
+message DelKVRequest {
   LocationType location = 1;
 }
 
-message DeleteResponse {}
+message DelKVResponse {}
 
-// EventStore interface
-service EventStore {
-  // Save variable to storage
-  rpc Save(SaveRequest) returns (SaveResponse) {}
-
-  // Load variable from storage
-  rpc Load(LoadRequest) returns (LoadResponse) {}
-
-  // Delete variable from storage
-  rpc Delete(DeleteRequest) returns (DeleteResponse) {}
+message LockRequest {
+  LocationType location = 1;
+  int32 timeout = 2;
 }
+
+message LockResponse {
+  string unlock = 1;
+}
+
+message UnlockRequest {
+  LocationType location = 1;
+  string unlock = 2;
+}
+
+message UnlockResponse {}
+
+// KVStore interface
+service KVStore {
+  // Set KV at storage
+  rpc Set(SetKVRequest) returns (SetKVResponse) {}
+
+  // Incr increments an integer value from storage
+  rpc Incr(IncrKVRequest) returns (IncrKVResponse) {}
+
+  // Decr decrements an integer value from storage
+  rpc Decr(DecrKVRequest) returns (DecrKVResponse) {}
+
+  // Del item from storage
+  rpc Del(DelKVRequest) returns (DelKVResponse) {}
+
+  // Get item from storage
+  rpc Get(GetKVRequest) returns (GetKVResponse) {}
+
+  // Lock the key for exclusive access
+  rpc Lock(LockRequest) returns (LockResponse) {}
+
+  // Unlock the key
+  rpc Unlock(UnlockRequest) returns (UnlockResponse) {}
+}
+
+
+message NewMapRequest {
+  LocationType location = 1;
+  int32 ttl = 2;
+}
+
+message NewMapResponse {}
+
+message DelMapRequest {
+  LocationType location = 1;
+}
+
+message DelMapResponse {}
+
+message GetAllMapFieldsRequest {
+  LocationType location = 1;
+}
+
+message GetAllMapFieldsResponse {
+  map<string, bytes> values = 1;
+}
+
+message LenMapRequest {
+  LocationType location = 1;
+}
+
+message LenMapResponse {
+  int32 len = 1;
+}
+
+message SetMapFieldRequest {
+  LocationType location = 1;
+  string field = 2;
+  bytes value = 3;
+}
+
+message SetMapFieldResponse {}
+
+message IncrMapFieldRequest {
+  LocationType location = 1;
+  string field = 2;
+  int32 incr = 3;
+}
+
+message IncrMapFieldResponse {}
+
+message DecrMapFieldRequest {
+  LocationType location = 1;
+  string field = 2;
+  int32 decr = 3;
+}
+
+message DecrMapFieldResponse {}
+
+message DelMapFieldRequest {
+  LocationType location = 1;
+  string field = 2;
+}
+
+message DelMapFieldResponse {}
+
+message GetMapFieldRequest {
+  LocationType location = 1;
+  string field = 2;
+}
+
+message GetMapFieldResponse {
+  bytes value = 1;
+}
+
+// Map interface
+service Map {
+
+  // New map
+  rpc New(NewMapRequest) returns (NewMapResponse) {}
+
+  // GetAll all KVs in map
+  rpc GetAll(GetAllMapFieldsRequest) returns (GetAllMapFieldsResponse) {}
+
+  // Len for the map
+  rpc Len(LenMapRequest) returns (LenMapResponse) {}
+
+  // Del map
+  rpc Del(DelMapRequest) returns (DelMapResponse) {}
+
+  // FieldSet KV at map
+  rpc FieldSet(SetMapFieldRequest) returns (SetMapFieldResponse) {}
+
+  // FieldIncr increments integer value at map
+  rpc FieldIncr(IncrMapFieldRequest) returns (IncrMapFieldResponse) {}
+
+  // FieldDecr decrements integer value at map
+  rpc FieldDecr(DecrMapFieldRequest) returns (DecrMapFieldResponse) {}
+
+  // FieldDel key at map
+  rpc FieldDel(DelMapFieldRequest) returns (DelMapFieldResponse) {}
+
+  // FieldGet value at key
+  rpc FieldGet(GetMapFieldRequest) returns (GetMapFieldResponse) {}
+
+  // Lock the map for exclusive access
+  rpc Lock(LockRequest) returns (LockRequest) {}
+
+  // Unlock the map
+  rpc Unlock(UnlockRequest) returns (UnlockResponse) {}
+}
+
+
+message NewQueueRequest {
+  LocationType location = 1;
+  int32 ttl = 2;
+}
+
+message NewQueueResponse {}
+
+message DelQueueRequest {
+  LocationType location = 1;
+}
+
+message DelQueueResponse {}
+
+message GetAllQueuesRequest {
+  LocationType location = 1;
+}
+
+message GetAllQueuesResponse {
+  repeated bytes values = 1;
+}
+
+message LenQueueRequest {
+  LocationType location = 1;
+}
+
+message LenQueueResponse {
+  int32 len = 1;
+}
+
+message PushQueueRequest {
+  LocationType location = 1;
+  bytes value = 2;
+}
+
+message PushQueueResponse {}
+
+message IndexQueueRequest {
+  LocationType location = 1;
+  int32 field = 2;
+}
+
+message IndexQueueResponse {
+  bytes value = 1;
+}
+
+message PopQueueRequest {
+  LocationType location = 1;
+  string field = 2;
+}
+
+message PopQueueResponse {
+  bytes value = 1;
+}
+
+message PeekQueueRequest {
+  LocationType location = 1;
+  string field = 2;
+}
+
+message PeekQueueResponse {
+  bytes value = 1;
+}
+
+// Queue interface
+service Queue {
+
+  // New queue
+  rpc New(NewQueueRequest) returns (NewQueueResponse) {}
+
+  // GetAll all elements in queue
+  rpc GetAll(GetAllQueuesRequest) returns (GetAllQueuesResponse) {}
+
+  // Len for the queue
+  rpc Len(LenQueueRequest) returns (LenQueueResponse) {}
+
+  // Del queue
+  rpc Del(DelQueueRequest) returns (DelQueueResponse) {}
+
+  // Push value in map
+  rpc Push(PushQueueRequest) returns (PushQueueResponse) {}
+
+  // Index returns the element at the index
+  rpc Index(IndexQueueRequest) returns (IndexQueueResponse) {}
+
+  // Pop retrieves and removes an element from the queue
+  rpc Pop(PopQueueRequest) returns (PopQueueResponse) {}
+
+  // Peek retrieves an element from the queue
+  rpc Peek(PeekQueueRequest) returns (PeekQueueResponse) {}
+
+  // Lock the queue for exclusive access
+  rpc Lock(LockRequest) returns (LockRequest) {}
+
+  // Unlock the queue
+  rpc Unlock(UnlockRequest) returns (UnlockResponse) {}
+}
+

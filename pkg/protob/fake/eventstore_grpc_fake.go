@@ -18,14 +18,15 @@ package fake
 
 import (
 	"context"
+	"errors"
 
 	"github.com/triggermesh/eventstore/pkg/protob"
 	"google.golang.org/grpc"
 )
 
-// EventStoreClient is a mocked EventStore client
-type EventStoreClient interface {
-	protob.EventStoreClient
+// KVStoreClient is a mocked EventStore client
+type KVStoreClient interface {
+	protob.KVStoreClient
 
 	GetRequests() []Request
 }
@@ -38,32 +39,32 @@ type Request struct {
 	TTL       int32
 }
 
-// EventStoreOption for customizing the fake client
-type EventStoreOption func(EventStoreClient)
+// KVStoreOption for customizing the fake client
+type KVStoreOption func(KVStoreClient)
 
-// SaveMock is the function that mocks save calls
-type SaveMock func(*protob.SaveRequest) (*protob.SaveResponse, error)
+// SetMock is the function that mocks save calls
+type SetMock func(*protob.SetKVRequest) (*protob.SetKVResponse, error)
 
-// LoadMock is the function that mocks save calls
-type LoadMock func(*protob.LoadRequest) (*protob.LoadResponse, error)
+// GetMock is the function that mocks save calls
+type GetMock func(*protob.GetKVRequest) (*protob.GetKVResponse, error)
 
-// DeleteMock is the function that mocks save calls
-type DeleteMock func(*protob.DeleteRequest) (*protob.DeleteResponse, error)
+// DelMock is the function that mocks save calls
+type DelMock func(*protob.DelKVRequest) (*protob.DelKVResponse, error)
 
 type client struct {
 	requests []Request
-	save     SaveMock
-	load     LoadMock
-	delete   DeleteMock
+	set      SetMock
+	get      GetMock
+	del      DelMock
 }
 
 // NewEventStoreClientFake creates a fake client
-func NewEventStoreClientFake(opts ...EventStoreOption) EventStoreClient {
+func NewEventStoreClientFake(opts ...KVStoreOption) KVStoreClient {
 	c := &client{
 		requests: []Request{},
-		save:     func(*protob.SaveRequest) (*protob.SaveResponse, error) { return nil, nil },
-		load:     func(*protob.LoadRequest) (*protob.LoadResponse, error) { return nil, nil },
-		delete:   func(*protob.DeleteRequest) (*protob.DeleteResponse, error) { return nil, nil },
+		set:      func(*protob.SetKVRequest) (*protob.SetKVResponse, error) { return nil, nil },
+		get:      func(*protob.GetKVRequest) (*protob.GetKVResponse, error) { return nil, nil },
+		del:      func(*protob.DelKVRequest) (*protob.DelKVResponse, error) { return nil, nil },
 	}
 
 	for _, f := range opts {
@@ -73,26 +74,26 @@ func NewEventStoreClientFake(opts ...EventStoreOption) EventStoreClient {
 }
 
 // WithSave adds Save function mock to the fake client
-func WithSave(f SaveMock) EventStoreOption {
-	return func(esc EventStoreClient) {
+func WithSet(f SetMock) KVStoreOption {
+	return func(esc KVStoreClient) {
 		c := esc.(*client)
-		c.save = f
+		c.set = f
 	}
 }
 
 // WithLoad adds Load function mock to the fake client
-func WithLoad(f LoadMock) EventStoreOption {
-	return func(esc EventStoreClient) {
+func WithLoad(f GetMock) KVStoreOption {
+	return func(esc KVStoreClient) {
 		c := esc.(*client)
-		c.load = f
+		c.get = f
 	}
 }
 
 // WithDelete adds Delete function mock to the fake client
-func WithDelete(f DeleteMock) EventStoreOption {
-	return func(esc EventStoreClient) {
+func WithDelete(f DelMock) KVStoreOption {
+	return func(esc KVStoreClient) {
 		c := esc.(*client)
-		c.delete = f
+		c.del = f
 	}
 }
 
@@ -102,36 +103,52 @@ func (c *client) GetRequests() []Request {
 }
 
 // Save variable to storage
-func (c *client) Save(ctx context.Context, in *protob.SaveRequest, opts ...grpc.CallOption) (*protob.SaveResponse, error) {
+func (c *client) Set(ctx context.Context, in *protob.SetKVRequest, opts ...grpc.CallOption) (*protob.SetKVResponse, error) {
 	c.requests = append(c.requests, Request{
-		Operation: "Save",
+		Operation: "Set",
 		//nolint:govet
 		Location: *in.Location,
 		Value:    in.Value,
 		TTL:      in.Ttl,
 	})
 
-	return c.save(in)
+	return c.set(in)
 }
 
 // Load variable from storage
-func (c *client) Load(ctx context.Context, in *protob.LoadRequest, opts ...grpc.CallOption) (*protob.LoadResponse, error) {
+func (c *client) Get(ctx context.Context, in *protob.GetKVRequest, opts ...grpc.CallOption) (*protob.GetKVResponse, error) {
 	c.requests = append(c.requests, Request{
-		Operation: "Load",
+		Operation: "Get",
 		//nolint:govet
 		Location: *in.Location,
 	})
 
-	return c.load(in)
+	return c.get(in)
 }
 
 // Delete variable from storage
-func (c *client) Delete(ctx context.Context, in *protob.DeleteRequest, opts ...grpc.CallOption) (*protob.DeleteResponse, error) {
+func (c *client) Del(ctx context.Context, in *protob.DelKVRequest, opts ...grpc.CallOption) (*protob.DelKVResponse, error) {
 	c.requests = append(c.requests, Request{
-		Operation: "Delete",
+		Operation: "Del",
 		//nolint:govet
 		Location: *in.Location,
 	})
 
-	return c.delete(in)
+	return c.del(in)
+}
+
+func (c *client) Incr(ctx context.Context, in *protob.IncrKVRequest, opts ...grpc.CallOption) (*protob.IncrKVResponse, error) {
+	return nil, errors.New("not implemented")
+}
+
+func (c *client) Decr(ctx context.Context, in *protob.DecrKVRequest, opts ...grpc.CallOption) (*protob.DecrKVResponse, error) {
+	return nil, errors.New("not implemented")
+}
+
+func (c *client) Lock(ctx context.Context, in *protob.LockRequest, opts ...grpc.CallOption) (*protob.LockResponse, error) {
+	return nil, errors.New("not implemented")
+}
+
+func (c *client) Unlock(ctx context.Context, in *protob.UnlockRequest, opts ...grpc.CallOption) (*protob.UnlockResponse, error) {
+	return nil, errors.New("not implemented")
 }

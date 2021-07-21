@@ -14,164 +14,1214 @@ import (
 // Requires gRPC-Go v1.32.0 or later.
 const _ = grpc.SupportPackageIsVersion7
 
-// EventStoreClient is the client API for EventStore service.
+// KVStoreClient is the client API for KVStore service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
-type EventStoreClient interface {
-	// Save variable to storage
-	Save(ctx context.Context, in *SaveRequest, opts ...grpc.CallOption) (*SaveResponse, error)
-	// Load variable from storage
-	Load(ctx context.Context, in *LoadRequest, opts ...grpc.CallOption) (*LoadResponse, error)
-	// Delete variable from storage
-	Delete(ctx context.Context, in *DeleteRequest, opts ...grpc.CallOption) (*DeleteResponse, error)
+type KVStoreClient interface {
+	// Set KV at storage
+	Set(ctx context.Context, in *SetKVRequest, opts ...grpc.CallOption) (*SetKVResponse, error)
+	// Incr increments an integer value from storage
+	Incr(ctx context.Context, in *IncrKVRequest, opts ...grpc.CallOption) (*IncrKVResponse, error)
+	// Decr decrements an integer value from storage
+	Decr(ctx context.Context, in *DecrKVRequest, opts ...grpc.CallOption) (*DecrKVResponse, error)
+	// Del item from storage
+	Del(ctx context.Context, in *DelKVRequest, opts ...grpc.CallOption) (*DelKVResponse, error)
+	// Get item from storage
+	Get(ctx context.Context, in *GetKVRequest, opts ...grpc.CallOption) (*GetKVResponse, error)
+	// Lock the key for exclusive access
+	Lock(ctx context.Context, in *LockRequest, opts ...grpc.CallOption) (*LockResponse, error)
+	// Unlock the key
+	Unlock(ctx context.Context, in *UnlockRequest, opts ...grpc.CallOption) (*UnlockResponse, error)
 }
 
-type eventStoreClient struct {
+type kVStoreClient struct {
 	cc grpc.ClientConnInterface
 }
 
-func NewEventStoreClient(cc grpc.ClientConnInterface) EventStoreClient {
-	return &eventStoreClient{cc}
+func NewKVStoreClient(cc grpc.ClientConnInterface) KVStoreClient {
+	return &kVStoreClient{cc}
 }
 
-func (c *eventStoreClient) Save(ctx context.Context, in *SaveRequest, opts ...grpc.CallOption) (*SaveResponse, error) {
-	out := new(SaveResponse)
-	err := c.cc.Invoke(ctx, "/protob.EventStore/Save", in, out, opts...)
+func (c *kVStoreClient) Set(ctx context.Context, in *SetKVRequest, opts ...grpc.CallOption) (*SetKVResponse, error) {
+	out := new(SetKVResponse)
+	err := c.cc.Invoke(ctx, "/protob.KVStore/Set", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *eventStoreClient) Load(ctx context.Context, in *LoadRequest, opts ...grpc.CallOption) (*LoadResponse, error) {
-	out := new(LoadResponse)
-	err := c.cc.Invoke(ctx, "/protob.EventStore/Load", in, out, opts...)
+func (c *kVStoreClient) Incr(ctx context.Context, in *IncrKVRequest, opts ...grpc.CallOption) (*IncrKVResponse, error) {
+	out := new(IncrKVResponse)
+	err := c.cc.Invoke(ctx, "/protob.KVStore/Incr", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *eventStoreClient) Delete(ctx context.Context, in *DeleteRequest, opts ...grpc.CallOption) (*DeleteResponse, error) {
-	out := new(DeleteResponse)
-	err := c.cc.Invoke(ctx, "/protob.EventStore/Delete", in, out, opts...)
+func (c *kVStoreClient) Decr(ctx context.Context, in *DecrKVRequest, opts ...grpc.CallOption) (*DecrKVResponse, error) {
+	out := new(DecrKVResponse)
+	err := c.cc.Invoke(ctx, "/protob.KVStore/Decr", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-// EventStoreServer is the server API for EventStore service.
-// All implementations must embed UnimplementedEventStoreServer
+func (c *kVStoreClient) Del(ctx context.Context, in *DelKVRequest, opts ...grpc.CallOption) (*DelKVResponse, error) {
+	out := new(DelKVResponse)
+	err := c.cc.Invoke(ctx, "/protob.KVStore/Del", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *kVStoreClient) Get(ctx context.Context, in *GetKVRequest, opts ...grpc.CallOption) (*GetKVResponse, error) {
+	out := new(GetKVResponse)
+	err := c.cc.Invoke(ctx, "/protob.KVStore/Get", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *kVStoreClient) Lock(ctx context.Context, in *LockRequest, opts ...grpc.CallOption) (*LockResponse, error) {
+	out := new(LockResponse)
+	err := c.cc.Invoke(ctx, "/protob.KVStore/Lock", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *kVStoreClient) Unlock(ctx context.Context, in *UnlockRequest, opts ...grpc.CallOption) (*UnlockResponse, error) {
+	out := new(UnlockResponse)
+	err := c.cc.Invoke(ctx, "/protob.KVStore/Unlock", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// KVStoreServer is the server API for KVStore service.
+// All implementations must embed UnimplementedKVStoreServer
 // for forward compatibility
-type EventStoreServer interface {
-	// Save variable to storage
-	Save(context.Context, *SaveRequest) (*SaveResponse, error)
-	// Load variable from storage
-	Load(context.Context, *LoadRequest) (*LoadResponse, error)
-	// Delete variable from storage
-	Delete(context.Context, *DeleteRequest) (*DeleteResponse, error)
-	mustEmbedUnimplementedEventStoreServer()
+type KVStoreServer interface {
+	// Set KV at storage
+	Set(context.Context, *SetKVRequest) (*SetKVResponse, error)
+	// Incr increments an integer value from storage
+	Incr(context.Context, *IncrKVRequest) (*IncrKVResponse, error)
+	// Decr decrements an integer value from storage
+	Decr(context.Context, *DecrKVRequest) (*DecrKVResponse, error)
+	// Del item from storage
+	Del(context.Context, *DelKVRequest) (*DelKVResponse, error)
+	// Get item from storage
+	Get(context.Context, *GetKVRequest) (*GetKVResponse, error)
+	// Lock the key for exclusive access
+	Lock(context.Context, *LockRequest) (*LockResponse, error)
+	// Unlock the key
+	Unlock(context.Context, *UnlockRequest) (*UnlockResponse, error)
+	mustEmbedUnimplementedKVStoreServer()
 }
 
-// UnimplementedEventStoreServer must be embedded to have forward compatible implementations.
-type UnimplementedEventStoreServer struct {
+// UnimplementedKVStoreServer must be embedded to have forward compatible implementations.
+type UnimplementedKVStoreServer struct {
 }
 
-func (UnimplementedEventStoreServer) Save(context.Context, *SaveRequest) (*SaveResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Save not implemented")
+func (UnimplementedKVStoreServer) Set(context.Context, *SetKVRequest) (*SetKVResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Set not implemented")
 }
-func (UnimplementedEventStoreServer) Load(context.Context, *LoadRequest) (*LoadResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Load not implemented")
+func (UnimplementedKVStoreServer) Incr(context.Context, *IncrKVRequest) (*IncrKVResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Incr not implemented")
 }
-func (UnimplementedEventStoreServer) Delete(context.Context, *DeleteRequest) (*DeleteResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Delete not implemented")
+func (UnimplementedKVStoreServer) Decr(context.Context, *DecrKVRequest) (*DecrKVResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Decr not implemented")
 }
-func (UnimplementedEventStoreServer) mustEmbedUnimplementedEventStoreServer() {}
+func (UnimplementedKVStoreServer) Del(context.Context, *DelKVRequest) (*DelKVResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Del not implemented")
+}
+func (UnimplementedKVStoreServer) Get(context.Context, *GetKVRequest) (*GetKVResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Get not implemented")
+}
+func (UnimplementedKVStoreServer) Lock(context.Context, *LockRequest) (*LockResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Lock not implemented")
+}
+func (UnimplementedKVStoreServer) Unlock(context.Context, *UnlockRequest) (*UnlockResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Unlock not implemented")
+}
+func (UnimplementedKVStoreServer) mustEmbedUnimplementedKVStoreServer() {}
 
-// UnsafeEventStoreServer may be embedded to opt out of forward compatibility for this service.
-// Use of this interface is not recommended, as added methods to EventStoreServer will
+// UnsafeKVStoreServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to KVStoreServer will
 // result in compilation errors.
-type UnsafeEventStoreServer interface {
-	mustEmbedUnimplementedEventStoreServer()
+type UnsafeKVStoreServer interface {
+	mustEmbedUnimplementedKVStoreServer()
 }
 
-func RegisterEventStoreServer(s grpc.ServiceRegistrar, srv EventStoreServer) {
-	s.RegisterService(&EventStore_ServiceDesc, srv)
+func RegisterKVStoreServer(s grpc.ServiceRegistrar, srv KVStoreServer) {
+	s.RegisterService(&KVStore_ServiceDesc, srv)
 }
 
-func _EventStore_Save_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(SaveRequest)
+func _KVStore_Set_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SetKVRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(EventStoreServer).Save(ctx, in)
+		return srv.(KVStoreServer).Set(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/protob.EventStore/Save",
+		FullMethod: "/protob.KVStore/Set",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(EventStoreServer).Save(ctx, req.(*SaveRequest))
+		return srv.(KVStoreServer).Set(ctx, req.(*SetKVRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _EventStore_Load_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(LoadRequest)
+func _KVStore_Incr_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(IncrKVRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(EventStoreServer).Load(ctx, in)
+		return srv.(KVStoreServer).Incr(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/protob.EventStore/Load",
+		FullMethod: "/protob.KVStore/Incr",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(EventStoreServer).Load(ctx, req.(*LoadRequest))
+		return srv.(KVStoreServer).Incr(ctx, req.(*IncrKVRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _EventStore_Delete_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(DeleteRequest)
+func _KVStore_Decr_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DecrKVRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(EventStoreServer).Delete(ctx, in)
+		return srv.(KVStoreServer).Decr(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/protob.EventStore/Delete",
+		FullMethod: "/protob.KVStore/Decr",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(EventStoreServer).Delete(ctx, req.(*DeleteRequest))
+		return srv.(KVStoreServer).Decr(ctx, req.(*DecrKVRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-// EventStore_ServiceDesc is the grpc.ServiceDesc for EventStore service.
+func _KVStore_Del_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DelKVRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(KVStoreServer).Del(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/protob.KVStore/Del",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(KVStoreServer).Del(ctx, req.(*DelKVRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _KVStore_Get_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetKVRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(KVStoreServer).Get(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/protob.KVStore/Get",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(KVStoreServer).Get(ctx, req.(*GetKVRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _KVStore_Lock_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(LockRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(KVStoreServer).Lock(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/protob.KVStore/Lock",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(KVStoreServer).Lock(ctx, req.(*LockRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _KVStore_Unlock_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UnlockRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(KVStoreServer).Unlock(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/protob.KVStore/Unlock",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(KVStoreServer).Unlock(ctx, req.(*UnlockRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+// KVStore_ServiceDesc is the grpc.ServiceDesc for KVStore service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
-var EventStore_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "protob.EventStore",
-	HandlerType: (*EventStoreServer)(nil),
+var KVStore_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "protob.KVStore",
+	HandlerType: (*KVStoreServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "Save",
-			Handler:    _EventStore_Save_Handler,
+			MethodName: "Set",
+			Handler:    _KVStore_Set_Handler,
 		},
 		{
-			MethodName: "Load",
-			Handler:    _EventStore_Load_Handler,
+			MethodName: "Incr",
+			Handler:    _KVStore_Incr_Handler,
 		},
 		{
-			MethodName: "Delete",
-			Handler:    _EventStore_Delete_Handler,
+			MethodName: "Decr",
+			Handler:    _KVStore_Decr_Handler,
+		},
+		{
+			MethodName: "Del",
+			Handler:    _KVStore_Del_Handler,
+		},
+		{
+			MethodName: "Get",
+			Handler:    _KVStore_Get_Handler,
+		},
+		{
+			MethodName: "Lock",
+			Handler:    _KVStore_Lock_Handler,
+		},
+		{
+			MethodName: "Unlock",
+			Handler:    _KVStore_Unlock_Handler,
+		},
+	},
+	Streams:  []grpc.StreamDesc{},
+	Metadata: "pkg/protob/eventstore.proto",
+}
+
+// MapClient is the client API for Map service.
+//
+// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
+type MapClient interface {
+	// New map
+	New(ctx context.Context, in *NewMapRequest, opts ...grpc.CallOption) (*NewMapResponse, error)
+	// GetAll all KVs in map
+	GetAll(ctx context.Context, in *GetAllMapFieldsRequest, opts ...grpc.CallOption) (*GetAllMapFieldsResponse, error)
+	// Len for the map
+	Len(ctx context.Context, in *LenMapRequest, opts ...grpc.CallOption) (*LenMapResponse, error)
+	// Del map
+	Del(ctx context.Context, in *DelMapRequest, opts ...grpc.CallOption) (*DelMapResponse, error)
+	// FieldSet KV at map
+	FieldSet(ctx context.Context, in *SetMapFieldRequest, opts ...grpc.CallOption) (*SetMapFieldResponse, error)
+	// FieldIncr increments integer value at map
+	FieldIncr(ctx context.Context, in *IncrMapFieldRequest, opts ...grpc.CallOption) (*IncrMapFieldResponse, error)
+	// FieldDecr decrements integer value at map
+	FieldDecr(ctx context.Context, in *DecrMapFieldRequest, opts ...grpc.CallOption) (*DecrMapFieldResponse, error)
+	// FieldDel key at map
+	FieldDel(ctx context.Context, in *DelMapFieldRequest, opts ...grpc.CallOption) (*DelMapFieldResponse, error)
+	// FieldGet value at key
+	FieldGet(ctx context.Context, in *GetMapFieldRequest, opts ...grpc.CallOption) (*GetMapFieldResponse, error)
+	// Lock the map for exclusive access
+	Lock(ctx context.Context, in *LockRequest, opts ...grpc.CallOption) (*LockRequest, error)
+	// Unlock the map
+	Unlock(ctx context.Context, in *UnlockRequest, opts ...grpc.CallOption) (*UnlockResponse, error)
+}
+
+type mapClient struct {
+	cc grpc.ClientConnInterface
+}
+
+func NewMapClient(cc grpc.ClientConnInterface) MapClient {
+	return &mapClient{cc}
+}
+
+func (c *mapClient) New(ctx context.Context, in *NewMapRequest, opts ...grpc.CallOption) (*NewMapResponse, error) {
+	out := new(NewMapResponse)
+	err := c.cc.Invoke(ctx, "/protob.Map/New", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *mapClient) GetAll(ctx context.Context, in *GetAllMapFieldsRequest, opts ...grpc.CallOption) (*GetAllMapFieldsResponse, error) {
+	out := new(GetAllMapFieldsResponse)
+	err := c.cc.Invoke(ctx, "/protob.Map/GetAll", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *mapClient) Len(ctx context.Context, in *LenMapRequest, opts ...grpc.CallOption) (*LenMapResponse, error) {
+	out := new(LenMapResponse)
+	err := c.cc.Invoke(ctx, "/protob.Map/Len", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *mapClient) Del(ctx context.Context, in *DelMapRequest, opts ...grpc.CallOption) (*DelMapResponse, error) {
+	out := new(DelMapResponse)
+	err := c.cc.Invoke(ctx, "/protob.Map/Del", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *mapClient) FieldSet(ctx context.Context, in *SetMapFieldRequest, opts ...grpc.CallOption) (*SetMapFieldResponse, error) {
+	out := new(SetMapFieldResponse)
+	err := c.cc.Invoke(ctx, "/protob.Map/FieldSet", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *mapClient) FieldIncr(ctx context.Context, in *IncrMapFieldRequest, opts ...grpc.CallOption) (*IncrMapFieldResponse, error) {
+	out := new(IncrMapFieldResponse)
+	err := c.cc.Invoke(ctx, "/protob.Map/FieldIncr", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *mapClient) FieldDecr(ctx context.Context, in *DecrMapFieldRequest, opts ...grpc.CallOption) (*DecrMapFieldResponse, error) {
+	out := new(DecrMapFieldResponse)
+	err := c.cc.Invoke(ctx, "/protob.Map/FieldDecr", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *mapClient) FieldDel(ctx context.Context, in *DelMapFieldRequest, opts ...grpc.CallOption) (*DelMapFieldResponse, error) {
+	out := new(DelMapFieldResponse)
+	err := c.cc.Invoke(ctx, "/protob.Map/FieldDel", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *mapClient) FieldGet(ctx context.Context, in *GetMapFieldRequest, opts ...grpc.CallOption) (*GetMapFieldResponse, error) {
+	out := new(GetMapFieldResponse)
+	err := c.cc.Invoke(ctx, "/protob.Map/FieldGet", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *mapClient) Lock(ctx context.Context, in *LockRequest, opts ...grpc.CallOption) (*LockRequest, error) {
+	out := new(LockRequest)
+	err := c.cc.Invoke(ctx, "/protob.Map/Lock", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *mapClient) Unlock(ctx context.Context, in *UnlockRequest, opts ...grpc.CallOption) (*UnlockResponse, error) {
+	out := new(UnlockResponse)
+	err := c.cc.Invoke(ctx, "/protob.Map/Unlock", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// MapServer is the server API for Map service.
+// All implementations must embed UnimplementedMapServer
+// for forward compatibility
+type MapServer interface {
+	// New map
+	New(context.Context, *NewMapRequest) (*NewMapResponse, error)
+	// GetAll all KVs in map
+	GetAll(context.Context, *GetAllMapFieldsRequest) (*GetAllMapFieldsResponse, error)
+	// Len for the map
+	Len(context.Context, *LenMapRequest) (*LenMapResponse, error)
+	// Del map
+	Del(context.Context, *DelMapRequest) (*DelMapResponse, error)
+	// FieldSet KV at map
+	FieldSet(context.Context, *SetMapFieldRequest) (*SetMapFieldResponse, error)
+	// FieldIncr increments integer value at map
+	FieldIncr(context.Context, *IncrMapFieldRequest) (*IncrMapFieldResponse, error)
+	// FieldDecr decrements integer value at map
+	FieldDecr(context.Context, *DecrMapFieldRequest) (*DecrMapFieldResponse, error)
+	// FieldDel key at map
+	FieldDel(context.Context, *DelMapFieldRequest) (*DelMapFieldResponse, error)
+	// FieldGet value at key
+	FieldGet(context.Context, *GetMapFieldRequest) (*GetMapFieldResponse, error)
+	// Lock the map for exclusive access
+	Lock(context.Context, *LockRequest) (*LockRequest, error)
+	// Unlock the map
+	Unlock(context.Context, *UnlockRequest) (*UnlockResponse, error)
+	mustEmbedUnimplementedMapServer()
+}
+
+// UnimplementedMapServer must be embedded to have forward compatible implementations.
+type UnimplementedMapServer struct {
+}
+
+func (UnimplementedMapServer) New(context.Context, *NewMapRequest) (*NewMapResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method New not implemented")
+}
+func (UnimplementedMapServer) GetAll(context.Context, *GetAllMapFieldsRequest) (*GetAllMapFieldsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetAll not implemented")
+}
+func (UnimplementedMapServer) Len(context.Context, *LenMapRequest) (*LenMapResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Len not implemented")
+}
+func (UnimplementedMapServer) Del(context.Context, *DelMapRequest) (*DelMapResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Del not implemented")
+}
+func (UnimplementedMapServer) FieldSet(context.Context, *SetMapFieldRequest) (*SetMapFieldResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method FieldSet not implemented")
+}
+func (UnimplementedMapServer) FieldIncr(context.Context, *IncrMapFieldRequest) (*IncrMapFieldResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method FieldIncr not implemented")
+}
+func (UnimplementedMapServer) FieldDecr(context.Context, *DecrMapFieldRequest) (*DecrMapFieldResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method FieldDecr not implemented")
+}
+func (UnimplementedMapServer) FieldDel(context.Context, *DelMapFieldRequest) (*DelMapFieldResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method FieldDel not implemented")
+}
+func (UnimplementedMapServer) FieldGet(context.Context, *GetMapFieldRequest) (*GetMapFieldResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method FieldGet not implemented")
+}
+func (UnimplementedMapServer) Lock(context.Context, *LockRequest) (*LockRequest, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Lock not implemented")
+}
+func (UnimplementedMapServer) Unlock(context.Context, *UnlockRequest) (*UnlockResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Unlock not implemented")
+}
+func (UnimplementedMapServer) mustEmbedUnimplementedMapServer() {}
+
+// UnsafeMapServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to MapServer will
+// result in compilation errors.
+type UnsafeMapServer interface {
+	mustEmbedUnimplementedMapServer()
+}
+
+func RegisterMapServer(s grpc.ServiceRegistrar, srv MapServer) {
+	s.RegisterService(&Map_ServiceDesc, srv)
+}
+
+func _Map_New_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(NewMapRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MapServer).New(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/protob.Map/New",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MapServer).New(ctx, req.(*NewMapRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Map_GetAll_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetAllMapFieldsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MapServer).GetAll(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/protob.Map/GetAll",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MapServer).GetAll(ctx, req.(*GetAllMapFieldsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Map_Len_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(LenMapRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MapServer).Len(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/protob.Map/Len",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MapServer).Len(ctx, req.(*LenMapRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Map_Del_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DelMapRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MapServer).Del(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/protob.Map/Del",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MapServer).Del(ctx, req.(*DelMapRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Map_FieldSet_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SetMapFieldRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MapServer).FieldSet(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/protob.Map/FieldSet",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MapServer).FieldSet(ctx, req.(*SetMapFieldRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Map_FieldIncr_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(IncrMapFieldRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MapServer).FieldIncr(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/protob.Map/FieldIncr",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MapServer).FieldIncr(ctx, req.(*IncrMapFieldRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Map_FieldDecr_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DecrMapFieldRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MapServer).FieldDecr(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/protob.Map/FieldDecr",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MapServer).FieldDecr(ctx, req.(*DecrMapFieldRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Map_FieldDel_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DelMapFieldRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MapServer).FieldDel(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/protob.Map/FieldDel",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MapServer).FieldDel(ctx, req.(*DelMapFieldRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Map_FieldGet_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetMapFieldRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MapServer).FieldGet(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/protob.Map/FieldGet",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MapServer).FieldGet(ctx, req.(*GetMapFieldRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Map_Lock_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(LockRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MapServer).Lock(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/protob.Map/Lock",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MapServer).Lock(ctx, req.(*LockRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Map_Unlock_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UnlockRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MapServer).Unlock(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/protob.Map/Unlock",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MapServer).Unlock(ctx, req.(*UnlockRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+// Map_ServiceDesc is the grpc.ServiceDesc for Map service.
+// It's only intended for direct use with grpc.RegisterService,
+// and not to be introspected or modified (even as a copy)
+var Map_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "protob.Map",
+	HandlerType: (*MapServer)(nil),
+	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "New",
+			Handler:    _Map_New_Handler,
+		},
+		{
+			MethodName: "GetAll",
+			Handler:    _Map_GetAll_Handler,
+		},
+		{
+			MethodName: "Len",
+			Handler:    _Map_Len_Handler,
+		},
+		{
+			MethodName: "Del",
+			Handler:    _Map_Del_Handler,
+		},
+		{
+			MethodName: "FieldSet",
+			Handler:    _Map_FieldSet_Handler,
+		},
+		{
+			MethodName: "FieldIncr",
+			Handler:    _Map_FieldIncr_Handler,
+		},
+		{
+			MethodName: "FieldDecr",
+			Handler:    _Map_FieldDecr_Handler,
+		},
+		{
+			MethodName: "FieldDel",
+			Handler:    _Map_FieldDel_Handler,
+		},
+		{
+			MethodName: "FieldGet",
+			Handler:    _Map_FieldGet_Handler,
+		},
+		{
+			MethodName: "Lock",
+			Handler:    _Map_Lock_Handler,
+		},
+		{
+			MethodName: "Unlock",
+			Handler:    _Map_Unlock_Handler,
+		},
+	},
+	Streams:  []grpc.StreamDesc{},
+	Metadata: "pkg/protob/eventstore.proto",
+}
+
+// QueueClient is the client API for Queue service.
+//
+// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
+type QueueClient interface {
+	// New queue
+	New(ctx context.Context, in *NewQueueRequest, opts ...grpc.CallOption) (*NewQueueResponse, error)
+	// GetAll all elements in queue
+	GetAll(ctx context.Context, in *GetAllQueuesRequest, opts ...grpc.CallOption) (*GetAllQueuesResponse, error)
+	// Len for the queue
+	Len(ctx context.Context, in *LenQueueRequest, opts ...grpc.CallOption) (*LenQueueResponse, error)
+	// Del queue
+	Del(ctx context.Context, in *DelQueueRequest, opts ...grpc.CallOption) (*DelQueueResponse, error)
+	// Push value in map
+	Push(ctx context.Context, in *PushQueueRequest, opts ...grpc.CallOption) (*PushQueueResponse, error)
+	// Index returns the element at the index
+	Index(ctx context.Context, in *IndexQueueRequest, opts ...grpc.CallOption) (*IndexQueueResponse, error)
+	// Pop retrieves and removes an element from the queue
+	Pop(ctx context.Context, in *PopQueueRequest, opts ...grpc.CallOption) (*PopQueueResponse, error)
+	// Peek retrieves an element from the queue
+	Peek(ctx context.Context, in *PeekQueueRequest, opts ...grpc.CallOption) (*PeekQueueResponse, error)
+	// Lock the queue for exclusive access
+	Lock(ctx context.Context, in *LockRequest, opts ...grpc.CallOption) (*LockRequest, error)
+	// Unlock the queue
+	Unlock(ctx context.Context, in *UnlockRequest, opts ...grpc.CallOption) (*UnlockResponse, error)
+}
+
+type queueClient struct {
+	cc grpc.ClientConnInterface
+}
+
+func NewQueueClient(cc grpc.ClientConnInterface) QueueClient {
+	return &queueClient{cc}
+}
+
+func (c *queueClient) New(ctx context.Context, in *NewQueueRequest, opts ...grpc.CallOption) (*NewQueueResponse, error) {
+	out := new(NewQueueResponse)
+	err := c.cc.Invoke(ctx, "/protob.Queue/New", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *queueClient) GetAll(ctx context.Context, in *GetAllQueuesRequest, opts ...grpc.CallOption) (*GetAllQueuesResponse, error) {
+	out := new(GetAllQueuesResponse)
+	err := c.cc.Invoke(ctx, "/protob.Queue/GetAll", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *queueClient) Len(ctx context.Context, in *LenQueueRequest, opts ...grpc.CallOption) (*LenQueueResponse, error) {
+	out := new(LenQueueResponse)
+	err := c.cc.Invoke(ctx, "/protob.Queue/Len", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *queueClient) Del(ctx context.Context, in *DelQueueRequest, opts ...grpc.CallOption) (*DelQueueResponse, error) {
+	out := new(DelQueueResponse)
+	err := c.cc.Invoke(ctx, "/protob.Queue/Del", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *queueClient) Push(ctx context.Context, in *PushQueueRequest, opts ...grpc.CallOption) (*PushQueueResponse, error) {
+	out := new(PushQueueResponse)
+	err := c.cc.Invoke(ctx, "/protob.Queue/Push", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *queueClient) Index(ctx context.Context, in *IndexQueueRequest, opts ...grpc.CallOption) (*IndexQueueResponse, error) {
+	out := new(IndexQueueResponse)
+	err := c.cc.Invoke(ctx, "/protob.Queue/Index", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *queueClient) Pop(ctx context.Context, in *PopQueueRequest, opts ...grpc.CallOption) (*PopQueueResponse, error) {
+	out := new(PopQueueResponse)
+	err := c.cc.Invoke(ctx, "/protob.Queue/Pop", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *queueClient) Peek(ctx context.Context, in *PeekQueueRequest, opts ...grpc.CallOption) (*PeekQueueResponse, error) {
+	out := new(PeekQueueResponse)
+	err := c.cc.Invoke(ctx, "/protob.Queue/Peek", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *queueClient) Lock(ctx context.Context, in *LockRequest, opts ...grpc.CallOption) (*LockRequest, error) {
+	out := new(LockRequest)
+	err := c.cc.Invoke(ctx, "/protob.Queue/Lock", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *queueClient) Unlock(ctx context.Context, in *UnlockRequest, opts ...grpc.CallOption) (*UnlockResponse, error) {
+	out := new(UnlockResponse)
+	err := c.cc.Invoke(ctx, "/protob.Queue/Unlock", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// QueueServer is the server API for Queue service.
+// All implementations must embed UnimplementedQueueServer
+// for forward compatibility
+type QueueServer interface {
+	// New queue
+	New(context.Context, *NewQueueRequest) (*NewQueueResponse, error)
+	// GetAll all elements in queue
+	GetAll(context.Context, *GetAllQueuesRequest) (*GetAllQueuesResponse, error)
+	// Len for the queue
+	Len(context.Context, *LenQueueRequest) (*LenQueueResponse, error)
+	// Del queue
+	Del(context.Context, *DelQueueRequest) (*DelQueueResponse, error)
+	// Push value in map
+	Push(context.Context, *PushQueueRequest) (*PushQueueResponse, error)
+	// Index returns the element at the index
+	Index(context.Context, *IndexQueueRequest) (*IndexQueueResponse, error)
+	// Pop retrieves and removes an element from the queue
+	Pop(context.Context, *PopQueueRequest) (*PopQueueResponse, error)
+	// Peek retrieves an element from the queue
+	Peek(context.Context, *PeekQueueRequest) (*PeekQueueResponse, error)
+	// Lock the queue for exclusive access
+	Lock(context.Context, *LockRequest) (*LockRequest, error)
+	// Unlock the queue
+	Unlock(context.Context, *UnlockRequest) (*UnlockResponse, error)
+	mustEmbedUnimplementedQueueServer()
+}
+
+// UnimplementedQueueServer must be embedded to have forward compatible implementations.
+type UnimplementedQueueServer struct {
+}
+
+func (UnimplementedQueueServer) New(context.Context, *NewQueueRequest) (*NewQueueResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method New not implemented")
+}
+func (UnimplementedQueueServer) GetAll(context.Context, *GetAllQueuesRequest) (*GetAllQueuesResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetAll not implemented")
+}
+func (UnimplementedQueueServer) Len(context.Context, *LenQueueRequest) (*LenQueueResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Len not implemented")
+}
+func (UnimplementedQueueServer) Del(context.Context, *DelQueueRequest) (*DelQueueResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Del not implemented")
+}
+func (UnimplementedQueueServer) Push(context.Context, *PushQueueRequest) (*PushQueueResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Push not implemented")
+}
+func (UnimplementedQueueServer) Index(context.Context, *IndexQueueRequest) (*IndexQueueResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Index not implemented")
+}
+func (UnimplementedQueueServer) Pop(context.Context, *PopQueueRequest) (*PopQueueResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Pop not implemented")
+}
+func (UnimplementedQueueServer) Peek(context.Context, *PeekQueueRequest) (*PeekQueueResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Peek not implemented")
+}
+func (UnimplementedQueueServer) Lock(context.Context, *LockRequest) (*LockRequest, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Lock not implemented")
+}
+func (UnimplementedQueueServer) Unlock(context.Context, *UnlockRequest) (*UnlockResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Unlock not implemented")
+}
+func (UnimplementedQueueServer) mustEmbedUnimplementedQueueServer() {}
+
+// UnsafeQueueServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to QueueServer will
+// result in compilation errors.
+type UnsafeQueueServer interface {
+	mustEmbedUnimplementedQueueServer()
+}
+
+func RegisterQueueServer(s grpc.ServiceRegistrar, srv QueueServer) {
+	s.RegisterService(&Queue_ServiceDesc, srv)
+}
+
+func _Queue_New_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(NewQueueRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(QueueServer).New(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/protob.Queue/New",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(QueueServer).New(ctx, req.(*NewQueueRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Queue_GetAll_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetAllQueuesRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(QueueServer).GetAll(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/protob.Queue/GetAll",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(QueueServer).GetAll(ctx, req.(*GetAllQueuesRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Queue_Len_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(LenQueueRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(QueueServer).Len(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/protob.Queue/Len",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(QueueServer).Len(ctx, req.(*LenQueueRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Queue_Del_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DelQueueRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(QueueServer).Del(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/protob.Queue/Del",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(QueueServer).Del(ctx, req.(*DelQueueRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Queue_Push_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(PushQueueRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(QueueServer).Push(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/protob.Queue/Push",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(QueueServer).Push(ctx, req.(*PushQueueRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Queue_Index_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(IndexQueueRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(QueueServer).Index(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/protob.Queue/Index",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(QueueServer).Index(ctx, req.(*IndexQueueRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Queue_Pop_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(PopQueueRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(QueueServer).Pop(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/protob.Queue/Pop",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(QueueServer).Pop(ctx, req.(*PopQueueRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Queue_Peek_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(PeekQueueRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(QueueServer).Peek(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/protob.Queue/Peek",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(QueueServer).Peek(ctx, req.(*PeekQueueRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Queue_Lock_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(LockRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(QueueServer).Lock(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/protob.Queue/Lock",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(QueueServer).Lock(ctx, req.(*LockRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Queue_Unlock_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UnlockRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(QueueServer).Unlock(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/protob.Queue/Unlock",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(QueueServer).Unlock(ctx, req.(*UnlockRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+// Queue_ServiceDesc is the grpc.ServiceDesc for Queue service.
+// It's only intended for direct use with grpc.RegisterService,
+// and not to be introspected or modified (even as a copy)
+var Queue_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "protob.Queue",
+	HandlerType: (*QueueServer)(nil),
+	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "New",
+			Handler:    _Queue_New_Handler,
+		},
+		{
+			MethodName: "GetAll",
+			Handler:    _Queue_GetAll_Handler,
+		},
+		{
+			MethodName: "Len",
+			Handler:    _Queue_Len_Handler,
+		},
+		{
+			MethodName: "Del",
+			Handler:    _Queue_Del_Handler,
+		},
+		{
+			MethodName: "Push",
+			Handler:    _Queue_Push_Handler,
+		},
+		{
+			MethodName: "Index",
+			Handler:    _Queue_Index_Handler,
+		},
+		{
+			MethodName: "Pop",
+			Handler:    _Queue_Pop_Handler,
+		},
+		{
+			MethodName: "Peek",
+			Handler:    _Queue_Peek_Handler,
+		},
+		{
+			MethodName: "Lock",
+			Handler:    _Queue_Lock_Handler,
+		},
+		{
+			MethodName: "Unlock",
+			Handler:    _Queue_Unlock_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

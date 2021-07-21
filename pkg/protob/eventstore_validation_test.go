@@ -25,11 +25,11 @@ import (
 
 func TestSaveValidation(t *testing.T) {
 	testCases := map[string]struct {
-		sr       *SaveRequest
+		sr       *SetKVRequest
 		expected error
 	}{
 		"valid global request with TTL and value": {
-			sr: &SaveRequest{
+			sr: &SetKVRequest{
 				Location: &LocationType{
 					Scope: &ScopeType{
 						Type: ScopeChoice_Global,
@@ -43,7 +43,7 @@ func TestSaveValidation(t *testing.T) {
 		},
 
 		"valid global request": {
-			sr: &SaveRequest{
+			sr: &SetKVRequest{
 				Location: &LocationType{
 					Scope: &ScopeType{
 						Type: ScopeChoice_Global,
@@ -55,7 +55,7 @@ func TestSaveValidation(t *testing.T) {
 		},
 
 		"valid bridge request": {
-			sr: &SaveRequest{
+			sr: &SetKVRequest{
 				Location: &LocationType{
 					Scope: &ScopeType{
 						Type:   ScopeChoice_Bridge,
@@ -68,7 +68,7 @@ func TestSaveValidation(t *testing.T) {
 		},
 
 		"valid instance request": {
-			sr: &SaveRequest{
+			sr: &SetKVRequest{
 				Location: &LocationType{
 					Scope: &ScopeType{
 						Type:     ScopeChoice_Instance,
@@ -82,7 +82,7 @@ func TestSaveValidation(t *testing.T) {
 		},
 
 		"error: no scope type defaults to instance": {
-			sr: &SaveRequest{
+			sr: &SetKVRequest{
 				Location: &LocationType{
 					Scope: &ScopeType{
 						Bridge: "mybridge",
@@ -94,7 +94,7 @@ func TestSaveValidation(t *testing.T) {
 		},
 
 		"error: missing key": {
-			sr: &SaveRequest{
+			sr: &SetKVRequest{
 				Location: &LocationType{
 					Scope: &ScopeType{
 						Type: ScopeChoice_Global,
@@ -105,7 +105,7 @@ func TestSaveValidation(t *testing.T) {
 		},
 
 		"error: global should not inform bridge": {
-			sr: &SaveRequest{
+			sr: &SetKVRequest{
 				Location: &LocationType{
 					Scope: &ScopeType{
 						Type:   ScopeChoice_Global,
@@ -118,7 +118,7 @@ func TestSaveValidation(t *testing.T) {
 		},
 
 		"error: global should not inform instance": {
-			sr: &SaveRequest{
+			sr: &SetKVRequest{
 				Location: &LocationType{
 					Scope: &ScopeType{
 						Type:     ScopeChoice_Global,
@@ -131,7 +131,7 @@ func TestSaveValidation(t *testing.T) {
 		},
 
 		"error: bridge should inform bridge": {
-			sr: &SaveRequest{
+			sr: &SetKVRequest{
 				Location: &LocationType{
 					Scope: &ScopeType{
 						Type: ScopeChoice_Bridge,
@@ -143,7 +143,7 @@ func TestSaveValidation(t *testing.T) {
 		},
 
 		"error: bridge should not inform instance": {
-			sr: &SaveRequest{
+			sr: &SetKVRequest{
 				Location: &LocationType{
 					Scope: &ScopeType{
 						Type:     ScopeChoice_Bridge,
@@ -157,7 +157,7 @@ func TestSaveValidation(t *testing.T) {
 		},
 
 		"error: instance should inform bridge": {
-			sr: &SaveRequest{
+			sr: &SetKVRequest{
 				Location: &LocationType{
 					Scope: &ScopeType{
 						Type:     ScopeChoice_Instance,
@@ -170,7 +170,7 @@ func TestSaveValidation(t *testing.T) {
 		},
 
 		"error: instance should inform instance": {
-			sr: &SaveRequest{
+			sr: &SetKVRequest{
 				Location: &LocationType{
 					Scope: &ScopeType{
 						Type:   ScopeChoice_Instance,
@@ -188,14 +188,14 @@ func TestSaveValidation(t *testing.T) {
 		},
 
 		"error: nil location": {
-			sr: &SaveRequest{
+			sr: &SetKVRequest{
 				Location: nil,
 			},
 			expected: errors.New("location cannot be nil"),
 		},
 
 		"error: nil scope type": {
-			sr: &SaveRequest{
+			sr: &SetKVRequest{
 				Location: &LocationType{
 					Scope: nil,
 					Key:   "mykey",
@@ -205,7 +205,7 @@ func TestSaveValidation(t *testing.T) {
 		},
 
 		"error: negative TTL": {
-			sr: &SaveRequest{
+			sr: &SetKVRequest{
 				Location: &LocationType{
 					Scope: &ScopeType{
 						Type: ScopeChoice_Global,
@@ -231,11 +231,11 @@ func TestLoadValidation(t *testing.T) {
 	// testing top level case only, all location type mutations
 	// are tested inside save validation
 	testCases := map[string]struct {
-		lr       *LoadRequest
+		lr       *GetKVRequest
 		expected error
 	}{
 		"valid global request": {
-			lr: &LoadRequest{
+			lr: &GetKVRequest{
 				Location: &LocationType{
 					Scope: &ScopeType{
 						Type: ScopeChoice_Global,
@@ -247,7 +247,7 @@ func TestLoadValidation(t *testing.T) {
 		},
 
 		"error: nil scope type": {
-			lr: &LoadRequest{
+			lr: &GetKVRequest{
 				Location: &LocationType{
 					Scope: nil,
 					Key:   "mykey",
@@ -269,11 +269,11 @@ func TestDeleteValidation(t *testing.T) {
 	// testing top level case only, all location type mutations
 	// are tested inside save validation
 	testCases := map[string]struct {
-		dr       *DeleteRequest
+		dr       *DelKVRequest
 		expected error
 	}{
 		"valid global request": {
-			dr: &DeleteRequest{
+			dr: &DelKVRequest{
 				Location: &LocationType{
 					Scope: &ScopeType{
 						Type: ScopeChoice_Global,
@@ -285,7 +285,7 @@ func TestDeleteValidation(t *testing.T) {
 		},
 
 		"error: nil scope type": {
-			dr: &DeleteRequest{
+			dr: &DelKVRequest{
 				Location: &LocationType{
 					Scope: nil,
 					Key:   "mykey",
