@@ -90,108 +90,142 @@ service KVStore {
   rpc Get(GetRequest) returns (GetResponse) {}
 }
 
-message SetMapRequest {
+
+message NewMapRequest {
+  LocationType location = 1;
+  int32 ttl = 2;
+}
+
+message NewMapResponse {}
+
+message SetMapFieldRequest {
   LocationType location = 1;
   int32 ttl = 2;
   string field = 3;
   bytes value = 4;
 }
 
-message SetMapResponse {}
+message SetMapFieldResponse {}
 
-message IncrMapRequest {
+message IncrMapFieldRequest {
   LocationType location = 1;
   string field = 2;
   int32 incr = 3;
 }
 
-message IncrMapResponse {}
+message IncrMapFieldResponse {}
 
-message DecrMapRequest {
+message DecrMapFieldRequest {
   LocationType location = 1;
   string field = 2;
   int32 decr = 3;
 }
 
-message DecrMapResponse {}
+message DecrMapFieldResponse {}
 
-message DelMapRequest {
+message DelMapFieldRequest {
   LocationType location = 1;
   string field = 2;
 }
 
-message DelMapResponse {}
+message DelMapFieldResponse {}
 
-message GetMapRequest {
+message GetMapFieldRequest {
   LocationType location = 1;
   string field = 2;
 }
 
-message GetMapResponse {
+message GetMapFieldResponse {
   bytes value = 1;
 }
 
-message GetAllMapRequest {
+message GetAllMapFieldRequest {
   LocationType location = 1;
 }
 
-message GetAllMapResponse {
+message GetAllMapFieldResponse {
   map<string, bytes> values = 1;
 }
 
-message LenMapRequest {
+message LenMapFieldRequest {
   LocationType location = 1;
 }
 
-message LenMapResponse {
+message LenMapFieldResponse {
   int32 len = 1;
 }
 
 // Map interface
 service Map {
-  // Set KV at map
-  rpc Set(SetMapRequest) returns (SetMapResponse) {}
 
-  // Incr increments integer value at map
-  rpc Incr(IncrMapRequest) returns (IncrMapResponse) {}
+  // New map
+  rpc New(NewMapRequest) returns (NewMapResponse) {}
 
-  // Decr decrements integer value at map
-  rpc Decr(DecrMapRequest) returns (DecrMapResponse) {}
+  // GetAll all KVs in map
+  rpc GetAll(GetAllMapFieldsRequest) returns (GetAllMapFieldsResponse) {}
+
+  // Len for the map
+  rpc Len(LenMapRequest) returns (LenFieldResponse) {}
 
   // Del key at map
   rpc Del(DelMapRequest) returns (DelMapResponse) {}
 
-  // Get value at key
-  rpc Get(GetMapRequest) returns (GetMapResponse) {}
+  // FieldSet KV at map
+  rpc FieldSet(SetMapFieldRequest) returns (SetMapFieldResponse) {}
 
-  // GetAll all KVs in map
-  rpc GetAll(GetAllMapRequest) returns (GetAllMapResponse) {}
+  // FieldIncr increments integer value at map
+  rpc FieldIncr(IncrMapFieldRequest) returns (IncrMapFieldResponse) {}
 
-  // Len for the map
-  rpc Len(LenMapRequest) returns (LenMapResponse) {}
+  // FieldDecr decrements integer value at map
+  rpc FieldDecr(DecrMapFieldRequest) returns (DecrMapFieldResponse) {}
+
+  // FieldDel key at map
+  rpc FieldDel(DelMapFieldRequest) returns (DelMapFieldResponse) {}
+
+  // FieldGet value at key
+  rpc FieldGet(GetMapFieldRequest) returns (GetMapFieldResponse) {}
 }
+
+
+message PushQueueRequest {
+  LocationType location = 1;
+  int32 ttl = 2;
+  bytes value = 3;
+}
+
+message PushQueueResponse {}
+
+message IndexQueueRequest {
+  LocationType location = 1;
+  int32 field = 2;
+}
+
+message IndexQueueResponse {
+  bytes value = 1;
+}
+
 
 // Queue interface
 service Queue {
   // Push value in map
-  rpc Push(PushRequest) returns (PushResponse) {}
+  rpc Push(PushQueueRequest) returns (PushQueueResponse) {}
 
   // Index returns the element at the index
-  rpc Index(IndexRequest) returns (IndexResponse) {}
+  rpc Index(IndexQueueRequest) returns (IndexQueueResponse) {}
 
   // Len for the queue
-  rpc Len(LenRequest) returns (LenResponse) {}
+  rpc Len(LenQueueRequest) returns (LenQueueResponse) {}
 
   // Pop retrieves and removes an element from the queue
-  rpc Pop(PopRequest) returns (PopResponse) {}
+  rpc Pop(PopQueueRequest) returns (PopQueueResponse) {}
 
   // Peek retrieves an element from the queue
-  rpc Peek(PeekRequest) returns (PeekResponse) {}
+  rpc Peek(PeekQueueRequest) returns (PeekQueueResponse) {}
 
   // Lock the queue for exclusive access
-  rpc Lock(LockRequest) returns (LockRequest) {}
+  rpc Lock(LockQueueRequest) returns (LockQueueRequest) {}
 
   // Unlock the queue
-  rpc Unlock(UnlockRequest) returns (UnlockResponse) {}
+  rpc Unlock(UnlockQueueRequest) returns (UnlockQueueResponse) {}
 }
 
