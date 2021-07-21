@@ -18,7 +18,6 @@ package client
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"time"
 
@@ -55,8 +54,8 @@ type KeyValue interface {
 	Set(ctx context.Context, key string, value []byte, ttlSec int32) error
 	Get(ctx context.Context, key string) ([]byte, error)
 	Del(ctx context.Context, key string) error
-	Incr(ctx context.Context, key string, value int) error
-	Decr(ctx context.Context, key string, value int) error
+	Incr(ctx context.Context, key string, value int32) error
+	Decr(ctx context.Context, key string, value int32) error
 
 	Lockable
 }
@@ -123,126 +122,18 @@ type internalClient struct {
 	instance string
 }
 
-type internalKV struct {
-	*internalClient
-}
-
-func (i *internalKV) Set(ctx context.Context, key string, value []byte, ttlSec int32) error {
-	if i.svc.kvc == nil {
-		return errors.New("Event store client is not connected")
-	}
-
-	sr := &eventstore.SetKVRequest{
-		Location: &eventstore.LocationType{
-			Scope: &eventstore.ScopeType{
-				Bridge:   i.bridge,
-				Instance: i.instance,
-			},
-			Key: key,
-		},
-		Ttl:   ttlSec,
-		Value: value,
-	}
-
-	switch {
-	case i.instance != "":
-		sr.Location.Scope.Type = eventstore.ScopeChoice_Instance
-	case i.bridge != "":
-		sr.Location.Scope.Type = eventstore.ScopeChoice_Bridge
-	default:
-		sr.Location.Scope.Type = eventstore.ScopeChoice_Global
-	}
-
-	if err := sr.Validate(); err != nil {
-		return err
-	}
-
-	_, err := i.svc.kvc.Set(ctx, sr)
-	return err
-}
-
-// LoadValue from EventStore
-func (i *internalKV) Get(ctx context.Context, key string) ([]byte, error) {
-	if i.svc.kvc == nil {
-		return nil, errors.New("Event store client is not connected")
-	}
-
-	gr := &eventstore.GetKVRequest{
-		Location: &eventstore.LocationType{
-			Key: key,
-			Scope: &eventstore.ScopeType{
-				Bridge:   i.bridge,
-				Instance: i.instance,
-			}}}
-
-	switch {
-	case i.instance != "":
-		gr.Location.Scope.Type = eventstore.ScopeChoice_Instance
-	case i.bridge != "":
-		gr.Location.Scope.Type = eventstore.ScopeChoice_Bridge
-	default:
-		gr.Location.Scope.Type = eventstore.ScopeChoice_Global
-	}
-
-	if err := gr.Validate(); err != nil {
-		return nil, err
-	}
-
-	r, err := i.svc.kvc.Get(ctx, gr)
-	if err != nil {
-		return nil, err
-	}
-
-	return r.GetValue(), nil
-}
-
-// DeleteValue from EventStore
-func (i *internalKV) Del(ctx context.Context, key string) error {
-	if i.svc.kvc == nil {
-		return errors.New("Event store client is not connected")
-	}
-
-	dr := &eventstore.DelKVRequest{
-		Location: &eventstore.LocationType{
-			Key: key,
-			Scope: &eventstore.ScopeType{
-				Bridge:   i.bridge,
-				Instance: i.instance,
-			}}}
-
-	switch {
-	case i.instance != "":
-		dr.Location.Scope.Type = eventstore.ScopeChoice_Instance
-	case i.bridge != "":
-		dr.Location.Scope.Type = eventstore.ScopeChoice_Bridge
-	default:
-		dr.Location.Scope.Type = eventstore.ScopeChoice_Global
-	}
-
-	if err := dr.Validate(); err != nil {
-		return err
-	}
-
-	_, err := i.svc.kvc.Del(ctx, dr)
-	return err
-}
-
-//
-// Incr(ctx context.Context, key string, value int) error
-// Decr(ctx context.Context, key string, value int) error
-
-// Lockable
-
 func (s *internalClient) KV() KeyValue {
 	return &internalKV{s}
 }
 
 func (s *internalClient) Map() Map {
-
+	// TODO add Map
+	return nil
 }
 
 func (s *internalClient) Queue() Queue {
-
+	// TODO add Queue
+	return nil
 }
 
 // New creates an instance of the EventStore client.

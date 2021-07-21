@@ -26,7 +26,7 @@ import (
 
 // KVStoreClient is a mocked EventStore client
 type KVStoreClient interface {
-	protob.KVStoreClient
+	protob.KVClient
 
 	GetRequests() []Request
 }

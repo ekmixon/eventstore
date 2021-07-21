@@ -95,3 +95,23 @@ func (x *GetKVRequest) Validate() error {
 func (x *DelKVRequest) Validate() error {
 	return x.Location.Validate()
 }
+
+// Validate IncrKVRequest
+func (x *IncrKVRequest) Validate() error {
+	return x.Location.Validate()
+}
+
+// Validate DecrKVRequest
+func (x *DecrKVRequest) Validate() error {
+	return x.Location.Validate()
+}
+
+// Validate LockRequest
+func (x *LockRequest) Validate() error {
+	return x.Location.Validate()
+}
+
+// Validate UnlockRequest
+func (x *UnlockRequest) Validate() error {
+	return x.Location.Validate()
+}
