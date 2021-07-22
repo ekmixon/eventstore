@@ -22,6 +22,9 @@ import (
 	"time"
 
 	"github.com/alecthomas/kong"
+	"google.golang.org/genproto/googleapis/cloud/location"
+
+	"github.com/triggermesh/eventstore/pkg/client"
 )
 
 type Globals struct {
@@ -31,20 +34,14 @@ type Globals struct {
 	Instance string `help:"Instance ID, when scope is instance"`
 
 	Timeout time.Duration `help:"Timeout for completing the operation" default:"5s"`
+
+	location location.Location
 }
 
 type Cli struct {
 	Globals
 
 	Kv KVCmd `cmd help:"KV EventStore"`
-
-	// Kv struct {
-	// 	Command string `help:"KV storage command."`
-	// 	// Force     bool   `help:"Force removal." short:"f"`
-	// 	// Recursive bool   `help:"Recursively remove files." short:"r"`
-
-	// 	// Paths []string `arg:"" help:"Paths to remove." type:"path" name:"path"`
-	// } `cmd:"" help:"EventStore KV."`
 
 	Map struct {
 		Paths []string `arg:"" optional:"" help:"Paths to list." type:"path"`
@@ -94,5 +91,19 @@ func (c *Cli) Validate() error {
 		return fmt.Errorf("unknown scope %q", c.Scope)
 	}
 
+	return nil
+}
+
+func (g *Globals) scopedClient(c client.EventStore) client.Interface {
+	switch g.Scope {
+	case "global":
+		return c.Global()
+
+	case "bridge":
+		return c.Bridge(g.Bridge)
+
+	case "instance":
+		return c.Instance(g.Bridge, g.Instance)
+	}
 	return nil
 }

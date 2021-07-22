@@ -19,7 +19,6 @@ package main
 import (
 	"context"
 	"fmt"
-	"log"
 	"time"
 
 	"github.com/triggermesh/eventstore/pkg/client"
@@ -51,19 +50,16 @@ type KVGetCmd struct {
 }
 
 func (kv *KVSetCmd) Run(g *Globals) error {
-	fmt.Printf("Scope: %s\n", g.Scope)
-	fmt.Printf("Bridge: %s\n", g.Bridge)
-	fmt.Printf("Attaching to: %v\n", g.Instance)
-
-	c := client.New(g.Server, g.Timeout)
+	es := client.New(g.Server, g.Timeout)
 	ctx := context.Background()
-	if err := c.Connect(ctx); err != nil {
-		log.Fatalf("Failed to dial %s: %v", g.Server, err)
+
+	if err := es.Connect(ctx); err != nil {
+		return fmt.Errorf("failed to dial %s: %v", g.Server, err)
 	}
+	defer func() { _ = es.Disconnect() }()
 
-	defer func() { _ = c.Disconnect() }()
-
-	return nil
+	c := g.scopedClient(es).KV()
+	return c.Set(ctx, kv.Key, []byte(kv.Value), int32(kv.TTL))
 }
 
 func (kv *KVGetCmd) Run(g *Globals) error {
