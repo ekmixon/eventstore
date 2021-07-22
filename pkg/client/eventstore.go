@@ -83,18 +83,18 @@ type MapFields interface {
 // Queue is a minimal FIFO interface.
 type Queue interface {
 	New(ctx context.Context, key string, ttlSec int32) error
-	Get(ctx context.Context, key string) QueueItems
+	Items(key string) QueueItems
 	Del(ctx context.Context, key string) error
 
 	Lockable
 }
 type QueueItems interface {
 	Push(ctx context.Context, value []byte) error
-	Index(ctx context.Context, index int) ([]byte, error)
+	Index(ctx context.Context, index int32) ([]byte, error)
 	Pop(ctx context.Context) ([]byte, error)
 	Peek(ctx context.Context) ([]byte, error)
 
-	GetAll(ctx context.Context) (map[string][]byte, error)
+	All(ctx context.Context) ([][]byte, error)
 	Len(ctx context.Context) (int, error)
 }
 

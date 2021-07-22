@@ -258,7 +258,7 @@ message PushQueueResponse {}
 
 message IndexQueueRequest {
   LocationType location = 1;
-  int32 field = 2;
+  int32 index = 2;
 }
 
 message IndexQueueResponse {
@@ -267,7 +267,6 @@ message IndexQueueResponse {
 
 message PopQueueRequest {
   LocationType location = 1;
-  string field = 2;
 }
 
 message PopQueueResponse {
@@ -276,7 +275,6 @@ message PopQueueResponse {
 
 message PeekQueueRequest {
   LocationType location = 1;
-  string field = 2;
 }
 
 message PeekQueueResponse {

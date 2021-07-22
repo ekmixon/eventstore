@@ -177,3 +177,42 @@ func (x *DelMapFieldRequest) Validate() error {
 func (x *GetAllMapFieldsRequest) Validate() error {
 	return x.Location.Validate()
 }
+
+func (x *NewQueueRequest) Validate() error {
+	if x.Ttl < 0 {
+		return errors.New("TTL cannot be negative")
+	}
+
+	return x.Location.Validate()
+}
+
+func (x *DelQueueRequest) Validate() error {
+	return x.Location.Validate()
+}
+
+func (x *LenQueueRequest) Validate() error {
+	return x.Location.Validate()
+}
+
+func (x *PushQueueRequest) Validate() error {
+	return x.Location.Validate()
+}
+
+func (x *PopQueueRequest) Validate() error {
+	return x.Location.Validate()
+}
+
+func (x *PeekQueueRequest) Validate() error {
+	return x.Location.Validate()
+}
+
+func (x *IndexQueueRequest) Validate() error {
+	if x.Index < 0 {
+		return errors.New("Index cannot be negative")
+	}
+	return x.Location.Validate()
+}
+
+func (x *GetAllQueuesRequest) Validate() error {
+	return x.Location.Validate()
+}
