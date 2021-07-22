@@ -88,8 +88,8 @@ message UnlockRequest {
 
 message UnlockResponse {}
 
-// KVStore interface
-service KVStore {
+// KV interface
+service KV {
   // Set KV at storage
   rpc Set(SetKVRequest) returns (SetKVResponse) {}
 
@@ -188,8 +188,8 @@ service Map {
   // New map
   rpc New(NewMapRequest) returns (NewMapResponse) {}
 
-  // GetAll all KVs in map
-  rpc GetAll(GetAllMapFieldsRequest) returns (GetAllMapFieldsResponse) {}
+  // GetFields all KVs in map
+  rpc GetFields(GetAllMapFieldsRequest) returns (GetAllMapFieldsResponse) {}
 
   // Len for the map
   rpc Len(LenMapRequest) returns (LenMapResponse) {}
@@ -213,7 +213,7 @@ service Map {
   rpc FieldGet(GetMapFieldRequest) returns (GetMapFieldResponse) {}
 
   // Lock the map for exclusive access
-  rpc Lock(LockRequest) returns (LockRequest) {}
+  rpc Lock(LockRequest) returns (LockResponse) {}
 
   // Unlock the map
   rpc Unlock(UnlockRequest) returns (UnlockResponse) {}
@@ -258,7 +258,7 @@ message PushQueueResponse {}
 
 message IndexQueueRequest {
   LocationType location = 1;
-  int32 field = 2;
+  int32 index = 2;
 }
 
 message IndexQueueResponse {
@@ -267,7 +267,6 @@ message IndexQueueResponse {
 
 message PopQueueRequest {
   LocationType location = 1;
-  string field = 2;
 }
 
 message PopQueueResponse {
@@ -276,7 +275,6 @@ message PopQueueResponse {
 
 message PeekQueueRequest {
   LocationType location = 1;
-  string field = 2;
 }
 
 message PeekQueueResponse {
@@ -311,7 +309,7 @@ service Queue {
   rpc Peek(PeekQueueRequest) returns (PeekQueueResponse) {}
 
   // Lock the queue for exclusive access
-  rpc Lock(LockRequest) returns (LockRequest) {}
+  rpc Lock(LockRequest) returns (LockResponse) {}
 
   // Unlock the queue
   rpc Unlock(UnlockRequest) returns (UnlockResponse) {}

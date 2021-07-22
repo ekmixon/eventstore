@@ -18,7 +18,6 @@ package client
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"time"
 
@@ -37,39 +36,66 @@ type EventStore interface {
 	Instance(string, string) Interface
 }
 
+// Interface provides read, write and delete primitives at
+// the EventStore
+type Interface interface {
+	KV() KeyValue
+	Map() Map
+	Queue() Queue
+}
+
+type Lockable interface {
+	Lock(ctx context.Context, key string, timeout int32) (string, error)
+	Unlock(ctx context.Context, key string, unlock string) error
+}
+
 // KeyValue is the key value interface for storage.
 type KeyValue interface {
 	Set(ctx context.Context, key string, value []byte, ttlSec int32) error
 	Get(ctx context.Context, key string) ([]byte, error)
 	Del(ctx context.Context, key string) error
-	Incr(ctx context.Context, key string, value int) error
-	Decr(ctx context.Context, key string, value int) error
+	Incr(ctx context.Context, key string, value int32) error
+	Decr(ctx context.Context, key string, value int32) error
+
+	Lockable
 }
 
 // MapInterface is the map structure interface for storage.
 type Map interface {
-	KeyValue
+	New(ctx context.Context, key string, ttlSec int32) error
+	Fields(key string) MapFields
+	Del(ctx context.Context, key string) error
 
-	GetAll(ctx context.Context) (map[string][]byte, error)
+	Lockable
+}
+
+type MapFields interface {
+	Set(ctx context.Context, key string, value []byte) error
+	Get(ctx context.Context, key string) ([]byte, error)
+	Del(ctx context.Context, key string) error
+	Incr(ctx context.Context, key string, value int32) error
+	Decr(ctx context.Context, key string, value int32) error
+
+	All(ctx context.Context) (map[string][]byte, error)
 	Len(ctx context.Context) (int, error)
-	Exists(ctx context.Context, field string) (bool, error)
 }
 
 // Queue is a minimal FIFO interface.
 type Queue interface {
+	New(ctx context.Context, key string, ttlSec int32) error
+	Items(key string) QueueItems
+	Del(ctx context.Context, key string) error
+
+	Lockable
+}
+type QueueItems interface {
 	Push(ctx context.Context, value []byte) error
-	Index(ctx context.Context, index int) ([]byte, error)
-	Len(ctx context.Context) (int, error)
+	Index(ctx context.Context, index int32) ([]byte, error)
 	Pop(ctx context.Context) ([]byte, error)
 	Peek(ctx context.Context) ([]byte, error)
-}
 
-// Interface provides read, write and delete primitives at
-// the EventStore
-type Interface interface {
-	LoadValue(ctx context.Context, key string) ([]byte, error)
-	SaveValue(ctx context.Context, key string, value []byte, ttlSec int32) error
-	DeleteValue(ctx context.Context, key string) error
+	All(ctx context.Context) ([][]byte, error)
+	Len(ctx context.Context) (int, error)
 }
 
 // client is the default implementation of the stateful
@@ -78,17 +104,35 @@ type client struct {
 	// stateful store URI.
 	uri string
 	// timeout for stateful requests
-	timeout time.Duration
-
+	timeout  time.Duration
 	conn     *grpc.ClientConn
-	esClient eventstore.KVStoreClient
+	services *services
+}
+
+type services struct {
+	kvc    eventstore.KVClient
+	mapc   eventstore.MapClient
+	queuec eventstore.QueueClient
 }
 
 type internalClient struct {
-	esClient eventstore.KVStoreClient
+	svc *services
 
 	bridge   string
 	instance string
+}
+
+func (s *internalClient) KV() KeyValue {
+	return &internalKV{s}
+}
+
+func (s *internalClient) Map() Map {
+	return &internalMap{s}
+}
+
+func (s *internalClient) Queue() Queue {
+	// TODO add Queue
+	return nil
 }
 
 // New creates an instance of the EventStore client.
@@ -106,27 +150,35 @@ func (c *client) Connect(ctx context.Context) error {
 
 	conn, err := grpc.DialContext(ctx, c.uri, grpc.WithInsecure(), grpc.WithBlock())
 	if err != nil {
-		return fmt.Errorf("Could not connect to store at %s: %w", c.uri, err)
+		return fmt.Errorf("could not connect to store at %s: %w", c.uri, err)
 	}
 
-	c.conn = conn
-	c.esClient = eventstore.NewKVStoreClient(conn)
+	c.services = &services{
+		kvc:    eventstore.NewKVClient(conn),
+		mapc:   eventstore.NewMapClient(conn),
+		queuec: eventstore.NewQueueClient(conn),
+	}
+	// c.svc = &services{
+	// 	kvc:    eventstore.NewKVClient(conn),
+	// 	mapc:   eventstore.NewMapClient(conn),
+	// 	queuec: eventstore.NewQueueClient(conn),
+	// }
 
 	return nil
 }
 
 // Disconnect from the EventStore
 func (c *client) Disconnect() error {
-	if c.esClient != nil {
-		c.esClient = nil
-	}
-
 	if c.conn != nil {
 		err := c.conn.Close()
 		if err != nil {
 			return err
 		}
 	}
+
+	c.services.kvc = nil
+	c.services.mapc = nil
+	c.services.queuec = nil
 	c.conn = nil
 
 	return nil
@@ -136,7 +188,7 @@ func (c *client) Disconnect() error {
 // brige level to perform storage operations
 func (c *client) Global() Interface {
 	return &internalClient{
-		esClient: c.esClient,
+		svc: c.services,
 	}
 }
 
@@ -144,8 +196,8 @@ func (c *client) Global() Interface {
 // brige level to perform storage operations
 func (c *client) Bridge(name string) Interface {
 	return &internalClient{
-		esClient: c.esClient,
-		bridge:   name,
+		svc:    c.services,
+		bridge: name,
 	}
 }
 
@@ -153,109 +205,8 @@ func (c *client) Bridge(name string) Interface {
 // instance level to perform storage operations
 func (c *client) Instance(bridge, instance string) Interface {
 	return &internalClient{
-		esClient: c.esClient,
+		svc:      c.services,
 		bridge:   bridge,
 		instance: instance,
 	}
-}
-
-// LoadValue from EventStore
-func (ic *internalClient) LoadValue(ctx context.Context, key string) ([]byte, error) {
-	if ic.esClient == nil {
-		return nil, errors.New("Event store client is not connected")
-	}
-
-	lr := &eventstore.GetKVRequest{
-		Location: &eventstore.LocationType{
-			Key: key,
-			Scope: &eventstore.ScopeType{
-				Bridge:   ic.bridge,
-				Instance: ic.instance,
-			}}}
-
-	switch {
-	case ic.instance != "":
-		lr.Location.Scope.Type = eventstore.ScopeChoice_Instance
-	case ic.bridge != "":
-		lr.Location.Scope.Type = eventstore.ScopeChoice_Bridge
-	default:
-		lr.Location.Scope.Type = eventstore.ScopeChoice_Global
-	}
-
-	if err := lr.Validate(); err != nil {
-		return nil, err
-	}
-
-	r, err := ic.esClient.Get(ctx, lr)
-	if err != nil {
-		return nil, err
-	}
-
-	return r.GetValue(), nil
-}
-
-// SaveValue to EventStore
-func (ic *internalClient) SaveValue(ctx context.Context, key string, value []byte, ttlSec int32) error {
-	if ic.esClient == nil {
-		return errors.New("Event store client is not connected")
-	}
-
-	sr := &eventstore.SetKVRequest{
-		Location: &eventstore.LocationType{
-			Scope: &eventstore.ScopeType{
-				Bridge:   ic.bridge,
-				Instance: ic.instance,
-			},
-			Key: key,
-		},
-		Ttl:   ttlSec,
-		Value: value,
-	}
-
-	switch {
-	case ic.instance != "":
-		sr.Location.Scope.Type = eventstore.ScopeChoice_Instance
-	case ic.bridge != "":
-		sr.Location.Scope.Type = eventstore.ScopeChoice_Bridge
-	default:
-		sr.Location.Scope.Type = eventstore.ScopeChoice_Global
-	}
-
-	if err := sr.Validate(); err != nil {
-		return err
-	}
-
-	_, err := ic.esClient.Set(ctx, sr)
-	return err
-}
-
-// DeleteValue from EventStore
-func (ic *internalClient) DeleteValue(ctx context.Context, key string) error {
-	if ic.esClient == nil {
-		return errors.New("Event store client is not connected")
-	}
-
-	dr := &eventstore.DelKVRequest{
-		Location: &eventstore.LocationType{
-			Key: key,
-			Scope: &eventstore.ScopeType{
-				Bridge:   ic.bridge,
-				Instance: ic.instance,
-			}}}
-
-	switch {
-	case ic.instance != "":
-		dr.Location.Scope.Type = eventstore.ScopeChoice_Instance
-	case ic.bridge != "":
-		dr.Location.Scope.Type = eventstore.ScopeChoice_Bridge
-	default:
-		dr.Location.Scope.Type = eventstore.ScopeChoice_Global
-	}
-
-	if err := dr.Validate(); err != nil {
-		return err
-	}
-
-	_, err := ic.esClient.Del(ctx, dr)
-	return err
 }

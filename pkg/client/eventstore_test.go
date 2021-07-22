@@ -48,33 +48,33 @@ var (
 
 func TestGlobalEventStoreClient(t *testing.T) {
 	esc := newFakeClient()
-	c := &client{esClient: esc}
+	c := &client{services: &services{kvc: esc}}
 	ctx := context.Background()
 
 	expected := []fakees.Request{}
 
 	client := c.Global()
-	_ = client.SaveValue(ctx, tKey, []byte(tValue), tTTL)
+	_ = client.KV().Set(ctx, tKey, []byte(tValue), tTTL)
 	expected = append(expected, expectedRequest(protob.ScopeChoice_Global, tSet, "", "", tKey, tValue, tTTL))
-	_, _ = client.LoadValue(ctx, tKey)
+	_, _ = client.KV().Get(ctx, tKey)
 	expected = append(expected, expectedRequest(protob.ScopeChoice_Global, tGet, "", "", tKey, tEmptyValue, 0))
-	_ = client.DeleteValue(ctx, tKey)
+	_ = client.KV().Del(ctx, tKey)
 	expected = append(expected, expectedRequest(protob.ScopeChoice_Global, tDel, "", "", tKey, tEmptyValue, 0))
 
 	client = c.Bridge(tBridge)
-	_ = client.SaveValue(ctx, tKey, []byte(tValue), tTTL)
+	_ = client.KV().Set(ctx, tKey, []byte(tValue), tTTL)
 	expected = append(expected, expectedRequest(protob.ScopeChoice_Bridge, tSet, tBridge, "", tKey, tValue, tTTL))
-	_, _ = client.LoadValue(ctx, tKey)
+	_, _ = client.KV().Get(ctx, tKey)
 	expected = append(expected, expectedRequest(protob.ScopeChoice_Bridge, tGet, tBridge, "", tKey, tEmptyValue, 0))
-	_ = client.DeleteValue(ctx, tKey)
+	_ = client.KV().Del(ctx, tKey)
 	expected = append(expected, expectedRequest(protob.ScopeChoice_Bridge, tDel, tBridge, "", tKey, tEmptyValue, 0))
 
 	client = c.Instance(tBridge, tInstance)
-	_ = client.SaveValue(ctx, tKey, []byte(tValue), tTTL)
+	_ = client.KV().Set(ctx, tKey, []byte(tValue), tTTL)
 	expected = append(expected, expectedRequest(protob.ScopeChoice_Instance, tSet, tBridge, tInstance, tKey, tValue, tTTL))
-	_, _ = client.LoadValue(ctx, tKey)
+	_, _ = client.KV().Get(ctx, tKey)
 	expected = append(expected, expectedRequest(protob.ScopeChoice_Instance, tGet, tBridge, tInstance, tKey, tEmptyValue, 0))
-	_ = client.DeleteValue(ctx, tKey)
+	_ = client.KV().Del(ctx, tKey)
 	expected = append(expected, expectedRequest(protob.ScopeChoice_Instance, tDel, tBridge, tInstance, tKey, tEmptyValue, 0))
 
 	requests := esc.GetRequests()

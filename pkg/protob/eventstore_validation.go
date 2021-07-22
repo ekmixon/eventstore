@@ -95,3 +95,124 @@ func (x *GetKVRequest) Validate() error {
 func (x *DelKVRequest) Validate() error {
 	return x.Location.Validate()
 }
+
+// Validate IncrKVRequest
+func (x *IncrKVRequest) Validate() error {
+	return x.Location.Validate()
+}
+
+// Validate DecrKVRequest
+func (x *DecrKVRequest) Validate() error {
+	return x.Location.Validate()
+}
+
+// Validate LockRequest
+func (x *LockRequest) Validate() error {
+	if x.Timeout < 0 {
+		return errors.New("timeout cannot be negative")
+	}
+
+	return x.Location.Validate()
+}
+
+// Validate UnlockRequest
+func (x *UnlockRequest) Validate() error {
+	if len(x.Unlock) == 0 {
+		return errors.New("no unlock code informed")
+	}
+	return x.Location.Validate()
+}
+
+func (x *NewMapRequest) Validate() error {
+	if x.Ttl < 0 {
+		return errors.New("TTL cannot be negative")
+	}
+
+	return x.Location.Validate()
+}
+
+func (x *DelMapRequest) Validate() error {
+	return x.Location.Validate()
+}
+
+func (x *LenMapRequest) Validate() error {
+	return x.Location.Validate()
+}
+
+func (x *SetMapFieldRequest) Validate() error {
+	if len(x.Field) == 0 {
+		return errors.New("no map field informed")
+	}
+	return x.Location.Validate()
+}
+
+func (x *IncrMapFieldRequest) Validate() error {
+	if len(x.Field) == 0 {
+		return errors.New("no map field informed")
+	}
+	return x.Location.Validate()
+}
+
+func (x *DecrMapFieldRequest) Validate() error {
+	if len(x.Field) == 0 {
+		return errors.New("no map field informed")
+	}
+	return x.Location.Validate()
+}
+
+func (x *GetMapFieldRequest) Validate() error {
+	if len(x.Field) == 0 {
+		return errors.New("no map field informed")
+	}
+	return x.Location.Validate()
+}
+
+func (x *DelMapFieldRequest) Validate() error {
+	if len(x.Field) == 0 {
+		return errors.New("no map field informed")
+	}
+	return x.Location.Validate()
+}
+
+func (x *GetAllMapFieldsRequest) Validate() error {
+	return x.Location.Validate()
+}
+
+func (x *NewQueueRequest) Validate() error {
+	if x.Ttl < 0 {
+		return errors.New("TTL cannot be negative")
+	}
+
+	return x.Location.Validate()
+}
+
+func (x *DelQueueRequest) Validate() error {
+	return x.Location.Validate()
+}
+
+func (x *LenQueueRequest) Validate() error {
+	return x.Location.Validate()
+}
+
+func (x *PushQueueRequest) Validate() error {
+	return x.Location.Validate()
+}
+
+func (x *PopQueueRequest) Validate() error {
+	return x.Location.Validate()
+}
+
+func (x *PeekQueueRequest) Validate() error {
+	return x.Location.Validate()
+}
+
+func (x *IndexQueueRequest) Validate() error {
+	if x.Index < 0 {
+		return errors.New("Index cannot be negative")
+	}
+	return x.Location.Validate()
+}
+
+func (x *GetAllQueuesRequest) Validate() error {
+	return x.Location.Validate()
+}

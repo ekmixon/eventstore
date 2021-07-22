@@ -68,21 +68,21 @@ func main() {
 
 	switch *command {
 	case "load":
-		r, err := sc.LoadValue(ctx, *key)
+		r, err := sc.KV().Get(ctx, *key)
 		if err != nil {
 			log.Fatalf("could not load %q: %v", *key, err)
 		}
 		log.Printf("Loaded value (string): %s", string(r))
 
 	case "save":
-		err := sc.SaveValue(ctx, *key, []byte(*value), *ttl)
+		err := sc.KV().Set(ctx, *key, []byte(*value), *ttl)
 		if err != nil {
 			log.Fatalf("could not save key %q: %v", *key, err)
 		}
 		log.Print("Saved.")
 
 	case "delete":
-		err := sc.DeleteValue(ctx, *key)
+		err := sc.KV().Del(ctx, *key)
 		if err != nil {
 			log.Fatalf("could not delete key %q: %v", *key, err)
 		}
