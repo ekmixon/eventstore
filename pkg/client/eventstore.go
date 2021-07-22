@@ -63,8 +63,8 @@ type KeyValue interface {
 // MapInterface is the map structure interface for storage.
 type Map interface {
 	New(ctx context.Context, key string, ttlSec int32) error
-	Get(ctx context.Context, key string) MapFields
-	Del(ctx context.Context, key string, opts ...grpc.CallOption) error
+	Fields(key string) MapFields
+	Del(ctx context.Context, key string) error
 
 	Lockable
 }
@@ -73,10 +73,10 @@ type MapFields interface {
 	Set(ctx context.Context, key string, value []byte) error
 	Get(ctx context.Context, key string) ([]byte, error)
 	Del(ctx context.Context, key string) error
-	Incr(ctx context.Context, key string, value int) error
-	Decr(ctx context.Context, key string, value int) error
+	Incr(ctx context.Context, key string, value int32) error
+	Decr(ctx context.Context, key string, value int32) error
 
-	GetAll(ctx context.Context) (map[string][]byte, error)
+	All(ctx context.Context) (map[string][]byte, error)
 	Len(ctx context.Context) (int, error)
 }
 
@@ -84,7 +84,7 @@ type MapFields interface {
 type Queue interface {
 	New(ctx context.Context, key string, ttlSec int32) error
 	Get(ctx context.Context, key string) QueueItems
-	Del(ctx context.Context, key string, opts ...grpc.CallOption) error
+	Del(ctx context.Context, key string) error
 
 	Lockable
 }
@@ -127,8 +127,7 @@ func (s *internalClient) KV() KeyValue {
 }
 
 func (s *internalClient) Map() Map {
-	// TODO add Map
-	return nil
+	return &internalMap{s}
 }
 
 func (s *internalClient) Queue() Queue {
@@ -151,7 +150,7 @@ func (c *client) Connect(ctx context.Context) error {
 
 	conn, err := grpc.DialContext(ctx, c.uri, grpc.WithInsecure(), grpc.WithBlock())
 	if err != nil {
-		return fmt.Errorf("Could not connect to store at %s: %w", c.uri, err)
+		return fmt.Errorf("could not connect to store at %s: %w", c.uri, err)
 	}
 
 	c.services = &services{

@@ -213,7 +213,7 @@ service Map {
   rpc FieldGet(GetMapFieldRequest) returns (GetMapFieldResponse) {}
 
   // Lock the map for exclusive access
-  rpc Lock(LockRequest) returns (LockRequest) {}
+  rpc Lock(LockRequest) returns (LockResponse) {}
 
   // Unlock the map
   rpc Unlock(UnlockRequest) returns (UnlockResponse) {}
@@ -311,7 +311,7 @@ service Queue {
   rpc Peek(PeekQueueRequest) returns (PeekQueueResponse) {}
 
   // Lock the queue for exclusive access
-  rpc Lock(LockRequest) returns (LockRequest) {}
+  rpc Lock(LockRequest) returns (LockResponse) {}
 
   // Unlock the queue
   rpc Unlock(UnlockRequest) returns (UnlockResponse) {}

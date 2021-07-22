@@ -108,10 +108,72 @@ func (x *DecrKVRequest) Validate() error {
 
 // Validate LockRequest
 func (x *LockRequest) Validate() error {
+	if x.Timeout < 0 {
+		return errors.New("timeout cannot be negative")
+	}
+
 	return x.Location.Validate()
 }
 
 // Validate UnlockRequest
 func (x *UnlockRequest) Validate() error {
+	if len(x.Unlock) == 0 {
+		return errors.New("no unlock code informed")
+	}
+	return x.Location.Validate()
+}
+
+func (x *NewMapRequest) Validate() error {
+	if x.Ttl < 0 {
+		return errors.New("TTL cannot be negative")
+	}
+
+	return x.Location.Validate()
+}
+
+func (x *DelMapRequest) Validate() error {
+	return x.Location.Validate()
+}
+
+func (x *LenMapRequest) Validate() error {
+	return x.Location.Validate()
+}
+
+func (x *SetMapFieldRequest) Validate() error {
+	if len(x.Field) == 0 {
+		return errors.New("no map field informed")
+	}
+	return x.Location.Validate()
+}
+
+func (x *IncrMapFieldRequest) Validate() error {
+	if len(x.Field) == 0 {
+		return errors.New("no map field informed")
+	}
+	return x.Location.Validate()
+}
+
+func (x *DecrMapFieldRequest) Validate() error {
+	if len(x.Field) == 0 {
+		return errors.New("no map field informed")
+	}
+	return x.Location.Validate()
+}
+
+func (x *GetMapFieldRequest) Validate() error {
+	if len(x.Field) == 0 {
+		return errors.New("no map field informed")
+	}
+	return x.Location.Validate()
+}
+
+func (x *DelMapFieldRequest) Validate() error {
+	if len(x.Field) == 0 {
+		return errors.New("no map field informed")
+	}
+	return x.Location.Validate()
+}
+
+func (x *GetAllMapFieldsRequest) Validate() error {
 	return x.Location.Validate()
 }

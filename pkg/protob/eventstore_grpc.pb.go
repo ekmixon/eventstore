@@ -353,7 +353,7 @@ type MapClient interface {
 	// FieldGet value at key
 	FieldGet(ctx context.Context, in *GetMapFieldRequest, opts ...grpc.CallOption) (*GetMapFieldResponse, error)
 	// Lock the map for exclusive access
-	Lock(ctx context.Context, in *LockRequest, opts ...grpc.CallOption) (*LockRequest, error)
+	Lock(ctx context.Context, in *LockRequest, opts ...grpc.CallOption) (*LockResponse, error)
 	// Unlock the map
 	Unlock(ctx context.Context, in *UnlockRequest, opts ...grpc.CallOption) (*UnlockResponse, error)
 }
@@ -447,8 +447,8 @@ func (c *mapClient) FieldGet(ctx context.Context, in *GetMapFieldRequest, opts .
 	return out, nil
 }
 
-func (c *mapClient) Lock(ctx context.Context, in *LockRequest, opts ...grpc.CallOption) (*LockRequest, error) {
-	out := new(LockRequest)
+func (c *mapClient) Lock(ctx context.Context, in *LockRequest, opts ...grpc.CallOption) (*LockResponse, error) {
+	out := new(LockResponse)
 	err := c.cc.Invoke(ctx, "/protob.Map/Lock", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -488,7 +488,7 @@ type MapServer interface {
 	// FieldGet value at key
 	FieldGet(context.Context, *GetMapFieldRequest) (*GetMapFieldResponse, error)
 	// Lock the map for exclusive access
-	Lock(context.Context, *LockRequest) (*LockRequest, error)
+	Lock(context.Context, *LockRequest) (*LockResponse, error)
 	// Unlock the map
 	Unlock(context.Context, *UnlockRequest) (*UnlockResponse, error)
 	mustEmbedUnimplementedMapServer()
@@ -525,7 +525,7 @@ func (UnimplementedMapServer) FieldDel(context.Context, *DelMapFieldRequest) (*D
 func (UnimplementedMapServer) FieldGet(context.Context, *GetMapFieldRequest) (*GetMapFieldResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method FieldGet not implemented")
 }
-func (UnimplementedMapServer) Lock(context.Context, *LockRequest) (*LockRequest, error) {
+func (UnimplementedMapServer) Lock(context.Context, *LockRequest) (*LockResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Lock not implemented")
 }
 func (UnimplementedMapServer) Unlock(context.Context, *UnlockRequest) (*UnlockResponse, error) {
@@ -819,7 +819,7 @@ type QueueClient interface {
 	// Peek retrieves an element from the queue
 	Peek(ctx context.Context, in *PeekQueueRequest, opts ...grpc.CallOption) (*PeekQueueResponse, error)
 	// Lock the queue for exclusive access
-	Lock(ctx context.Context, in *LockRequest, opts ...grpc.CallOption) (*LockRequest, error)
+	Lock(ctx context.Context, in *LockRequest, opts ...grpc.CallOption) (*LockResponse, error)
 	// Unlock the queue
 	Unlock(ctx context.Context, in *UnlockRequest, opts ...grpc.CallOption) (*UnlockResponse, error)
 }
@@ -904,8 +904,8 @@ func (c *queueClient) Peek(ctx context.Context, in *PeekQueueRequest, opts ...gr
 	return out, nil
 }
 
-func (c *queueClient) Lock(ctx context.Context, in *LockRequest, opts ...grpc.CallOption) (*LockRequest, error) {
-	out := new(LockRequest)
+func (c *queueClient) Lock(ctx context.Context, in *LockRequest, opts ...grpc.CallOption) (*LockResponse, error) {
+	out := new(LockResponse)
 	err := c.cc.Invoke(ctx, "/protob.Queue/Lock", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -943,7 +943,7 @@ type QueueServer interface {
 	// Peek retrieves an element from the queue
 	Peek(context.Context, *PeekQueueRequest) (*PeekQueueResponse, error)
 	// Lock the queue for exclusive access
-	Lock(context.Context, *LockRequest) (*LockRequest, error)
+	Lock(context.Context, *LockRequest) (*LockResponse, error)
 	// Unlock the queue
 	Unlock(context.Context, *UnlockRequest) (*UnlockResponse, error)
 	mustEmbedUnimplementedQueueServer()
@@ -977,7 +977,7 @@ func (UnimplementedQueueServer) Pop(context.Context, *PopQueueRequest) (*PopQueu
 func (UnimplementedQueueServer) Peek(context.Context, *PeekQueueRequest) (*PeekQueueResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Peek not implemented")
 }
-func (UnimplementedQueueServer) Lock(context.Context, *LockRequest) (*LockRequest, error) {
+func (UnimplementedQueueServer) Lock(context.Context, *LockRequest) (*LockResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Lock not implemented")
 }
 func (UnimplementedQueueServer) Unlock(context.Context, *UnlockRequest) (*UnlockResponse, error) {
