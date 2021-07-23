@@ -42,9 +42,10 @@ type Interface interface {
 	KV() KeyValue
 	Map() Map
 	Queue() Queue
+	Sync() Sync
 }
 
-type Lockable interface {
+type Sync interface {
 	Lock(ctx context.Context, key string, timeout int32) (string, error)
 	Unlock(ctx context.Context, key string, unlock string) error
 }
@@ -56,8 +57,6 @@ type KeyValue interface {
 	Del(ctx context.Context, key string) error
 	Incr(ctx context.Context, key string, value int32) error
 	Decr(ctx context.Context, key string, value int32) error
-
-	Lockable
 }
 
 // MapInterface is the map structure interface for storage.
@@ -65,8 +64,6 @@ type Map interface {
 	New(ctx context.Context, key string, ttlSec int32) error
 	Fields(key string) MapFields
 	Del(ctx context.Context, key string) error
-
-	Lockable
 }
 
 type MapFields interface {
@@ -85,8 +82,6 @@ type Queue interface {
 	New(ctx context.Context, key string, ttlSec int32) error
 	Items(key string) QueueItems
 	Del(ctx context.Context, key string) error
-
-	Lockable
 }
 type QueueItems interface {
 	Push(ctx context.Context, value []byte) error
@@ -113,6 +108,7 @@ type services struct {
 	kvc    eventstore.KVClient
 	mapc   eventstore.MapClient
 	queuec eventstore.QueueClient
+	syncc  eventstore.SyncClient
 }
 
 type internalClient struct {
@@ -131,8 +127,12 @@ func (s *internalClient) Map() Map {
 }
 
 func (s *internalClient) Queue() Queue {
+	return &internalQueue{s}
+}
+
+func (s *internalClient) Sync() Sync {
 	// TODO add Queue
-	return nil
+	return &internalSync{s}
 }
 
 // New creates an instance of the EventStore client.
@@ -157,12 +157,8 @@ func (c *client) Connect(ctx context.Context) error {
 		kvc:    eventstore.NewKVClient(conn),
 		mapc:   eventstore.NewMapClient(conn),
 		queuec: eventstore.NewQueueClient(conn),
+		syncc:  eventstore.NewSyncClient(conn),
 	}
-	// c.svc = &services{
-	// 	kvc:    eventstore.NewKVClient(conn),
-	// 	mapc:   eventstore.NewMapClient(conn),
-	// 	queuec: eventstore.NewQueueClient(conn),
-	// }
 
 	return nil
 }
@@ -179,6 +175,7 @@ func (c *client) Disconnect() error {
 	c.services.kvc = nil
 	c.services.mapc = nil
 	c.services.queuec = nil
+	c.services.syncc = nil
 	c.conn = nil
 
 	return nil

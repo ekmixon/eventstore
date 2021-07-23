@@ -30,9 +30,6 @@ type KVCmd struct {
 	Del  KVDelCmd  `cmd:"" help:"Delete Key"`
 	Incr KVIncrCmd `cmd:"" help:"Increase value"`
 	Decr KVDecrCmd `cmd:"" help:"Increase value"`
-
-	Lock   LockCmd   `cmd:"" help:"Lock key for exclusive access"`
-	Unlock UnlockCmd `cmd:"" help:"Unlock key"`
 }
 
 type KVSetCmd struct {
@@ -68,11 +65,79 @@ func (kv *KVSetCmd) Run(g *Globals) error {
 	}
 	defer func() { _ = es.Disconnect() }()
 
-	c := g.scopedClient(es).KV()
-	return c.Set(ctx, kv.Key, []byte(kv.Value), int32(kv.TTL))
+	if err := g.scopedClient(es).KV().Set(ctx, kv.Key, []byte(kv.Value), int32(kv.TTL)); err != nil {
+		return err
+	}
+
+	printDone()
+	return nil
 }
 
 func (kv *KVGetCmd) Run(g *Globals) error {
-	fmt.Printf("KVGet Scope: %s\n", g.Scope)
+	es := client.New(g.Server, g.Timeout)
+	ctx := context.Background()
+
+	if err := es.Connect(ctx); err != nil {
+		return fmt.Errorf("failed to dial %s: %v", g.Server, err)
+	}
+	defer func() { _ = es.Disconnect() }()
+
+	value, err := g.scopedClient(es).KV().Get(ctx, kv.Key)
+	if err != nil {
+		return err
+	}
+
+	printKV(kv.Key, string(value))
+	return nil
+}
+
+func (kv *KVDelCmd) Run(g *Globals) error {
+	es := client.New(g.Server, g.Timeout)
+	ctx := context.Background()
+
+	if err := es.Connect(ctx); err != nil {
+		return fmt.Errorf("failed to dial %s: %v", g.Server, err)
+	}
+	defer func() { _ = es.Disconnect() }()
+
+	if err := g.scopedClient(es).KV().Del(ctx, kv.Key); err != nil {
+		return err
+	}
+
+	printDone()
+	return nil
+}
+
+func (kv *KVIncrCmd) Run(g *Globals) error {
+	es := client.New(g.Server, g.Timeout)
+	ctx := context.Background()
+
+	if err := es.Connect(ctx); err != nil {
+		return fmt.Errorf("failed to dial %s: %v", g.Server, err)
+	}
+	defer func() { _ = es.Disconnect() }()
+
+	if err := g.scopedClient(es).KV().Incr(ctx, kv.Key, kv.Incr); err != nil {
+		return err
+	}
+
+	printDone()
+	return nil
+}
+
+func (kv *KVDecrCmd) Run(g *Globals) error {
+	es := client.New(g.Server, g.Timeout)
+	ctx := context.Background()
+
+	if err := es.Connect(ctx); err != nil {
+		return fmt.Errorf("failed to dial %s: %v", g.Server, err)
+	}
+	defer func() { _ = es.Disconnect() }()
+
+	if err := g.scopedClient(es).KV().Decr(ctx, kv.Key, kv.Decr); err != nil {
+		return err
+	}
+
+	printDone()
 	return nil
 }
