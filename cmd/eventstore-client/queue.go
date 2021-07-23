@@ -18,47 +18,117 @@ package main
 
 import (
 	"context"
-	"log"
-	"time"
+	"fmt"
 
 	"github.com/triggermesh/eventstore/pkg/client"
 )
 
 type QueueCmd struct {
-	Set QueueNewCmd `cmd:"" help:"Create new queue at key"`
-	Get QueueDelCmd `cmd:"" help:"Delete queue at key"`
+	New QueueNewCmd `cmd:"" help:"Create new queue"`
+	Del QueueDelCmd `cmd:"" help:"Delete queue at key"`
+
+	Push  QueuePushCmd  `cmd:"" help:"Push item to queue"`
+	Index QueueIndexCmd `cmd:"" help:"Retrieve element at index"`
+	Pop   QueuePopCmd   `cmd:"" help:"Extract and remove element at head"`
+	Peek  QueuePeekCmd  `cmd:"" help:"Extract element at head wihtout removing"`
+
+	AllItems QueueAllItemsCmd `cmd:"" help:"Get all items at queue"`
+	Len      QueueLenCmd      `cmd:"" help:"Get queue length"`
+
+	Key string `help:"Key identifying queue" required:""`
 }
 
 type QueueNewCmd struct {
-	Key string        `help:"Key where the value will be stored" required:""`
-	TTL time.Duration `help:"Key's time to live (seconds)" default:"5s"`
+	// Key string `help:"Key where the value will be stored" required:""`
+	TTL int32 `help:"Key's time to live (seconds)" default:"5"`
 }
 
 type QueueDelCmd struct {
-	Key string `help:"Queue key to delete" required:""`
+	// Key string `help:"Queue key to delete" required:""`
 }
 
-func (kv *QueueNewCmd) Run(g *Globals) error {
-	c := client.New(g.Server, g.Timeout)
+type QueuePushCmd struct {
+	// Key string `help:"Queue key to delete" required:""`
+	Value string `help:"Value to be pushed" required:""`
+}
+
+type QueueIndexCmd struct {
+	Index int32 `help:"Index for the queue element to retrieve" required:""`
+}
+
+type QueuePopCmd struct{}
+type QueuePeekCmd struct{}
+type QueueAllItemsCmd struct{}
+type QueueLenCmd struct{}
+
+func (s *QueueNewCmd) Run(g *Globals) error {
+	es := client.New(g.Server, g.Timeout)
 	ctx := context.Background()
-	if err := c.Connect(ctx); err != nil {
-		log.Fatalf("Failed to dial %s: %v", g.Server, err)
+
+	if err := es.Connect(ctx); err != nil {
+		return fmt.Errorf("failed to dial %s: %v", g.Server, err)
+	}
+	defer func() { _ = es.Disconnect() }()
+
+	err := g.scopedClient(es).Queue().New(ctx, g.Key, s.TTL)
+	if err != nil {
+		return err
 	}
 
-	defer func() { _ = c.Disconnect() }()
-
+	printDone()
 	return nil
 }
 
-func (kv *QueueDelCmd) Run(g *Globals) error {
-	c := client.New(g.Server, g.Timeout)
+func (s *QueueDelCmd) Run(g *Globals) error {
+	es := client.New(g.Server, g.Timeout)
 	ctx := context.Background()
-	if err := c.Connect(ctx); err != nil {
-		log.Fatalf("Failed to dial %s: %v", g.Server, err)
+
+	if err := es.Connect(ctx); err != nil {
+		return fmt.Errorf("failed to dial %s: %v", g.Server, err)
+	}
+	defer func() { _ = es.Disconnect() }()
+
+	err := g.scopedClient(es).Queue().Del(ctx, g.Key)
+	if err != nil {
+		return err
 	}
 
-	defer func() { _ = c.Disconnect() }()
+	printDone()
+	return nil
+}
 
-	// TODO actual work
+func (s *QueueAllItemsCmd) Run(g *Globals) error {
+	es := client.New(g.Server, g.Timeout)
+	ctx := context.Background()
+
+	if err := es.Connect(ctx); err != nil {
+		return fmt.Errorf("failed to dial %s: %v", g.Server, err)
+	}
+	defer func() { _ = es.Disconnect() }()
+
+	res, err := g.scopedClient(es).Queue().Items(g.Key).All(ctx)
+	if err != nil {
+		return err
+	}
+
+	printList("items", res)
+	return nil
+}
+
+func (s *QueuePushCmd) Run(g *Globals) error {
+	es := client.New(g.Server, g.Timeout)
+	ctx := context.Background()
+
+	if err := es.Connect(ctx); err != nil {
+		return fmt.Errorf("failed to dial %s: %v", g.Server, err)
+	}
+	defer func() { _ = es.Disconnect() }()
+
+	err := g.scopedClient(es).Queue().Items(g.Key).Push(ctx, []byte(s.Value))
+	if err != nil {
+		return err
+	}
+
+	printDone()
 	return nil
 }
