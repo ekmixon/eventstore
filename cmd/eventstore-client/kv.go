@@ -25,13 +25,14 @@ import (
 )
 
 type KVCmd struct {
-	Set KVSetCmd `cmd:"" help:"Set Key/Value"`
-	Get KVGetCmd `cmd:"" help:"Set Key/Value"`
-	// DetachKeys string `help:"Override the key sequence for detaching a container"`
-	// NoStdin    bool   `help:"Do not attach STDIN"`
-	// SigProxy   bool   `help:"Proxy all received signals to the process" default:"true"`
+	Set  KVSetCmd  `cmd:"" help:"Set Key/Value"`
+	Get  KVGetCmd  `cmd:"" help:"Get Value"`
+	Del  KVDelCmd  `cmd:"" help:"Delete Key"`
+	Incr KVIncrCmd `cmd:"" help:"Increase value"`
+	Decr KVDecrCmd `cmd:"" help:"Increase value"`
 
-	// Container string `arg required help:"Container ID to attach to."`
+	Lock   LockCmd   `cmd:"" help:"Lock key for exclusive access"`
+	Unlock UnlockCmd `cmd:"" help:"Unlock key"`
 }
 
 type KVSetCmd struct {
@@ -40,13 +41,22 @@ type KVSetCmd struct {
 	TTL   time.Duration `help:"Key's time to live (seconds)" default:"5s"`
 }
 
-// type KVSet struct {
-// 	key   = kingpin.Flag("key", "Key for storing value.").Required().String()
-// 	value = kingpin.Flag("value", "Value to be stored.").Default("").String()
-// 	ttl   = kingpin.Flag("ttl", "Stored value's time to live (seconds).").Default("5").Int32()
-// }
-
 type KVGetCmd struct {
+	Key string `help:"Key for the value that will be retrieved" required:""`
+}
+
+type KVDelCmd struct {
+	Key string `help:"Key that will be deleted" required:""`
+}
+
+type KVIncrCmd struct {
+	Key  string `help:"Key for value increase" required:""`
+	Incr int32  `help:"Value to be increased" default:"1"`
+}
+
+type KVDecrCmd struct {
+	Key  string `help:"Key for value decrease" required:""`
+	Decr int32  `help:"Value to be decreased" default:"1"`
 }
 
 func (kv *KVSetCmd) Run(g *Globals) error {
