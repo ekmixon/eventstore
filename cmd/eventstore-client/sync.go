@@ -29,12 +29,10 @@ type SyncCmd struct {
 }
 
 type LockCmd struct {
-	Key           string `help:"Key that will be locked" required:""`
-	UnlockTimeout int32  `help:"Timeout before automatically unlocking (seconds)" required:""`
+	UnlockTimeout int32 `help:"Timeout before automatically unlocking (seconds)" required:""`
 }
 
 type UnlockCmd struct {
-	Key    string `help:"Key that will be locked" required:""`
 	Unlock string `help:"Unlock string" required:""`
 }
 
@@ -47,7 +45,7 @@ func (s *LockCmd) Run(g *Globals) error {
 	}
 	defer func() { _ = es.Disconnect() }()
 
-	unlock, err := g.scopedClient(es).Sync().Lock(ctx, s.Key, s.UnlockTimeout)
+	unlock, err := g.scopedClient(es).Sync().Lock(ctx, g.Key, s.UnlockTimeout)
 	if err != nil {
 		return err
 	}
@@ -65,7 +63,7 @@ func (s *UnlockCmd) Run(g *Globals) error {
 	}
 	defer func() { _ = es.Disconnect() }()
 
-	if err := g.scopedClient(es).Sync().Unlock(ctx, s.Key, s.Unlock); err != nil {
+	if err := g.scopedClient(es).Sync().Unlock(ctx, g.Key, s.Unlock); err != nil {
 		return err
 	}
 

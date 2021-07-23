@@ -23,7 +23,6 @@ import (
 	"time"
 
 	"github.com/alecthomas/kong"
-	"google.golang.org/genproto/googleapis/cloud/location"
 
 	"github.com/triggermesh/eventstore/pkg/client"
 )
@@ -33,25 +32,18 @@ type Globals struct {
 	Scope    string `help:"Storage scope" enum:"global,bridge,instance"`
 	Bridge   string `help:"Bridge name, when scope is bridge or instance"`
 	Instance string `help:"Instance ID, when scope is instance"`
+	Key      string `help:"Storage Key" required:""`
 
 	Timeout time.Duration `help:"Timeout for completing the operation" default:"5s"`
-
-	location location.Location
 }
 
 type Cli struct {
 	Globals
 
-	Kv   KVCmd   `cmd:"" help:"KV EventStore"`
-	Sync SyncCmd `cmd:"" help:"Lock and unlock keys"`
-
-	Map struct {
-		Paths []string `arg:"" optional:"" help:"Paths to list." type:"path"`
-	} `cmd:"" help:"List paths."`
-
-	Queue struct {
-		Paths []string `arg:"" optional:"" help:"Paths to list." type:"path"`
-	} `cmd:"" help:"List paths."`
+	Kv    KVCmd    `cmd:"" help:"KV store"`
+	Queue QueueCmd `cmd:"" help:"Queue store"`
+	Map   MapCmd   `cmd:"" help:"Map store"`
+	Sync  SyncCmd  `cmd:"" help:"Lock and unlock keys"`
 }
 
 func main() {
@@ -112,6 +104,13 @@ func (g *Globals) scopedClient(c client.EventStore) client.Interface {
 
 func printKV(key string, value interface{}) {
 	log.Printf("%s: %s\n", key, value)
+}
+
+func printList(key string, values [][]byte) {
+	log.Printf("%s:\n", key)
+	for i := range values {
+		log.Printf("\t%d: %s\n", i, string(values[i]))
+	}
 }
 
 func printDone() {

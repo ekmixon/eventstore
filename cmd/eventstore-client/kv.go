@@ -33,27 +33,20 @@ type KVCmd struct {
 }
 
 type KVSetCmd struct {
-	Key   string        `help:"Key where the value will be stored" required:""`
 	Value string        `help:"Value to be stored" required:""`
 	TTL   time.Duration `help:"Key's time to live (seconds)" default:"5s"`
 }
 
-type KVGetCmd struct {
-	Key string `help:"Key for the value that will be retrieved" required:""`
-}
+type KVGetCmd struct{}
 
-type KVDelCmd struct {
-	Key string `help:"Key that will be deleted" required:""`
-}
+type KVDelCmd struct{}
 
 type KVIncrCmd struct {
-	Key  string `help:"Key for value increase" required:""`
-	Incr int32  `help:"Value to be increased" default:"1"`
+	Incr int32 `help:"Value to be increased" default:"1"`
 }
 
 type KVDecrCmd struct {
-	Key  string `help:"Key for value decrease" required:""`
-	Decr int32  `help:"Value to be decreased" default:"1"`
+	Decr int32 `help:"Value to be decreased" default:"1"`
 }
 
 func (kv *KVSetCmd) Run(g *Globals) error {
@@ -65,7 +58,7 @@ func (kv *KVSetCmd) Run(g *Globals) error {
 	}
 	defer func() { _ = es.Disconnect() }()
 
-	if err := g.scopedClient(es).KV().Set(ctx, kv.Key, []byte(kv.Value), int32(kv.TTL)); err != nil {
+	if err := g.scopedClient(es).KV().Set(ctx, g.Key, []byte(kv.Value), int32(kv.TTL)); err != nil {
 		return err
 	}
 
@@ -82,12 +75,12 @@ func (kv *KVGetCmd) Run(g *Globals) error {
 	}
 	defer func() { _ = es.Disconnect() }()
 
-	value, err := g.scopedClient(es).KV().Get(ctx, kv.Key)
+	value, err := g.scopedClient(es).KV().Get(ctx, g.Key)
 	if err != nil {
 		return err
 	}
 
-	printKV(kv.Key, string(value))
+	printKV(g.Key, string(value))
 	return nil
 }
 
@@ -100,7 +93,7 @@ func (kv *KVDelCmd) Run(g *Globals) error {
 	}
 	defer func() { _ = es.Disconnect() }()
 
-	if err := g.scopedClient(es).KV().Del(ctx, kv.Key); err != nil {
+	if err := g.scopedClient(es).KV().Del(ctx, g.Key); err != nil {
 		return err
 	}
 
@@ -117,7 +110,7 @@ func (kv *KVIncrCmd) Run(g *Globals) error {
 	}
 	defer func() { _ = es.Disconnect() }()
 
-	if err := g.scopedClient(es).KV().Incr(ctx, kv.Key, kv.Incr); err != nil {
+	if err := g.scopedClient(es).KV().Incr(ctx, g.Key, kv.Incr); err != nil {
 		return err
 	}
 
@@ -134,7 +127,7 @@ func (kv *KVDecrCmd) Run(g *Globals) error {
 	}
 	defer func() { _ = es.Disconnect() }()
 
-	if err := g.scopedClient(es).KV().Decr(ctx, kv.Key, kv.Decr); err != nil {
+	if err := g.scopedClient(es).KV().Decr(ctx, g.Key, kv.Decr); err != nil {
 		return err
 	}
 
