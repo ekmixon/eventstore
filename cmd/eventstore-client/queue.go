@@ -34,21 +34,16 @@ type QueueCmd struct {
 
 	AllItems QueueAllItemsCmd `cmd:"" help:"Get all items at queue"`
 	Len      QueueLenCmd      `cmd:"" help:"Get queue length"`
-
-	Key string `help:"Key identifying queue" required:""`
 }
 
 type QueueNewCmd struct {
-	// Key string `help:"Key where the value will be stored" required:""`
 	TTL int32 `help:"Key's time to live (seconds)" default:"5"`
 }
 
 type QueueDelCmd struct {
-	// Key string `help:"Queue key to delete" required:""`
 }
 
 type QueuePushCmd struct {
-	// Key string `help:"Queue key to delete" required:""`
 	Value string `help:"Value to be pushed" required:""`
 }
 
@@ -97,6 +92,78 @@ func (s *QueueDelCmd) Run(g *Globals) error {
 	return nil
 }
 
+func (s *QueuePushCmd) Run(g *Globals) error {
+	es := client.New(g.Server, g.Timeout)
+	ctx := context.Background()
+
+	if err := es.Connect(ctx); err != nil {
+		return fmt.Errorf("failed to dial %s: %v", g.Server, err)
+	}
+	defer func() { _ = es.Disconnect() }()
+
+	err := g.scopedClient(es).Queue().Items(g.Key).Push(ctx, []byte(s.Value))
+	if err != nil {
+		return err
+	}
+
+	printDone()
+	return nil
+}
+
+func (s *QueueIndexCmd) Run(g *Globals) error {
+	es := client.New(g.Server, g.Timeout)
+	ctx := context.Background()
+
+	if err := es.Connect(ctx); err != nil {
+		return fmt.Errorf("failed to dial %s: %v", g.Server, err)
+	}
+	defer func() { _ = es.Disconnect() }()
+
+	res, err := g.scopedClient(es).Queue().Items(g.Key).Index(ctx, s.Index)
+	if err != nil {
+		return err
+	}
+
+	printKV(fmt.Sprintf("%s[%d]", g.Key, s.Index), res)
+	return nil
+}
+
+func (s *QueuePopCmd) Run(g *Globals) error {
+	es := client.New(g.Server, g.Timeout)
+	ctx := context.Background()
+
+	if err := es.Connect(ctx); err != nil {
+		return fmt.Errorf("failed to dial %s: %v", g.Server, err)
+	}
+	defer func() { _ = es.Disconnect() }()
+
+	res, err := g.scopedClient(es).Queue().Items(g.Key).Pop(ctx)
+	if err != nil {
+		return err
+	}
+
+	printKV(g.Key, res)
+	return nil
+}
+
+func (s *QueuePeekCmd) Run(g *Globals) error {
+	es := client.New(g.Server, g.Timeout)
+	ctx := context.Background()
+
+	if err := es.Connect(ctx); err != nil {
+		return fmt.Errorf("failed to dial %s: %v", g.Server, err)
+	}
+	defer func() { _ = es.Disconnect() }()
+
+	res, err := g.scopedClient(es).Queue().Items(g.Key).Peek(ctx)
+	if err != nil {
+		return err
+	}
+
+	printKV(g.Key, res)
+	return nil
+}
+
 func (s *QueueAllItemsCmd) Run(g *Globals) error {
 	es := client.New(g.Server, g.Timeout)
 	ctx := context.Background()
@@ -115,7 +182,7 @@ func (s *QueueAllItemsCmd) Run(g *Globals) error {
 	return nil
 }
 
-func (s *QueuePushCmd) Run(g *Globals) error {
+func (s *QueueLenCmd) Run(g *Globals) error {
 	es := client.New(g.Server, g.Timeout)
 	ctx := context.Background()
 
@@ -124,11 +191,11 @@ func (s *QueuePushCmd) Run(g *Globals) error {
 	}
 	defer func() { _ = es.Disconnect() }()
 
-	err := g.scopedClient(es).Queue().Items(g.Key).Push(ctx, []byte(s.Value))
+	res, err := g.scopedClient(es).Queue().Items(g.Key).Len(ctx)
 	if err != nil {
 		return err
 	}
 
-	printDone()
+	printKV("len", res)
 	return nil
 }

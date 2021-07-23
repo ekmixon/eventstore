@@ -30,12 +30,10 @@ type MapCmd struct {
 }
 
 type MapNewCmd struct {
-	Key string        `help:"Key where the value will be stored" required:""`
 	TTL time.Duration `help:"Key's time to live (seconds)" default:"5s"`
 }
 
 type MapDelCmd struct {
-	Key string `help:"Map key to delete" required:""`
 }
 
 func (kv *MapNewCmd) Run(g *Globals) error {
