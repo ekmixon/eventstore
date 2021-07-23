@@ -307,11 +307,13 @@ service Queue {
 
   // Peek retrieves an element from the queue
   rpc Peek(PeekQueueRequest) returns (PeekQueueResponse) {}
-
-  // Lock the queue for exclusive access
-  rpc Lock(LockRequest) returns (LockResponse) {}
-
-  // Unlock the queue
-  rpc Unlock(UnlockRequest) returns (UnlockResponse) {}
 }
 
+service Sync {
+  // Lock key for exclusive access
+  rpc Lock(LockRequest) returns (LockResponse) {}
+
+  // Unlock key
+  rpc Unlock(UnlockRequest) returns (UnlockResponse) {}
+
+}

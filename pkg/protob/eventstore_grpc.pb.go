@@ -818,10 +818,6 @@ type QueueClient interface {
 	Pop(ctx context.Context, in *PopQueueRequest, opts ...grpc.CallOption) (*PopQueueResponse, error)
 	// Peek retrieves an element from the queue
 	Peek(ctx context.Context, in *PeekQueueRequest, opts ...grpc.CallOption) (*PeekQueueResponse, error)
-	// Lock the queue for exclusive access
-	Lock(ctx context.Context, in *LockRequest, opts ...grpc.CallOption) (*LockResponse, error)
-	// Unlock the queue
-	Unlock(ctx context.Context, in *UnlockRequest, opts ...grpc.CallOption) (*UnlockResponse, error)
 }
 
 type queueClient struct {
@@ -904,24 +900,6 @@ func (c *queueClient) Peek(ctx context.Context, in *PeekQueueRequest, opts ...gr
 	return out, nil
 }
 
-func (c *queueClient) Lock(ctx context.Context, in *LockRequest, opts ...grpc.CallOption) (*LockResponse, error) {
-	out := new(LockResponse)
-	err := c.cc.Invoke(ctx, "/protob.Queue/Lock", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *queueClient) Unlock(ctx context.Context, in *UnlockRequest, opts ...grpc.CallOption) (*UnlockResponse, error) {
-	out := new(UnlockResponse)
-	err := c.cc.Invoke(ctx, "/protob.Queue/Unlock", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 // QueueServer is the server API for Queue service.
 // All implementations must embed UnimplementedQueueServer
 // for forward compatibility
@@ -942,10 +920,6 @@ type QueueServer interface {
 	Pop(context.Context, *PopQueueRequest) (*PopQueueResponse, error)
 	// Peek retrieves an element from the queue
 	Peek(context.Context, *PeekQueueRequest) (*PeekQueueResponse, error)
-	// Lock the queue for exclusive access
-	Lock(context.Context, *LockRequest) (*LockResponse, error)
-	// Unlock the queue
-	Unlock(context.Context, *UnlockRequest) (*UnlockResponse, error)
 	mustEmbedUnimplementedQueueServer()
 }
 
@@ -976,12 +950,6 @@ func (UnimplementedQueueServer) Pop(context.Context, *PopQueueRequest) (*PopQueu
 }
 func (UnimplementedQueueServer) Peek(context.Context, *PeekQueueRequest) (*PeekQueueResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Peek not implemented")
-}
-func (UnimplementedQueueServer) Lock(context.Context, *LockRequest) (*LockResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Lock not implemented")
-}
-func (UnimplementedQueueServer) Unlock(context.Context, *UnlockRequest) (*UnlockResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Unlock not implemented")
 }
 func (UnimplementedQueueServer) mustEmbedUnimplementedQueueServer() {}
 
@@ -1140,42 +1108,6 @@ func _Queue_Peek_Handler(srv interface{}, ctx context.Context, dec func(interfac
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Queue_Lock_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(LockRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(QueueServer).Lock(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/protob.Queue/Lock",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(QueueServer).Lock(ctx, req.(*LockRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _Queue_Unlock_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(UnlockRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(QueueServer).Unlock(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/protob.Queue/Unlock",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(QueueServer).Unlock(ctx, req.(*UnlockRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 // Queue_ServiceDesc is the grpc.ServiceDesc for Queue service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -1215,13 +1147,131 @@ var Queue_ServiceDesc = grpc.ServiceDesc{
 			MethodName: "Peek",
 			Handler:    _Queue_Peek_Handler,
 		},
+	},
+	Streams:  []grpc.StreamDesc{},
+	Metadata: "pkg/protob/eventstore.proto",
+}
+
+// SyncClient is the client API for Sync service.
+//
+// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
+type SyncClient interface {
+	// Lock key for exclusive access
+	Lock(ctx context.Context, in *LockRequest, opts ...grpc.CallOption) (*LockResponse, error)
+	// Unlock key
+	Unlock(ctx context.Context, in *UnlockRequest, opts ...grpc.CallOption) (*UnlockResponse, error)
+}
+
+type syncClient struct {
+	cc grpc.ClientConnInterface
+}
+
+func NewSyncClient(cc grpc.ClientConnInterface) SyncClient {
+	return &syncClient{cc}
+}
+
+func (c *syncClient) Lock(ctx context.Context, in *LockRequest, opts ...grpc.CallOption) (*LockResponse, error) {
+	out := new(LockResponse)
+	err := c.cc.Invoke(ctx, "/protob.Sync/Lock", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *syncClient) Unlock(ctx context.Context, in *UnlockRequest, opts ...grpc.CallOption) (*UnlockResponse, error) {
+	out := new(UnlockResponse)
+	err := c.cc.Invoke(ctx, "/protob.Sync/Unlock", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// SyncServer is the server API for Sync service.
+// All implementations must embed UnimplementedSyncServer
+// for forward compatibility
+type SyncServer interface {
+	// Lock key for exclusive access
+	Lock(context.Context, *LockRequest) (*LockResponse, error)
+	// Unlock key
+	Unlock(context.Context, *UnlockRequest) (*UnlockResponse, error)
+	mustEmbedUnimplementedSyncServer()
+}
+
+// UnimplementedSyncServer must be embedded to have forward compatible implementations.
+type UnimplementedSyncServer struct {
+}
+
+func (UnimplementedSyncServer) Lock(context.Context, *LockRequest) (*LockResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Lock not implemented")
+}
+func (UnimplementedSyncServer) Unlock(context.Context, *UnlockRequest) (*UnlockResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Unlock not implemented")
+}
+func (UnimplementedSyncServer) mustEmbedUnimplementedSyncServer() {}
+
+// UnsafeSyncServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to SyncServer will
+// result in compilation errors.
+type UnsafeSyncServer interface {
+	mustEmbedUnimplementedSyncServer()
+}
+
+func RegisterSyncServer(s grpc.ServiceRegistrar, srv SyncServer) {
+	s.RegisterService(&Sync_ServiceDesc, srv)
+}
+
+func _Sync_Lock_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(LockRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SyncServer).Lock(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/protob.Sync/Lock",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SyncServer).Lock(ctx, req.(*LockRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Sync_Unlock_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UnlockRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SyncServer).Unlock(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/protob.Sync/Unlock",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SyncServer).Unlock(ctx, req.(*UnlockRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+// Sync_ServiceDesc is the grpc.ServiceDesc for Sync service.
+// It's only intended for direct use with grpc.RegisterService,
+// and not to be introspected or modified (even as a copy)
+var Sync_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "protob.Sync",
+	HandlerType: (*SyncServer)(nil),
+	Methods: []grpc.MethodDesc{
 		{
 			MethodName: "Lock",
-			Handler:    _Queue_Lock_Handler,
+			Handler:    _Sync_Lock_Handler,
 		},
 		{
 			MethodName: "Unlock",
-			Handler:    _Queue_Unlock_Handler,
+			Handler:    _Sync_Unlock_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

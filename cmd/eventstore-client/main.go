@@ -19,6 +19,7 @@ package main
 import (
 	"errors"
 	"fmt"
+	"log"
 	"time"
 
 	"github.com/alecthomas/kong"
@@ -41,7 +42,8 @@ type Globals struct {
 type Cli struct {
 	Globals
 
-	Kv KVCmd `cmd help:"KV EventStore"`
+	Kv   KVCmd   `cmd:"" help:"KV EventStore"`
+	Sync SyncCmd `cmd:"" help:"Lock and unlock keys"`
 
 	Map struct {
 		Paths []string `arg:"" optional:"" help:"Paths to list." type:"path"`
@@ -106,4 +108,12 @@ func (g *Globals) scopedClient(c client.EventStore) client.Interface {
 		return c.Instance(g.Bridge, g.Instance)
 	}
 	return nil
+}
+
+func printKV(key string, value interface{}) {
+	log.Printf("%s: %s\n", key, value)
+}
+
+func printDone() {
+	log.Println("done")
 }
