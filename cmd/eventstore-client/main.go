@@ -113,6 +113,13 @@ func printList(key string, values [][]byte) {
 	}
 }
 
+func printMap(key string, values map[string][]byte) {
+	log.Printf("%s:\n", key)
+	for k, v := range values {
+		log.Printf("\t%s: %s\n", k, string(v))
+	}
+}
+
 func printDone() {
 	log.Println("done")
 }
